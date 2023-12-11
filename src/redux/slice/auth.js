@@ -6,7 +6,7 @@ export const fetchtodos = createAsyncThunk('fetchTodos', async () => {
  return response.json();
 })
 
-const initialState= {
+const initialState = {
  isLoading: false,
  data: null,
  isError: false
@@ -25,6 +25,16 @@ const authSlice = createSlice({
    state.isError = true
   })
  },
+
+ // reducers: {
+ //  login: (state, action) => {
+
+
+ //  },
+ //  register: () => {
+
+ //  }
+ // }
 
 })
 
