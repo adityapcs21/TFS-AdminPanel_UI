@@ -16,19 +16,23 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import Header from '../header';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import { ExpandLess, ExpandMore, Settings, StarBorder } from '@mui/icons-material';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { Avatar, Collapse } from '@mui/material';
-import DataGridTable from '../../../components/DataGridTable';
 
 
 const drawerWidth = 240;
+
+const PagesItem = [
+  { label: 'Profile', url: '/profile' },
+  { label: 'Edit-Profile', url: '/edit-profile' },
+  { label: 'Blog', url: '/blog' },
+  { label: 'About-Us', url: '/aboutus' },
+  { label: 'Settings', url: '/setting' },
+]
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -99,7 +103,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export default function MiniDrawer() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
+  const [open, setOpen] = React.useState(true);
   const [openPages, setOpenPages] = React.useState(true);
 
   const handleClick = () => {
@@ -117,7 +122,7 @@ export default function MiniDrawer() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} elevation={0}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -144,7 +149,7 @@ export default function MiniDrawer() {
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
         </DrawerHeader>
-        <Divider />
+        <Divider sx={{ borderColor: "#eae8f1", border: '0.5px solid #eae8f1', opacity: 1 }} />
         <List>
           <ListItem sx={{ display: "block" }}>
             <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
@@ -155,8 +160,8 @@ export default function MiniDrawer() {
               />
               {open &&
                 <>
-                  <Typography sx={{ fontSize: '14px', fontWeight: 500 }}>Peter cruiser</Typography>
-                  <Typography sx={{ fontSize: '12px', fontWeight: 500 }}>Premium Member</Typography>
+                  <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>Peter cruiser</Typography>
+                  <Typography sx={{ fontSize: '14px', fontWeight: 500 }}>Premium Member</Typography>
                 </>
               }
 
@@ -166,7 +171,15 @@ export default function MiniDrawer() {
         <List>
           {['Pages'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton onClick={() => setOpenPages(prevState => !prevState)}>
+              <ListItemButton sx={{
+                '&.MuiListItemButton-root:hover': {
+                  // backgroundColor: 'orange',
+                  color: "primary.main",
+                  '& .MuiListItemIcon-root': {
+                    color: 'primary.main',
+                  },
+                },
+              }} onClick={() => setOpenPages(prevState => !prevState)}>
                 <ListItemIcon>
                   <AutoStoriesIcon />
                 </ListItemIcon>
@@ -175,14 +188,21 @@ export default function MiniDrawer() {
               </ListItemButton>
               <Collapse in={openPages} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
-                  {['Profile', 'Edit-Profile', 'About-Us', 'Settings'].map((text, index) => (
-                    <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+                  {PagesItem.map((item, index) => (
+                    <ListItem onClick={() => navigate(item.url)} key={index} disablePadding sx={{ display: 'block' }}>
                       <ListItemButton
                         sx={{
                           pl: 4,
                           minHeight: 48,
                           justifyContent: open ? 'initial' : 'center',
                           px: 2.5,
+                          '&.MuiListItemButton-root:hover': {
+                            // backgroundColor: 'orange',
+                            color: "primary.main",
+                            '& .MuiListItemIcon-root': {
+                              color: 'primary.main',
+                            },
+                          },
                         }}
                       >
                         <ListItemIcon
@@ -194,7 +214,7 @@ export default function MiniDrawer() {
                         >
                           {open && <KeyboardArrowRightIcon />}
                         </ListItemIcon>
-                        <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                        <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0 }} />
                       </ListItemButton>
                     </ListItem>
                   ))}
@@ -206,8 +226,8 @@ export default function MiniDrawer() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         {/* this will be rebdered */}
-        {/* <Outlet /> */}
-        <DataGridTable />
+        <Outlet />
+        {/* <DataGridTable /> */}
       </Box>
     </Box >
   );

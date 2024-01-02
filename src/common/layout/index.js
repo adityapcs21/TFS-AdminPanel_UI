@@ -17,7 +17,7 @@ export default function Layout() {
     <div className="main-content app-content" >
      <div className="main-container container-fluid" >
       <div className='side-app'>
-       <Outlet />
+       {/* <Outlet /> */}
       </div>
      </div>
     </div>

@@ -1,74 +1,127 @@
-import React from 'react';
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-// import { Imagesdata } from '../../common/commonimages';
+import { Avatar, Box, Button, Checkbox, FormControlLabel, Grid, Link, Paper, TextField, Typography, } from '@mui/material'
+import React, { useEffect } from 'react'
+import LockIcon from '@mui/icons-material/Lock';
+import { styled } from "@mui/material/styles";
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
+import { useDispatch } from 'react-redux';
+import { login } from '../../redux/slice/auth';
 
-const SignIn = () => {
- return (
-  <div>
-   <div className="">
-    <Row className="no-gutter">
-     <Col md={6} lg={6} xl={7} className="d-none d-md-flex bg-primary-transparent">
-      <Row className="wd-100p mx-auto text-center">
-       <Col md={12} lg={12} xl={12} className="my-auto mx-auto wd-100p">
-        <img src="https://images.unsplash.com/photo-1529539795054-3c162aab037a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" className="my-auto ht-xl-100p wd-md-100p wd-xl-100p mx-auto" alt="logo" />
-       </Col>
-      </Row>
-     </Col>
-     <Col md={6} lg={6} xl={5} className="bg-white py-4">
-      <div className="login d-flex align-items-center py-2 px-4">
-       <Container className="p-0">
-        <Row>
-         <Col md={10} lg={10} xl={9} className="mx-auto">
-          <div className="card-sigin">
-           <div className="mb-5 d-flex">
+const schema = yup.object({
+  email: yup.string().email().required(),
+  password: yup.string().required(),
+}).required();
 
-            {/* <img src="../src/assets/img/photos/8.jpg" className="sign-favicon-a ht-40" alt="logo" />
-            <img src="../src/assets/img/photos/8.jpg" className="sign-favicon-b ht-40" alt="logo" /> */}
+export default function Login() {
+  const dispatch = useDispatch();
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema)
+  });
 
-            <h1 className="main-logo1 ms-1 me-0 my-auto tx-28">T<span>F</span>S</h1>
-           </div>
-           <div className="card-sigin">
-            <div className="main-signup-header">
-             <h2>Welcome back!</h2>
-             <h5 className="fw-semibold mb-4">Please sign in to continue.</h5>
-             <Form action="#">
-              <Form.Group>
-               <Form.Label className="mb-2">Email</Form.Label>
-               <Form.Control className="mb-3" placeholder="Enter your email" type="text" />
-              </Form.Group>
-              <Form.Group>
-               <Form.Label className="mb-2">Password</Form.Label>
-               <Form.Control className="mb-3" placeholder="Enter your password" type="password" />
-              </Form.Group>
-              <Button className="btn-main-primary btn-block">Sign In</Button>
-              <Row className="row-xs social-icons">
-               <Col sm={6} className="">
-                <Button className="btn-block"><i className="fab fa-facebook-f"></i> Signup with Facebook</Button>
-               </Col>
-               <Col sm={6} className="mg-t-10 mg-sm-t-0">
-                <Button className="btn-info btn-block btn-b"><i className="fab fa-twitter"></i> Signup with Twitter</Button>
-               </Col>
-              </Row>
-             </Form>
-             <div className="main-signin-footer mt-5">
-              <p>
-               Forgot password?</p>
-              <p>Don't have an account? Create an Account</p>
-             </div>
-            </div>
-           </div>
-          </div>
-         </Col>
-        </Row>
-       </Container>
-      </div>
-     </Col>
-    </Row>
-   </div>
-  </div>
- )
-};
+  const onSubmit = (loginDetails) => {
+    let payload = {
+      emailId: loginDetails.email,
+      "password": loginDetails.password,
+      "grantType": "token"
+    }
+    dispatch(login(payload))
+  }
 
+  return (
+    <Container container component="main">
+      <Wrapper item xs={12} sm={8} md={5} lg={4} component={Paper} elevation={1} square>
+        <PaperCont >
+          <AvatarCont >
+            <LockIcon />
+          </AvatarCont>
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          <FormCont onSubmit={handleSubmit(onSubmit)}>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              label="Username"
+              name="username"
+              autoFocus
+              autoComplete="off"
+              {...register("email")}
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              autoComplete="new-password"
+              {...register("password")}
 
-export default SignIn;
+            />
+            <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
+            <SubmitButton type="submit" fullWidth variant="contained" color="primary">Sign In</SubmitButton>
+
+            <Grid container>
+              <Grid item>
+                <Link href="#" variant="body2">
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
+            </Grid>
+            <Box mt={5}>
+            </Box>
+          </FormCont>
+        </PaperCont>
+      </Wrapper>
+    </Container>
+  )
+}
+
+const Container = styled(Grid)(({ theme }) => ({
+  height: "100vh",
+  backgroundImage: `url('https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
+  backgroundSize: "cover",
+  backgroundColor:
+    theme.palette.type === "light"
+      ? theme.palette.grey[50]
+      : theme.palette.grey[900],
+
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center"
+}));
+
+const Wrapper = styled(Grid)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center"
+}));
+
+const PaperCont = styled(Box)(({ theme }) => ({
+  margin: theme.spacing(2, 6),
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center"
+}))
+
+const AvatarCont = styled(Avatar)(({ theme }) => ({
+  margin: theme.spacing(0),
+  backgroundColor: theme.palette.secondary.main
+}))
+
+const FormCont = styled(`form`)(({ theme }) => ({
+  width: "100%", // Fix IE 11 issue.
+  marginTop: theme.spacing(1)
+}))
+
+const SubmitButton = styled(Button)(({ theme }) => ({
+  margin: theme.spacing(3, 0, 2)
+}));
+
+// https://images.unsplash.com/photo-1529539795054-3c162aab037a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D
