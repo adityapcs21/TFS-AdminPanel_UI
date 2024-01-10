@@ -22,16 +22,22 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { Avatar, Collapse } from '@mui/material';
+import routeNames from '../../../router/routeNames';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import brandLogo from '../../../assets/images/tfs_logo.jpg'
+
 
 
 const drawerWidth = 240;
 
 const PagesItem = [
-  { label: 'Profile', url: '/profile' },
-  { label: 'Edit-Profile', url: '/edit-profile' },
-  { label: 'Blog', url: '/blog' },
-  { label: 'About-Us', url: '/aboutus' },
-  { label: 'Settings', url: '/setting' },
+  { label: 'Manage User', url: routeNames.USERMANAGEMENT },
+  // { label: 'Edit-Profile', url: '/edit-profile' },
+  { label: 'Blog', url: routeNames.BLOG },
+  { label: 'Gallery', url: routeNames.GALLERY },
+  { label: 'About-Us', url: routeNames.ABOUTUS },
+  { label: 'Contact-Us', url: routeNames.CONTACTUS },
 ]
 
 const openedMixin = (theme) => ({
@@ -58,11 +64,17 @@ const closedMixin = (theme) => ({
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'flex-end',
+  justifyContent: 'space-between',
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
+
+const BrandLogo = styled('img')({
+  width: 'auto',
+  height: '40px',
+  paddingLeft: '10px'
+})
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -106,6 +118,12 @@ export default function MiniDrawer() {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(true);
   const [openPages, setOpenPages] = React.useState(true);
+  const [userDetails, setUserDetails] = useState({})
+
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem("userDetails"));
+    setUserDetails(userInfo)
+  }, [])
 
   const handleClick = () => {
     setOpen(!open);
@@ -134,17 +152,18 @@ export default function MiniDrawer() {
               ...(open && { display: 'none' }),
             }}
           >
+
             <MenuIcon />
           </IconButton>
 
-          {/* header */}
-          <Header />
+          <Header isOpen={open} />
 
         </Toolbar>
       </AppBar>
 
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
+          <BrandLogo src={brandLogo} alt='brand-logo' />
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
@@ -160,8 +179,8 @@ export default function MiniDrawer() {
               />
               {open &&
                 <>
-                  <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>Peter cruiser</Typography>
-                  <Typography sx={{ fontSize: '14px', fontWeight: 500 }}>Premium Member</Typography>
+                  <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>{userDetails.name}</Typography>
+                  <Typography sx={{ fontSize: '14px', fontWeight: 500 }}>{userDetails.role}</Typography>
                 </>
               }
 
@@ -232,3 +251,4 @@ export default function MiniDrawer() {
     </Box >
   );
 }
+

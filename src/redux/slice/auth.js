@@ -24,7 +24,8 @@ const authSlice = createSlice({
    state.isLoading = false;
    state.data = action.payload
    localStorage.setItem("token", action.payload.accessToken);
-   window.location = "/"
+   localStorage.setItem("userDetails", JSON.stringify(action.payload));
+   // window.location = "/"
   });
   builder.addCase(login.rejected, (state, action) => {
    console.log("Error", action.payload);

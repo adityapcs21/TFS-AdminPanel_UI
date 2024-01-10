@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { TextField, Button, Grid, Container, Box, Typography, Input, IconButton } from '@mui/material';
+import { TextField, Button, Grid, Container, Box, Typography} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const schema = yup.object().shape({
  title: yup.string().required(),
@@ -86,7 +85,7 @@ const ViewBlog = ({ data, onClose }) => {
       <Controller
        disabled
        name="externalLink"
-       defaultValue={externalLink}
+      defaultValue={externalLink}
        control={control}
        render={({ field }) => (
         <TextField fullWidth label="External Link" {...field} error={!!errors.externalLink} helperText={errors.externalLink?.message} />
@@ -97,8 +96,8 @@ const ViewBlog = ({ data, onClose }) => {
       <TextField label="Deleted" disabled value={deleted} />
      </Grid> */}
      <Grid item xs={12}>
-      <Box sx={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
-       <Typography>Attachments</Typography>
+      <Typography>Attachments</Typography>
+      <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
        {attachments && attachments.map((media) => (
         <Box>
          <img src={media} alt="Preview" style={{ maxWidth: '100%', maxHeight: '80px', borderRadius: '5px' }} />

@@ -1,7 +1,10 @@
 const routeNames = {
  LOGIN: '/login',
  DASHBOARD: '/',
- BLOG:'/blog',
- USERMANAGEMENT:'/user-management',
+ ABOUTUS: '/about-us',
+ BLOG: '/blog',
+ USERMANAGEMENT: '/user-management',
+ GALLERY: '/gallery',
+ CONTACTUS: '/contact-us'
 }
 export default routeNames;

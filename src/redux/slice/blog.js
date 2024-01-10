@@ -15,6 +15,7 @@ export const SaveBlog = createAsyncThunk('blogs/saveBlog', async (data) => {
     },
     body: JSON.stringify(data),
   });
+  console.log("res", response.json())
   return response.json();
 })
 
@@ -42,7 +43,8 @@ export const DeleteBlogById = createAsyncThunk('blogs/deleteBlogById', async (id
 const initialState = {
   isLoading: false,
   BlogData: {},
-  isError: false
+  isError: false,
+  newBlogAdded: false
 }
 
 const blogSlice = createSlice({
@@ -52,6 +54,7 @@ const blogSlice = createSlice({
     builder.addCase(getAllBlogs.fulfilled, (state, action) => {
       state.isLoading = false;
       state.BlogData = action.payload
+      state.newBlogAdded = false
     });
     builder.addCase(getAllBlogs.rejected, (state, action) => {
       console.log("Error", action.payload);
@@ -61,22 +64,27 @@ const blogSlice = createSlice({
     // ----------------Save Blog----------------------------
     builder.addCase(SaveBlog.fulfilled, (state, action) => {
       state.isLoading = false;
+      state.newBlogAdded = true;
       // state.BlogData = action.payload
       console.log("action.payload", action.payload)
     });
     builder.addCase(SaveBlog.rejected, (state, action) => {
-      console.log("Error", action.payload);
+      console.log(" SaveBlog Error", action.payload);
       state.isError = true
+      state.newBlogAdded = true;
+
     })
 
     // ----------------Update Blog----------------------------
     builder.addCase(UpdateBlog.fulfilled, (state, action) => {
       state.isLoading = false;
+      state.newBlogAdded = true
       // state.BlogData = action.payload
       console.log("action.payload", action.payload)
     });
     builder.addCase(UpdateBlog.rejected, (state, action) => {
       console.log("Error", action.payload);
+      state.newBlogAdded = true
       state.isError = true
     })
 
@@ -84,7 +92,7 @@ const blogSlice = createSlice({
     builder.addCase(DeleteBlogById.fulfilled, (state, action) => {
       state.isLoading = false;
       // getAllBlogs();
-      // state.BlogData = action.payload
+      state.BlogData = action.payload
       console.log("action.payload", action.payload)
     });
     builder.addCase(DeleteBlogById.rejected, (state, action) => {

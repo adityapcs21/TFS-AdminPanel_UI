@@ -10,7 +10,7 @@ import { UpdateBlog } from '../../../redux/slice/blog';
 
 const schema = yup.object().shape({
  title: yup.string().required(),
- createdBy: yup.string().required(),
+ // createdBy: yup.string().required(),
  description: yup.string().required(),
  externalLink: yup.string().url().optional(),
  attachments: yup.array().of(yup.mixed().required('Image is required')),
@@ -80,6 +80,7 @@ const EditBlog = ({ data, onClose }) => {
        name="createdBy"
        defaultValue={createdBy}
        control={control}
+       disabled
        render={({ field }) => (
         <TextField fullWidth label="Created By" {...field} error={!!errors.createdBy} helperText={errors.createdBy?.message} />
        )}

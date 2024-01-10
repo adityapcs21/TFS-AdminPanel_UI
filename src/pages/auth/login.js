@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../redux/slice/auth';
 
 const schema = yup.object({
@@ -16,9 +16,17 @@ const schema = yup.object({
 
 export default function Login() {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const UserDetails = useSelector(state => state.auth.data)
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
+
+  useEffect(() => {
+    if (UserDetails) {
+      navigate("/")
+    }
+  }, [UserDetails])
 
   const onSubmit = (loginDetails) => {
     let payload = {
@@ -28,7 +36,7 @@ export default function Login() {
     }
     dispatch(login(payload))
   }
-
+  console.log("UserDetails", UserDetails)
   return (
     <Container container component="main">
       <Wrapper item xs={12} sm={8} md={5} lg={4} component={Paper} elevation={1} square>
@@ -64,13 +72,13 @@ export default function Login() {
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
             <SubmitButton type="submit" fullWidth variant="contained" color="primary">Sign In</SubmitButton>
 
-            <Grid container>
+            {/* <Grid container>
               <Grid item>
                 <Link href="#" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
-            </Grid>
+            </Grid> */}
             <Box mt={5}>
             </Box>
           </FormCont>

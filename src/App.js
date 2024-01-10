@@ -1,12 +1,12 @@
 import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter, useNavigate } from 'react-router-dom';
-import { ThemeProvider } from 'react-bootstrap';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter } from 'react-router-dom';
 import { theme } from './theme';
 import Router from './router';
+import { ThemeProvider } from '@mui/material';
 
 function App() {
-
+  console.log("app  ")
 
   return (
     <div className="App">

@@ -36,19 +36,15 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit }) => {
   });
 
   function IsImage(value) {
-    console.log("checkck--->", value, "----", Array.isArray(value))
     if (Array.isArray(value)) {
-      console.log("fileImage", value)
       if (/\.(jpg|jpeg|gif|png)$/.test(value[0])) {
         return <ImageCont src={value[0]} alt="thumbnails" />
       }
       else {
-        console.log("noImage", value)
         return <ImageCont src="https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg" alt="no image" />
       }
     }
     else {
-      console.log(" string value", value)
       return <Box sx={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis' }}>{value && value.toString()}</Box>
     }
   }
@@ -79,7 +75,6 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit }) => {
             .map((row) => (
               <TableRow key={row.id}>
                 {columns.map((column) => {
-                  console.log("rowwwwwwwwwwww", row["attachments"])
                   return (
                     <TableCell key={column.id}>
 
@@ -89,15 +84,15 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit }) => {
                 })}
                 <TableCell>
                   <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <IconButton sx={{ backgroundColor: '#1976d2', color: '#ffffff' }} onClick={() => onView(row)}>
+                    <IconContainer onClick={() => onView(row)}>
                       <VisibilityIcon />
-                    </IconButton>
-                    <IconButton sx={{ backgroundColor: '#4caf50', color: '#ffffff' }} onClick={() => onEdit(row)}>
+                    </IconContainer>
+                    <IconContainer onClick={() => onEdit(row)}>
                       <EditIcon />
-                    </IconButton >
-                    <IconButton sx={{ backgroundColor: '#ed6c0f', color: '#ffffff' }} onClick={() => onDelete(row)}>
+                    </IconContainer >
+                    <IconContainer onClick={() => onDelete(row)}>
                       <DeleteIcon />
-                    </IconButton>
+                    </IconContainer>
                   </Box>
                 </TableCell>
               </TableRow>
@@ -116,12 +111,17 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit }) => {
     </TableContainer>
   );
 };
-
+export default ReusableTable;
 
 const ImageCont = styled('img')({
   width: '80px',
   height: 'auto',
-  borderRadius: '4px'
+  borderRadius: '4px',
+  ":hover": {
+    backgroundColor: ''
+  }
 })
 
-export default ReusableTable;
+const IconContainer = styled(IconButton)({
+  opacity: "0.9"
+})

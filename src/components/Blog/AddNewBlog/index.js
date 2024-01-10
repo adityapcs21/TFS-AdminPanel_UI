@@ -32,7 +32,7 @@ const AddNewBlog = ({ onClose }) => {
  const handleFileChange = (e) => {
   const files = e.target.files;
   // setValue('media', files);
-  setValue('attachments', ["http://nightmare.mit.edu/static/homepage/img/portfolio/colosseum_haunted.png", "http://nightmare.mit.edu/static/homepage/img/portfolio/colosseum_orig.png"]);
+  setValue('attachments', ["https://newbreak.church/wp-content/uploads/2023/11/i0iarfzfjzm-1536x1024.jpg", "http://nightmare.mit.edu/static/homepage/img/portfolio/colosseum_orig.png"]);
 
 
   // Preview all selected images
