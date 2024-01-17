@@ -27,7 +27,7 @@ export default function Header({ isOpen }) {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  const [userDetails, setUserDetails] = useState({})
+  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userDetails"));
@@ -56,7 +56,10 @@ export default function Header({ isOpen }) {
     handleMenuClose();
     window.location.reload()
   }
-
+  function getInitials(name) {
+    const initials = name.split(' ').map(word => word.charAt(0)).join('');
+    return initials;
+  }
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -219,7 +222,7 @@ export default function Header({ isOpen }) {
               />
               :
               <InitialImg>
-                <Typography>VS</Typography>
+                <Typography>{getInitials(userDetails.name)}</Typography>
               </InitialImg>
           }
         </IconButton>

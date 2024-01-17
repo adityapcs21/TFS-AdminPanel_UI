@@ -24,30 +24,45 @@ const UpdateImageGallery = ({ onClose, data }) => {
  const [file, setFile] = useState(attachments);
  const [fileName, setFileName] = useState([])
  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
- const { control, handleSubmit, formState: { errors } } = useForm({
+ const { control, setValue, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });
+
+ useEffect(() => {
+  setValue('attachments', attachments);
+ }, [])
 
  console.log("update", errors)
 
  async function onSubmit(data) {
   const resultsArray = [];
-  await Promise.all(fileName.map(async (item) => {
-   let payload1 = {
-    mediaType: "galleryAttachments/images",
-    fileName: item.Name,
-    file: item.File
-   }
-   let response = await getS3SignedUrl(payload1);
-   resultsArray.push(response);
-  }));
+  if (fileName && fileName.length > 0) {
+   await Promise.all(fileName.map(async (item) => {
+    let payload1 = {
+     mediaType: "galleryAttachments/images",
+     fileName: item.Name,
+     file: item.File
+    }
+    let response = await getS3SignedUrl(payload1);
+    resultsArray.push(response);
+   }));
 
-  let payload = {
-   "galleryId": galleryId,
-   "title": data.title,
-   "attachments": resultsArray
+   let payload = {
+    "galleryId": galleryId,
+    "title": data.title,
+    "attachments": resultsArray
+   }
+   dispatch(UpdateGallery(payload))
   }
-  dispatch(UpdateGallery(payload))
+  else {
+   let payload = {
+    "galleryId": galleryId,
+    "title": data.title,
+    "attachments": data.attachments
+   }
+   dispatch(UpdateGallery(payload))
+
+  }
   onClose()
  };
 

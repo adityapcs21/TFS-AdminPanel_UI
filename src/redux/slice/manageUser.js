@@ -62,7 +62,7 @@ const manageUser = createSlice({
   builder.addCase(GetAllUserList.fulfilled, (state, action) => {
    state.isLoading = false;
    state.UserUpdated = false
-   state.UserList = action.payload.userList
+   state.UserList = action.payload?.userList
   });
   builder.addCase(GetAllUserList.rejected, (state, action) => {
    console.log("Error", action.payload);

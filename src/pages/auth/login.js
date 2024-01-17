@@ -1,16 +1,17 @@
 import { Avatar, Box, Button, Checkbox, FormControlLabel, Grid, Link, Paper, TextField, Typography, } from '@mui/material'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import LockIcon from '@mui/icons-material/Lock';
 import { styled } from "@mui/material/styles";
 import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../redux/slice/auth';
+import routeNames from '../../router/routeNames';
 
 const schema = yup.object({
-  email: yup.string().email().required(),
+  emailId: yup.string().email().required(),
   password: yup.string().required(),
 }).required();
 
@@ -18,25 +19,40 @@ export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate()
   const UserDetails = useSelector(state => state.auth.data)
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")));
+  const { register, control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
 
   useEffect(() => {
     if (UserDetails) {
-      navigate("/")
+      if (UserDetails.passwordChangeRequired) {
+        navigate(routeNames.CHNAGEPASSWORD)
+      } else {
+        navigate("/")
+      }
     }
   }, [UserDetails])
 
+  useEffect(() => {
+    if (userDetails) {
+      if (userDetails.passwordChangeRequired) {
+        navigate(routeNames.CHNAGEPASSWORD)
+      } else {
+        navigate("/")
+      }
+    }
+  }, [userDetails])
+
   const onSubmit = (loginDetails) => {
     let payload = {
-      "emailId": loginDetails.email,
+      "emailId": loginDetails.emailId,
       "password": loginDetails.password,
       "grantType": "token"
     }
     dispatch(login(payload))
   }
-  console.log("UserDetails", UserDetails)
+  console.log("UserDetails", userDetails)
   return (
     <Container container component="main">
       <Wrapper item xs={12} sm={8} md={5} lg={4} component={Paper} elevation={1} square>
@@ -48,26 +64,44 @@ export default function Login() {
             Sign in
           </Typography>
           <FormCont onSubmit={handleSubmit(onSubmit)}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              label="Username"
-              name="username"
-              autoFocus
-              autoComplete="off"
-              {...register("email")}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              autoComplete="new-password"
-              {...register("password")}
-            />
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Controller
+                  name="emailId"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Email"
+                      variant="outlined"
+                      fullWidth
+                      error={!!errors.emailId}
+                      helperText={errors.emailId?.message}
+                    />
+                  )}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <Controller
+                  name="password"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      type="password"
+                      label="Password"
+                      variant="outlined"
+                      fullWidth
+                      error={!!errors.password}
+                      helperText={errors.password?.message}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
             <SubmitButton type="submit" fullWidth variant="contained" color="primary">Sign In</SubmitButton>
 

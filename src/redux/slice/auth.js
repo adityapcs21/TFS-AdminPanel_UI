@@ -22,13 +22,19 @@ const initialState = {
 const authSlice = createSlice({
  name: "auth",
  initialState,
+ reducers: {
+  setUserDetails: (state, action) => {
+   state.data = action.payload
+  }
+ },
  extraReducers: (builder) => {
   builder.addCase(login.fulfilled, (state, action) => {
    console.log("qwesrdtfyg", action)
    state.isLoading = false;
    state.data = action.payload
-   localStorage.setItem("token", action.payload.accessToken);
+   localStorage.setItem("token", action.payload?.accessToken);
    localStorage.setItem("userDetails", JSON.stringify(action.payload));
+   window.location.reload()
    // window.location = "/"
   });
   builder.addCase(login.rejected, (state, action) => {
@@ -50,5 +56,5 @@ const authSlice = createSlice({
  // }
 
 })
-
+export const { setUserDetails } = authSlice.actions;
 export default authSlice.reducer;

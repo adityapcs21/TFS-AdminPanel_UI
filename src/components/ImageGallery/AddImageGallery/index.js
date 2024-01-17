@@ -7,12 +7,13 @@ import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useDispatch } from 'react-redux';
 import { getS3SignedUrl } from '../../../helpers/mediaUpload';
+import { SaveGallery } from '../../../redux/slice/gallery';
 
 
 const schema = yup.object().shape({
  title: yup.string().required(),
  createdBy: yup.string().required(),
- type: yup.string().required(),
+ type: yup.string().optional(),
  attachments: yup.array().of(yup.mixed().required('Image is required')),
 });
 
@@ -27,12 +28,12 @@ const AddImageInGallery = ({ onClose }) => {
  });
 
 
-
+ console.log(errors)
  async function onSubmit(data) {
   const resultsArray = [];
   await Promise.all(fileName.map(async (item) => {
    let payload1 = {
-    mediaType: "blogAttachments",
+    mediaType: "galleryAttachments/images",
     fileName: item.Name,
     file: item.File
    }
@@ -42,12 +43,11 @@ const AddImageInGallery = ({ onClose }) => {
 
   let payload = {
    "title": data.title,
-   "description": data.description,
-   "externalLink": data.externalLink,
    "createdBy": data.createdBy,
-   "attachments": resultsArray
+   "attachments": resultsArray,
+   "type": "image"
   }
-  // dispatch(SaveBlog(payload))
+  dispatch(SaveGallery(payload))
   onClose()
  };
 
@@ -78,7 +78,10 @@ const AddImageInGallery = ({ onClose }) => {
     <Typography variant='h5'>Add New Image in gallery</Typography>
     <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
    </Box>
-   <form onSubmit={handleSubmit(onSubmit)}>
+   <form onSubmit={handleSubmit((data) => {
+    data.type = "image";
+    onSubmit(data);
+   })}>
     <Grid container spacing={2}>
      <Grid item xs={12}>
       <Controller

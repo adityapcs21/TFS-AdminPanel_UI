@@ -7,6 +7,8 @@ import ContactUs from "../pages/contact-us/index.js";
 import SubscribedEmail from "../pages/subscribed-email/index.js";
 import VideoGallery from "../pages/gallery/video-gallery/index.js";
 import VideoGallery2 from "../pages/gallery/video-gallery/videoGallery.js";
+import ChangePassword from "../pages/auth/changePassword.js";
+import GalleryComponent from "../pages/gallery/video-gallery/videoGallery.js";
 
 
 const Login = lazy(() => import('../pages/auth/login.js'));
@@ -22,6 +24,7 @@ const Router = () => {
     <Suspense fallback={<Loader />}>
       <Routes>
         <Route path={routeNames.LOGIN} element={<Login />} />
+        <Route path={routeNames.CHNAGEPASSWORD} element={<ChangePassword />} />
         <Route element={<ProtectedRoute />}>
           <Route index element={< Dashboard />} />
           <Route path={routeNames.BLOG} element={< Blog />} />
@@ -30,7 +33,7 @@ const Router = () => {
           <Route path={routeNames.ABOUTUS} element={< AboutUs />} />
           <Route path={routeNames.CONTACTUS} element={< ContactUs />} />
           <Route path={routeNames.IMAGEGALLERY} element={< ImageGallery />} />
-          <Route path={routeNames.VIDEOGALLERY} element={<VideoGallery2 />} />
+          <Route path={routeNames.VIDEOGALLERY} element={<GalleryComponent />} />
         </Route>
         {/* <Route path={routeNames.ERROR} element={<ErrorPage />} /> */}
       </Routes>
