@@ -1,14 +1,17 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import axios from "axios";
 
 //Action
-export const login = createAsyncThunk('login', async (data) => {
-
- const response = await fetch("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/auth/admin/login", {
-  method: "POST",
-  body: JSON.stringify(data),
- });
- return response.json();
+export const login = createAsyncThunk('auth/login', async (data) => {
+ try {
+  const response = await axios.post("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/auth/admin/login", data);
+  return response.data;
+ } catch (error) {
+  console.error(error);
+ }
 })
+
+
 
 const initialState = {
  isLoading: false,
@@ -21,6 +24,7 @@ const authSlice = createSlice({
  initialState,
  extraReducers: (builder) => {
   builder.addCase(login.fulfilled, (state, action) => {
+   console.log("qwesrdtfyg", action)
    state.isLoading = false;
    state.data = action.payload
    localStorage.setItem("token", action.payload.accessToken);
@@ -28,6 +32,8 @@ const authSlice = createSlice({
    // window.location = "/"
   });
   builder.addCase(login.rejected, (state, action) => {
+   console.log("qwesrdtfyg rej", action)
+
    console.log("Error", action.payload);
    state.isError = true
   })

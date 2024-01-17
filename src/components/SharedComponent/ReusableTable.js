@@ -8,7 +8,7 @@ import styled from '@emotion/styled';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
 
-const ReusableTable = ({ data, columns, onView, onDelete, onEdit }) => {
+const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, disableDelete, disableEdit, disableActionButton }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [orderBy, setOrderBy] = useState('');
@@ -66,7 +66,7 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit }) => {
                 </TableSortLabel>
               </TableCell>
             ))}
-            <TableCell sx={{ textWrap: 'nowrap', fontWeight: 600 }}>Actions</TableCell>
+            {!disableActionButton && <TableCell sx={{ textWrap: 'nowrap', fontWeight: 600 }}>Actions</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -82,19 +82,21 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit }) => {
                     </TableCell>
                   )
                 })}
-                <TableCell>
+                {!disableActionButton && <TableCell>
                   <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <IconContainer onClick={() => onView(row)}>
+                    {!disableView && <IconContainer onClick={() => onView(row)}>
                       <VisibilityIcon />
-                    </IconContainer>
-                    <IconContainer onClick={() => onEdit(row)}>
+                    </IconContainer>}
+
+                    {!disableEdit && <IconContainer onClick={() => onEdit(row)}>
                       <EditIcon />
-                    </IconContainer >
-                    <IconContainer onClick={() => onDelete(row)}>
+                    </IconContainer >}
+
+                    {!disableDelete && <IconContainer onClick={() => onDelete(row)}>
                       <DeleteIcon />
-                    </IconContainer>
+                    </IconContainer>}
                   </Box>
-                </TableCell>
+                </TableCell>}
               </TableRow>
             ))}
         </TableBody>

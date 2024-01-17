@@ -1,55 +1,64 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import jwtInterceptor from "../../helpers/jwtInterceptors";
+
+let axiosConfig = {
+  headers: {
+    "Authorization": localStorage.getItem("token")
+  }
+};
 
 export const getAllBlogs = createAsyncThunk('blogs/getAllBlogs', async () => {
-  const response = await fetch("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/getAllBlogs", {
-    method: "GET",
-  });
-  return response.json();
+  try {
+    const response = await jwtInterceptor.get("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/getAllBlogs")
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
 })
 
 export const SaveBlog = createAsyncThunk('blogs/saveBlog', async (data) => {
-  const response = await fetch("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/createBlog", {
-    method: "POST",
-    headers: {
-      "Authorization": localStorage.getItem("token")
-    },
-    body: JSON.stringify(data),
-  });
-  console.log("res", response.json())
-  return response.json();
+  try {
+    const response = await jwtInterceptor.post("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/createBlog", data, axiosConfig)
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 export const UpdateBlog = createAsyncThunk('blogs/updateBlog', async (data) => {
-  const response = await fetch("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/updateBlog", {
-    method: "POST",
-    headers: {
-      "Authorization": localStorage.getItem("token")
-    },
-    body: JSON.stringify(data),
-  });
-  return response.json();
+  try {
+    const response = await jwtInterceptor.post("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/updateBlog", data, axiosConfig);
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 export const DeleteBlogById = createAsyncThunk('blogs/deleteBlogById', async (id) => {
-  const response = await fetch(`https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/deleteBlog?blogId=${id}`, {
-    method: "DELETE",
-    headers: {
-      "Authorization": localStorage.getItem("token")
-    }
-  });
-  return response.json();
+  try {
+    const response = await jwtInterceptor.delete(`https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/deleteBlog?blogId=${id}`, axiosConfig);
+    return response.data;
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 const initialState = {
   isLoading: false,
   BlogData: {},
   isError: false,
-  newBlogAdded: false
+  newBlogAdded: false,
+  isMediaUploading: false
 }
 
 const blogSlice = createSlice({
   name: "blog",
   initialState,
+  reducers: {
+    mediaIsUploading: (state) => {
+      state.isMediaUploading = true
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(getAllBlogs.fulfilled, (state, action) => {
       state.isLoading = false;
@@ -65,41 +74,32 @@ const blogSlice = createSlice({
     builder.addCase(SaveBlog.fulfilled, (state, action) => {
       state.isLoading = false;
       state.newBlogAdded = true;
-      // state.BlogData = action.payload
-      console.log("action.payload", action.payload)
+      state.isMediaUploading = false
     });
     builder.addCase(SaveBlog.rejected, (state, action) => {
-      console.log(" SaveBlog Error", action.payload);
       state.isError = true
-      state.newBlogAdded = true;
-
     })
 
     // ----------------Update Blog----------------------------
     builder.addCase(UpdateBlog.fulfilled, (state, action) => {
       state.isLoading = false;
       state.newBlogAdded = true
-      // state.BlogData = action.payload
-      console.log("action.payload", action.payload)
+      state.isMediaUploading = false
+
     });
     builder.addCase(UpdateBlog.rejected, (state, action) => {
-      console.log("Error", action.payload);
-      state.newBlogAdded = true
       state.isError = true
     })
 
     // ----------------delete Blog----------------------------
     builder.addCase(DeleteBlogById.fulfilled, (state, action) => {
       state.isLoading = false;
-      // getAllBlogs();
       state.BlogData = action.payload
-      console.log("action.payload", action.payload)
     });
     builder.addCase(DeleteBlogById.rejected, (state, action) => {
-      console.log("Error", action.payload);
       state.isError = true
     })
   },
 })
-
+export const { mediaIsUploading } = blogSlice.actions;
 export default blogSlice.reducer;

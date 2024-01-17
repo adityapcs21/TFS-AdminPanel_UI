@@ -6,7 +6,6 @@ import Router from './router';
 import { ThemeProvider } from '@mui/material';
 
 function App() {
-  console.log("app  ")
 
   return (
     <div className="App">

@@ -2,71 +2,52 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import CancelIcon from '@mui/icons-material/Cancel';
 import { TextField, Button, Grid, Container, Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useDispatch, useSelector } from 'react-redux';
-import { SaveBlog, mediaIsUploading } from '../../../redux/slice/blog';
+import { useDispatch } from 'react-redux';
 import { getS3SignedUrl } from '../../../helpers/mediaUpload';
-import useEditorState from '../../../helpers/textEditorHandler';
-import { Editor } from 'react-draft-wysiwyg';
-import draftToHtml from 'draftjs-to-html';
-import { convertToRaw } from 'draft-js';
-import FullScreenLoader from '../../../common/FullscreenLoader';
-import styled from '@emotion/styled';
+import { SaveGallery, UpdateGallery } from '../../../redux/slice/gallery';
 
 
 const schema = yup.object().shape({
  title: yup.string().required(),
  createdBy: yup.string().required(),
- // description: yup.string(),
- externalLink: yup.string().url().required(),
  attachments: yup.array().of(yup.mixed().required('Image is required')),
 });
 
-const AddNewBlog = ({ onClose }) => {
+const UpdateImageGallery = ({ onClose, data }) => {
  const dispatch = useDispatch()
- const { editorState, onChange } = useEditorState();
- const isLoading = useSelector((state) => state.blog.isMediaUploading)
+ const { galleryId, title, createdBy, createdDate, updatedDate, attachments } = data;
 
- const [file, setFile] = useState([]);
+
+ const [file, setFile] = useState(attachments);
  const [fileName, setFileName] = useState([])
  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
- const { control, setValue, handleSubmit, formState: { errors } } = useForm({
+ const { control, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });
 
- useEffect(() => {
-  setValue("description", draftToHtml(convertToRaw(editorState.getCurrentContent())))
- }, [editorState])
+ console.log("update", errors)
 
-
- console.log(errors)
  async function onSubmit(data) {
-
-  if (fileName && fileName.length > 0) {
-   dispatch(mediaIsUploading())
-   const resultsArray = [];
-   await Promise.all(fileName.map(async (item) => {
-    let payload1 = {
-     mediaType: "blogAttachments",
-     fileName: item.Name,
-     file: item.File
-    }
-    let response = await getS3SignedUrl(payload1);
-    resultsArray.push(response);
-   }));
-
-   let payload = {
-    "title": data.title,
-    "description": data.description,
-    "externalLink": data.externalLink,
-    "createdBy": data.createdBy,
-    "attachments": resultsArray
+  const resultsArray = [];
+  await Promise.all(fileName.map(async (item) => {
+   let payload1 = {
+    mediaType: "galleryAttachments/images",
+    fileName: item.Name,
+    file: item.File
    }
-   dispatch(SaveBlog(payload))
+   let response = await getS3SignedUrl(payload1);
+   resultsArray.push(response);
+  }));
+
+  let payload = {
+   "galleryId": galleryId,
+   "title": data.title,
+   "attachments": resultsArray
   }
+  dispatch(UpdateGallery(payload))
   onClose()
  };
 
@@ -90,23 +71,18 @@ const AddNewBlog = ({ onClose }) => {
 
  };
 
- const handleRemoveImages = (img) => {
-  let filtered = file.filter((item) => item != img)
-  console.log(filtered)
-  setFile(filtered)
- }
-
 
  return (
   <Container >
    <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>
-    <Typography variant='h5'>Add New Blog</Typography>
+    <Typography variant='h5'>Add New Image in gallery</Typography>
     <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
    </Box>
    <form onSubmit={handleSubmit(onSubmit)}>
-    <Grid container spacing={1}>
+    <Grid container spacing={2}>
      <Grid item xs={12}>
       <Controller
+       defaultValue={title}
        name="title"
        control={control}
        render={({ field }) => (
@@ -125,25 +101,6 @@ const AddNewBlog = ({ onClose }) => {
        )}
       />
       <Box sx={{ minHeight: '16px' }}></Box>
-     </Grid>
-     <Grid item xs={12}>
-      <Controller
-       name="externalLink"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="External Link" {...field} error={!!errors.externalLink} helperText={errors.externalLink?.message} />
-       )}
-      />
-     </Grid>
-
-     <Grid item xs={12}>
-      <Box sx={{ border: '1px solid lightgrey' }}>
-       <Editor
-        editorState={editorState}
-        editorClassName="richtext-editor-textarea"
-        onEditorStateChange={onChange}
-       />
-      </Box>
      </Grid>
 
      <Grid item xs={12}>
@@ -171,18 +128,16 @@ const AddNewBlog = ({ onClose }) => {
         Upload
        </Button>
        {file.length > 0 && (
-        <Grid display="flex">
+        <div>
          {file.map((url, index) => (
-          <Grid >
-           <ImageWrapper key={index}>
-            <DisplayAttachment src={url} />
-            <CloseIconCont>
-             <CancelIcon onClick={() => handleRemoveImages(url)} />
-            </CloseIconCont>
-           </ImageWrapper>
-          </Grid>
+          <img
+           key={index}
+           src={url}
+           alt={`Preview ${index + 1}`}
+           style={{ height: "80px", width: 'auto', maxWidth: '100%', margin: '5px' }}
+          />
          ))}
-        </Grid>
+        </div>
        )}
       </Box>
 
@@ -190,46 +145,13 @@ const AddNewBlog = ({ onClose }) => {
      <Grid item xs={12}>
       <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>
        <Button variant="contained" color="warning" onClick={onClose}>Cancel</Button>
-       <Button type="submit" variant="contained" color="primary">Add Blog</Button>
+       <Button type="submit" variant="contained" color="primary">Update Image</Button>
       </Box>
      </Grid>
     </Grid>
    </form>
-   <FullScreenLoader loading={isLoading} />
-
   </Container>
  );
 };
 
-export default AddNewBlog;
-const ImageWrapper = styled(Box)({
- height: '100%',
- width: "100%",
- position: "relative"
-})
-const DisplayAttachment = styled('img')({
- objectFit: "cover",
- color: "#152766",
- width: "80px",
- height: "80px",
- background: "#f7f7f7",
- borderRadius: "3px",
- marginRight: "10px",
- border: "1px solid lightgray",
- '&.hover': {
-  backgroundColor: "rgba(0, 0, 0)",
-  opacity: 0.5,
- }
-})
-
-const CloseIconCont = styled(Box)({
- borderRadius: '50%',
- position: 'absolute',
- top: '-5px',
- right: '5px',
- height: '24px',
- background: 'white',
- "&.hover": {
-  fontSize: "18px",
- }
-})
+export default UpdateImageGallery;

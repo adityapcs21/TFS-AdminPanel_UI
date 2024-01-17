@@ -18,27 +18,44 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Header from '../header';
 import { Outlet, useNavigate } from 'react-router-dom';
-import AutoStoriesIcon from '@mui/icons-material/AutoStories';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { Avatar, Collapse } from '@mui/material';
 import routeNames from '../../../router/routeNames';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import brandLogo from '../../../assets/images/tfs_logo.jpg'
+import brandLogo from '../../../assets/images/TFS-logo.png'
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import RssFeedIcon from '@mui/icons-material/RssFeed';
+import CollectionsIcon from '@mui/icons-material/Collections';
+import InfoIcon from '@mui/icons-material/Info';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
 
+const drawerWidth = 260;
 
-
-const drawerWidth = 240;
-
-const PagesItem = [
-  { label: 'Manage User', url: routeNames.USERMANAGEMENT },
-  // { label: 'Edit-Profile', url: '/edit-profile' },
-  { label: 'Blog', url: routeNames.BLOG },
-  { label: 'Gallery', url: routeNames.GALLERY },
-  { label: 'About-Us', url: routeNames.ABOUTUS },
-  { label: 'Contact-Us', url: routeNames.CONTACTUS },
-]
+const menuOptions = {
+  "SUPER USER": [
+    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon />, subCategory: [{ label: 'Admin', subCatUrl: routeNames.USERMANAGEMENT }, { label: 'Email Subscribed User', subCatUrl: routeNames.SUBSCRIBEDEMAIL }, { label: 'All Students', subCatUrl: "#" }, { label: 'Renew Pending Students', subCatUrl: "#" }] },
+    { label: 'Blog', url: routeNames.BLOG, icons: <RssFeedIcon />, subCategory: [] },
+    { label: 'Gallery', url: routeNames.GALLERY, icons: <CollectionsIcon />, subCategory: [{ label: 'Images', subCatUrl: routeNames.IMAGEGALLERY }, { label: 'Videos', subCatUrl: routeNames.VIDEOGALLERY }] },
+    { label: 'About-Us', url: routeNames.ABOUTUS, icons: <InfoIcon />, subCategory: [] },
+    // { label: 'Contact-Us', url: routeNames.CONTACTUS, icons: <ContactMailIcon />, subCategory: [] },
+    { label: 'Banner', url: routeNames.BANNER, icons: <CollectionsIcon />, subCategory: [] },
+  ],
+  "RENEWAL LEAD": [
+    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon />, subCategory: [{ label: 'All Students', subCatUrl: "#" }, { label: 'Renew Pending Students', subCatUrl: "#" }, { label: 'Assigned Students', subCatUrl: "#" }] },
+  ],
+  "RENEWAL": [
+    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon />, subCategory: [{ label: 'Renew Pending Students', subCatUrl: "#" }, { label: 'Assigned Students', subCatUrl: "#" }] },
+  ],
+  "TIC BUDDY": [
+    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon />, subCategory: [{ label: 'Assigned Students', subCatUrl: "#" }] },
+  ],
+  "SOCIAL MEDIA MANAGER": [
+    { label: 'Gallery', url: routeNames.GALLERY, icons: <CollectionsIcon />, subCategory: [{ label: 'Images', subCatUrl: routeNames.IMAGEGALLERY }, { label: 'Videos', subCatUrl: routeNames.VIDEOGALLERY }] },
+    { label: 'Banner', url: routeNames.BANNER, icons: <CollectionsIcon />, subCategory: [] },
+  ]
+}
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -70,10 +87,10 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-const BrandLogo = styled('img')({
+const BrandLogos = styled('img')({
   width: 'auto',
   height: '40px',
-  paddingLeft: '10px'
+  paddingLeft: '70px'
 })
 
 const AppBar = styled(MuiAppBar, {
@@ -117,17 +134,10 @@ export default function MiniDrawer() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(true);
-  const [openPages, setOpenPages] = React.useState(true);
-  const [userDetails, setUserDetails] = useState({})
+  const [openPages, setOpenPages] = React.useState(false);
+  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")));
+  const [activeIndex, setActiveIndex] = useState()
 
-  useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userDetails"));
-    setUserDetails(userInfo)
-  }, [])
-
-  const handleClick = () => {
-    setOpen(!open);
-  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -136,6 +146,12 @@ export default function MiniDrawer() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const handleOpenMenu = (id) => {
+    setActiveIndex(id)
+    setOpenPages(prevState => !prevState)
+  }
+
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -163,7 +179,7 @@ export default function MiniDrawer() {
 
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <BrandLogo src={brandLogo} alt='brand-logo' />
+          <BrandLogos src={brandLogo} alt='brand-logo' />
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
@@ -188,59 +204,81 @@ export default function MiniDrawer() {
           </ListItem>
         </List>
         <List>
-          {['Pages'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton sx={{
-                '&.MuiListItemButton-root:hover': {
-                  // backgroundColor: 'orange',
-                  color: "primary.main",
-                  '& .MuiListItemIcon-root': {
-                    color: 'primary.main',
-                  },
-                },
-              }} onClick={() => setOpenPages(prevState => !prevState)}>
-                <ListItemIcon>
-                  <AutoStoriesIcon />
-                </ListItemIcon>
-                <ListItemText primary={text} />
-                {openPages ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-              <Collapse in={openPages} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {PagesItem.map((item, index) => (
-                    <ListItem onClick={() => navigate(item.url)} key={index} disablePadding sx={{ display: 'block' }}>
-                      <ListItemButton
-                        sx={{
-                          pl: 4,
-                          minHeight: 48,
-                          justifyContent: open ? 'initial' : 'center',
-                          px: 2.5,
-                          '&.MuiListItemButton-root:hover': {
-                            // backgroundColor: 'orange',
-                            color: "primary.main",
-                            '& .MuiListItemIcon-root': {
-                              color: 'primary.main',
-                            },
-                          },
-                        }}
-                      >
-                        <ListItemIcon
-                          sx={{
-                            minWidth: 0,
-                            mr: open ? 3 : 'auto',
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {open && <KeyboardArrowRightIcon />}
-                        </ListItemIcon>
-                        <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0 }} />
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-                </List>
-              </Collapse>
-            </ListItem>
-          ))}
+          {menuOptions[userDetails.role].map((page, index) => {
+            return (
+              page.subCategory.length > 0 ?
+                <ListItem key={index} disablePadding sx={{ display: 'block' }} >
+                  <ListItemButton sx={{
+                    '&.MuiListItemButton-root:hover': {
+                      // backgroundColor: 'orange',
+                      color: "primary.main",
+                      '& .MuiListItemIcon-root': {
+                        color: 'primary.main',
+                      },
+                    },
+                  }} onClick={() => handleOpenMenu(index)}>
+                    <ListItemIcon>
+                      {page.icons}
+                    </ListItemIcon>
+                    <ListItemText primary={page.label} />
+                    {page.subCategory.length > 0 &&
+                      (openPages && activeIndex === index ? <ExpandLess /> : <ExpandMore />)}
+                  </ListItemButton>
+
+                  <Collapse in={openPages && activeIndex === index} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {page.subCategory.map((item, index) => (
+                        <ListItem onClick={() => navigate(item.subCatUrl)} key={index} disablePadding sx={{ display: 'block' }}>
+                          <ListItemButton
+                            sx={{
+                              pl: 4,
+                              minHeight: 48,
+                              justifyContent: open ? 'initial' : 'center',
+                              px: 2.5,
+                              '&.MuiListItemButton-root:hover': {
+                                // backgroundColor: 'orange',
+                                color: "primary.main",
+                                '& .MuiListItemIcon-root': {
+                                  color: 'primary.main',
+                                },
+                              },
+                            }}
+                          >
+                            <ListItemIcon
+                              sx={{
+                                minWidth: 0,
+                                mr: open ? 3 : 'auto',
+                                justifyContent: 'center',
+                              }}
+                            >
+                              {open && <ArrowRightAltIcon />}
+                            </ListItemIcon>
+                            <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0 }} />
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Collapse>
+                </ListItem>
+                :
+                <ListItem key={index} disablePadding sx={{ display: 'block' }} onClick={() => navigate(page.url)}>
+                  <ListItemButton sx={{
+                    '&.MuiListItemButton-root:hover': {
+                      // backgroundColor: 'orange',
+                      color: "primary.main",
+                      '& .MuiListItemIcon-root': {
+                        color: 'primary.main',
+                      },
+                    },
+                  }} >
+                    <ListItemIcon>
+                      {page.icons}
+                    </ListItemIcon>
+                    <ListItemText primary={page.label} />
+                  </ListItemButton>
+                </ListItem>
+            )
+          })}
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

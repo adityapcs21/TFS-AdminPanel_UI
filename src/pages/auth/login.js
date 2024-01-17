@@ -30,7 +30,7 @@ export default function Login() {
 
   const onSubmit = (loginDetails) => {
     let payload = {
-      emailId: loginDetails.email,
+      "emailId": loginDetails.email,
       "password": loginDetails.password,
       "grantType": "token"
     }
@@ -67,7 +67,6 @@ export default function Login() {
               type="password"
               autoComplete="new-password"
               {...register("password")}
-
             />
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
             <SubmitButton type="submit" fullWidth variant="contained" color="primary">Sign In</SubmitButton>

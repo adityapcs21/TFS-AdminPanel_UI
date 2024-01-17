@@ -22,7 +22,7 @@ export default function Blog() {
   const dispatch = useDispatch();
   const BlogData = useSelector((state) => state.blog.BlogData)
   const NewBlogAdded = useSelector((state) => state.blog.newBlogAdded)
-  console.log("--------", NewBlogAdded)
+
 
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);

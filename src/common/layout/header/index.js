@@ -18,7 +18,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
-import brandLogo from '../../../assets/images/tfs_logo.jpg'
+import brandLogo from '../../../assets/images/TFS-logo.png'
 
 
 export default function Header({ isOpen }) {
@@ -187,7 +187,7 @@ export default function Header({ isOpen }) {
 
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+        {/* <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="error">
             <MailIcon />
           </Badge>
@@ -200,7 +200,7 @@ export default function Header({ isOpen }) {
           <Badge badgeContent={17} color="error">
             <NotificationsIcon />
           </Badge>
-        </IconButton>
+        </IconButton> */}
         <IconButton
           size="large"
           edge="end"
