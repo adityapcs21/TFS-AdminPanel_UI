@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Badge from '@mui/material/Badge';
@@ -10,10 +9,9 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { Avatar, Divider } from '@mui/material';
+import { Avatar, Divider, styled } from '@mui/material';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import styled from 'styled-components';
 import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -258,5 +256,5 @@ const InitialImg = styled(Box)({
 })
 const BrandLogo = styled('img')({
   width: 'auto',
-  height: '40px'
+  height: '53px'
 })

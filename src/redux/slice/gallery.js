@@ -9,7 +9,16 @@ let axiosConfig = {
 
 export const GetAllGallery = createAsyncThunk('gallery/getAllGallery', async (type) => {
  try {
-  const response = await jwtInterceptor.get(`https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/gallery/getAllGallery?type=${type}`)
+  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}gallery/getAllGallery?type=${type}`)
+  return response.data;
+ } catch (error) {
+  console.error(error);
+ }
+})
+
+export const GetAllVideoGallery = createAsyncThunk('gallery/getAllVideoGallery', async (type) => {
+ try {
+  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}gallery/getAllGallery?type=${type}`)
   return response.data;
  } catch (error) {
   console.error(error);
@@ -18,7 +27,7 @@ export const GetAllGallery = createAsyncThunk('gallery/getAllGallery', async (ty
 
 export const SaveGallery = createAsyncThunk('gallery/createGallery', async (data) => {
  try {
-  const response = await jwtInterceptor.post("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/gallery/createGallery", data, axiosConfig)
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}gallery/createGallery`, data, axiosConfig)
   return response.data;
  } catch (error) {
   console.log(error)
@@ -27,7 +36,7 @@ export const SaveGallery = createAsyncThunk('gallery/createGallery', async (data
 
 export const UpdateGallery = createAsyncThunk('gallery/updateGallery', async (data) => {
  try {
-  const response = await jwtInterceptor.post("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/gallery/updateGallery", data, axiosConfig);
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}gallery/updateGallery`, data, axiosConfig);
   return response.data;
  } catch (error) {
   console.log(error)
@@ -36,7 +45,7 @@ export const UpdateGallery = createAsyncThunk('gallery/updateGallery', async (da
 
 export const DeleteGalleryById = createAsyncThunk('gallery/deleteGallery', async (id) => {
  try {
-  const response = await jwtInterceptor.delete(`https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/gallery/deleteGallery?galleryId=${id}`, axiosConfig);
+  const response = await jwtInterceptor.delete(`${process.env.REACT_APP_API_ENDPOINT}gallery/deleteGallery?galleryId=${id}`, axiosConfig);
   return response.data;
  } catch (error) {
   console.log(error)
@@ -46,13 +55,20 @@ export const DeleteGalleryById = createAsyncThunk('gallery/deleteGallery', async
 const initialState = {
  isLoading: false,
  Gallery: {},
+ Video: {},
  isError: false,
- newGalleryAdded: false
+ newGalleryAdded: false,
+ isMediaUploading: false
 }
 
 const gallerySlice = createSlice({
  name: "gallery",
  initialState,
+ reducers: {
+  galleryIsUpdating: (state) => {
+   state.isMediaUploading = true
+  }
+ },
  extraReducers: (builder) => {
   builder.addCase(GetAllGallery.fulfilled, (state, action) => {
    state.isLoading = false;
@@ -62,13 +78,22 @@ const gallerySlice = createSlice({
   builder.addCase(GetAllGallery.rejected, (state, action) => {
    console.log("Error", action.payload);
    state.isError = true
-  })
+  });
 
+  builder.addCase(GetAllVideoGallery.fulfilled, (state, action) => {
+   state.isLoading = false;
+   state.Video = action.payload
+   state.newGalleryAdded = false
+  });
+  builder.addCase(GetAllVideoGallery.rejected, (state, action) => {
+   console.log("Error", action.payload);
+   state.isError = true
+  })
   // ----------------Save Gallery----------------------------
   builder.addCase(SaveGallery.fulfilled, (state, action) => {
    state.isLoading = false;
    state.newGalleryAdded = true;
-   // state.Gallery = action.payload
+   state.isMediaUploading = false;
    console.log("action.payload", action.payload)
   });
   builder.addCase(SaveGallery.rejected, (state, action) => {
@@ -80,7 +105,7 @@ const gallerySlice = createSlice({
   builder.addCase(UpdateGallery.fulfilled, (state, action) => {
    state.isLoading = false;
    state.newGalleryAdded = true
-   // state.Gallery = action.payload
+   state.isMediaUploading = false;
    console.log("action.payload", action.payload)
   });
   builder.addCase(UpdateGallery.rejected, (state, action) => {
@@ -92,6 +117,7 @@ const gallerySlice = createSlice({
   builder.addCase(DeleteGalleryById.fulfilled, (state, action) => {
    state.isLoading = false;
    state.Gallery = action.payload
+   state.newGalleryAdded = true
    console.log("action.payload", action.payload)
   });
   builder.addCase(DeleteGalleryById.rejected, (state, action) => {
@@ -100,5 +126,6 @@ const gallerySlice = createSlice({
   })
  },
 })
+export const { galleryIsUpdating } = gallerySlice.actions;
 
 export default gallerySlice.reducer;

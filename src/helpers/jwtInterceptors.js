@@ -14,7 +14,7 @@ jwtInterceptor.interceptors.response.use(
     "grantType": "refresh",
     "refreshToken": userDetails.refreshToken
    }
-   await axios.post("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/auth/admin/login", payload)
+   await axios.post(`${process.env.REACT_APP_API_ENDPOINT}blog/auth/admin/login`, payload)
     .then((res) => {
      localStorage.clear()
      localStorage.setItem("token", res.data.accessToken);
@@ -28,12 +28,12 @@ jwtInterceptor.interceptors.response.use(
     })
    return axios(error.config)
   }
-  // else if (error.response.status === 403) {
-  //  localStorage.clear()
-  //  window.location.reload()
+  // else if (error.response.status === 500) {
+  //  return error
   // }
-
+  // console.log("errorree", error)
   Promise.reject(error)
+  // return error
  }
 );
 export default jwtInterceptor

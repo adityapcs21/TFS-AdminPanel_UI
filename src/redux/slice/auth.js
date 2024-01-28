@@ -4,13 +4,12 @@ import axios from "axios";
 //Action
 export const login = createAsyncThunk('auth/login', async (data) => {
  try {
-  const response = await axios.post("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/auth/admin/login", data);
+  const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}auth/admin/login`, data);
   return response.data;
  } catch (error) {
   console.error(error);
  }
 })
-
 
 
 const initialState = {
@@ -29,17 +28,19 @@ const authSlice = createSlice({
  },
  extraReducers: (builder) => {
   builder.addCase(login.fulfilled, (state, action) => {
-   console.log("qwesrdtfyg", action)
-   state.isLoading = false;
-   state.data = action.payload
-   localStorage.setItem("token", action.payload?.accessToken);
-   localStorage.setItem("userDetails", JSON.stringify(action.payload));
-   window.location.reload()
-   // window.location = "/"
+   if (action.payload?.passwordChangeRequired) {
+    state.isLoading = false;
+    state.data = action.payload
+    // localStorage.setItem("token", action.payload?.accessToken);
+    localStorage.setItem("userDetails", JSON.stringify(action.payload));
+    window.location.reload()
+   } else {
+    localStorage.setItem("userDetails", JSON.stringify(action.payload));
+    // window.location.reload()
+   }
+
   });
   builder.addCase(login.rejected, (state, action) => {
-   console.log("qwesrdtfyg rej", action)
-
    console.log("Error", action.payload);
    state.isError = true
   })

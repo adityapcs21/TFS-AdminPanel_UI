@@ -5,22 +5,23 @@ import * as yup from 'yup';
 import { TextField, Button, Grid, Container, Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getS3SignedUrl } from '../../../helpers/mediaUpload';
-import { SaveGallery, UpdateGallery } from '../../../redux/slice/gallery';
+import { UpdateGallery } from '../../../redux/slice/gallery';
+import FullScreenLoader from '../../../common/FullscreenLoader';
 
 
 const schema = yup.object().shape({
- title: yup.string().required(),
+ title: yup.string().optional(),
  createdBy: yup.string().required(),
  attachments: yup.array().of(yup.mixed().required('Image is required')),
 });
 
 const UpdateImageGallery = ({ onClose, data }) => {
  const dispatch = useDispatch()
- const { galleryId, title, createdBy, createdDate, updatedDate, attachments } = data;
+ const { galleryId, title, createdBy, attachments } = data;
 
-
+ const isLoading = useSelector((state) => state.blog.isMediaUploading);
  const [file, setFile] = useState(attachments);
  const [fileName, setFileName] = useState([])
  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
@@ -32,7 +33,6 @@ const UpdateImageGallery = ({ onClose, data }) => {
   setValue('attachments', attachments);
  }, [])
 
- console.log("update", errors)
 
  async function onSubmit(data) {
   const resultsArray = [];
@@ -44,7 +44,7 @@ const UpdateImageGallery = ({ onClose, data }) => {
      file: item.File
     }
     let response = await getS3SignedUrl(payload1);
-    resultsArray.push(response);
+    resultsArray.push(response.url);
    }));
 
    let payload = {
@@ -90,7 +90,7 @@ const UpdateImageGallery = ({ onClose, data }) => {
  return (
   <Container >
    <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>
-    <Typography variant='h5'>Add New Image in gallery</Typography>
+    <Typography variant='h5'>Update Image in gallery</Typography>
     <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
    </Box>
    <form onSubmit={handleSubmit(onSubmit)}>
@@ -165,6 +165,7 @@ const UpdateImageGallery = ({ onClose, data }) => {
      </Grid>
     </Grid>
    </form>
+   <FullScreenLoader loading={isLoading} />
   </Container>
  );
 };

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import jwtInterceptor from "../../helpers/jwtInterceptors";
+import axios from "axios";
 
 let axiosConfig = {
  headers: {
@@ -8,13 +9,9 @@ let axiosConfig = {
 };
 export const GetAllUserList = createAsyncThunk('manageUser/getUsersList', async () => {
  try {
-  const response = await jwtInterceptor.get("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/managerUser/admin/getUsersList", axiosConfig)
-  if (response && response.status === 200) {
-   return response.data;
-  }
-  else {
-   console.log(response)
-  }
+  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}managerUser/admin/getUsersList`, axiosConfig)
+  return response.data;
+
  } catch (error) {
   console.log(error)
  }
@@ -23,7 +20,7 @@ export const GetAllUserList = createAsyncThunk('manageUser/getUsersList', async 
 
 export const CreateAdminUser = createAsyncThunk('manageUser/createUser', async (data) => {
  try {
-  const response = await jwtInterceptor.post("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/managerUser/admin/createUser", data, axiosConfig)
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}managerUser/admin/createUser`, data, axiosConfig)
   return response.data;
  } catch (error) {
   console.log(error)
@@ -32,7 +29,7 @@ export const CreateAdminUser = createAsyncThunk('manageUser/createUser', async (
 
 export const UpdateAdminUser = createAsyncThunk('manageUser/updateUser', async (data) => {
  try {
-  const response = await jwtInterceptor.post("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/managerUser/admin/updateUser", data, axiosConfig)
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}managerUser/admin/updateUser`, data, axiosConfig)
   return response.data;
  } catch (error) {
   console.log(error)
@@ -41,7 +38,7 @@ export const UpdateAdminUser = createAsyncThunk('manageUser/updateUser', async (
 
 export const DeleteAdminById = createAsyncThunk('manageUser/deleteUser', async (emailId) => {
  try {
-  const response = await jwtInterceptor.delete(`https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/managerUser/admin/deleteUser?emailId=${emailId}`, axiosConfig);
+  const response = await jwtInterceptor.delete(`${process.env.REACT_APP_API_ENDPOINT}managerUser/admin/deleteUser?emailId=${emailId}`, axiosConfig);
   return response.data;
  } catch (error) {
   console.log(error)

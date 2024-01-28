@@ -22,8 +22,9 @@ code {
 .lg-backdrop { z-index: 1290; }
 
 .richtext-editor-textarea{
-  min-height: 120px;
-  max-height: 120px;
+  min-height: 150px;
+  max-height: 150px;
+  padding: 0px 10px;
 }
 .richtext-editor-textarea .public-DraftStyleDefault-block{
   margin: 0 !important;

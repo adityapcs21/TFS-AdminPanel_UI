@@ -37,7 +37,7 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, d
 
   function IsImage(value) {
     if (Array.isArray(value)) {
-      if (/\.(jpg|jpeg|gif|png)$/.test(value[0])) {
+      if (/\.(jpg|jpeg|gif|png|avif|tiff|JPG|JPEG|GIF|PNG|AVIF|TIFF|BMP|bmp|webp)$/.test(value[0])) {
         return <ImageCont src={value[0]} alt="thumbnails" />
       }
       else {

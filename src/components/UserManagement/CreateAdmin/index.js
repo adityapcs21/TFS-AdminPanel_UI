@@ -68,8 +68,6 @@ const CreateAdmin = ({ onClose }) => {
   onClose()
  };
 
- console.log("rere", errors)
-
  return (
   <Container >
    <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>
@@ -173,7 +171,7 @@ const CreateAdmin = ({ onClose }) => {
      <Grid item xs={12}>
       <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>
        <Button variant="contained" color="warning" onClick={onClose}>Cancel</Button>
-       <Button type="submit" variant="contained" color="primary">Create Admin</Button>
+       <Button type="submit" variant="contained" color="primary">Create User</Button>
       </Box>
      </Grid>
     </Grid>

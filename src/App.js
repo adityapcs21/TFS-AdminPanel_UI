@@ -1,6 +1,5 @@
 import './App.css';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import { theme } from './theme';
 import Router from './router';
 import { ThemeProvider } from '@mui/material';
@@ -20,11 +19,11 @@ function App() {
 
   return (
     <div className="App">
-      <BrowserRouter>
+      <HashRouter basename='/'>
         <ThemeProvider theme={theme} >
           <Router />
         </ThemeProvider>
-      </BrowserRouter>
+      </HashRouter>
     </div>
   );
 }

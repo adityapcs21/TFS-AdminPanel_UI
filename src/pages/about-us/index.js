@@ -21,7 +21,6 @@ export default function AboutUs() {
 
  const handleFileChange = (e) => {
   const files = e.target.files;
-  console.log("snkj", files)
   // setValue('media', files);
   setValue('attachments', ["http://nightmare.mit.edu/static/homepage/img/portfolio/colosseum_haunted.png", "http://nightmare.mit.edu/static/homepage/img/portfolio/colosseum_orig.png"]);
 

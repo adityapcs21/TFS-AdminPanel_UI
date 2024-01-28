@@ -8,7 +8,7 @@ let axiosConfig = {
 };
 export const GetAllSubscribedUser = createAsyncThunk('subscribedUser/getAllSubscribedUser', async () => {
  try {
-  const response = await jwtInterceptor.get("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/emailSubscribe/getAllSubscriptions", axiosConfig)
+  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}emailSubscribe/getAllSubscriptions`, axiosConfig)
   console.log("response", response)
   if (response && response.status === 200) {
    return response.data
@@ -24,7 +24,7 @@ export const GetAllSubscribedUser = createAsyncThunk('subscribedUser/getAllSubsc
 
 export const UnsubscribeUser = createAsyncThunk('subscribedUser/unsubscribe', async (emailId) => {
  try {
-  const response = await jwtInterceptor.get(`https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/emailSubscribe/unsubscribe?emailId=${emailId}`)
+  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}emailSubscribe/unsubscribe?emailId=${emailId}`)
   return response.data;
  } catch (error) {
   console.error(error);

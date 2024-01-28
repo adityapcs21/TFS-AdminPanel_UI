@@ -20,8 +20,6 @@ import styled from '@emotion/styled';
 const schema = yup.object().shape({
  title: yup.string().required(),
  createdBy: yup.string().required(),
- // description: yup.string(),
- externalLink: yup.string().url().required(),
  attachments: yup.array().of(yup.mixed().required('Image is required')),
 });
 
@@ -42,12 +40,12 @@ const AddNewBlog = ({ onClose }) => {
  }, [editorState])
 
 
- console.log(errors)
  async function onSubmit(data) {
 
   if (fileName && fileName.length > 0) {
    dispatch(mediaIsUploading())
    const resultsArray = [];
+   let uid;
    await Promise.all(fileName.map(async (item) => {
     let payload1 = {
      mediaType: "blogAttachments",
@@ -55,15 +53,26 @@ const AddNewBlog = ({ onClose }) => {
      file: item.File
     }
     let response = await getS3SignedUrl(payload1);
-    resultsArray.push(response);
+    resultsArray.push(response.url);
+    uid = response.uid
    }));
 
    let payload = {
     "title": data.title,
     "description": data.description,
-    "externalLink": data.externalLink,
     "createdBy": data.createdBy,
-    "attachments": resultsArray
+    "attachments": resultsArray,
+    "blogId": uid
+   }
+   dispatch(SaveBlog(payload))
+  }
+  else{
+   let payload = {
+    "title": data.title,
+    "description": data.description,
+    "createdBy": data.createdBy,
+    "attachments": [],
+    // "blogId": uid
    }
    dispatch(SaveBlog(payload))
   }
@@ -78,7 +87,7 @@ const AddNewBlog = ({ onClose }) => {
    const reader = new FileReader();
    return new Promise((resolve) => {
     reader.onloadend = () => {
-     resolve(reader.result);
+     resolve({ Name: name, "file": reader.result });
     };
     reader.readAsDataURL(file);
    });
@@ -92,8 +101,10 @@ const AddNewBlog = ({ onClose }) => {
 
  const handleRemoveImages = (img) => {
   let filtered = file.filter((item) => item != img)
-  console.log(filtered)
+  let filtered1 = file.filter((item) => item.Name != img.Name)
+
   setFile(filtered)
+  setFileName(filtered1)
  }
 
 
@@ -125,15 +136,6 @@ const AddNewBlog = ({ onClose }) => {
        )}
       />
       <Box sx={{ minHeight: '16px' }}></Box>
-     </Grid>
-     <Grid item xs={12}>
-      <Controller
-       name="externalLink"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="External Link" {...field} error={!!errors.externalLink} helperText={errors.externalLink?.message} />
-       )}
-      />
      </Grid>
 
      <Grid item xs={12}>
@@ -175,7 +177,7 @@ const AddNewBlog = ({ onClose }) => {
          {file.map((url, index) => (
           <Grid >
            <ImageWrapper key={index}>
-            <DisplayAttachment src={url} />
+            <DisplayAttachment src={url.file || url} />
             <CloseIconCont>
              <CancelIcon onClick={() => handleRemoveImages(url)} />
             </CloseIconCont>

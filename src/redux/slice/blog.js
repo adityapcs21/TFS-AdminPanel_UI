@@ -9,7 +9,7 @@ let axiosConfig = {
 
 export const getAllBlogs = createAsyncThunk('blogs/getAllBlogs', async () => {
   try {
-    const response = await jwtInterceptor.get("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/getAllBlogs")
+    const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}blog/getAllBlogs`)
     return response.data;
   } catch (error) {
     console.error(error);
@@ -18,8 +18,11 @@ export const getAllBlogs = createAsyncThunk('blogs/getAllBlogs', async () => {
 
 export const SaveBlog = createAsyncThunk('blogs/saveBlog', async (data) => {
   try {
-    const response = await jwtInterceptor.post("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/createBlog", data, axiosConfig)
-    return response.data;
+    const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}blog/createBlog`, data, axiosConfig)
+    console.log("------", response)
+    if (response && response.data) {
+      return response.data;
+    }
   } catch (error) {
     console.log(error)
   }
@@ -27,7 +30,7 @@ export const SaveBlog = createAsyncThunk('blogs/saveBlog', async (data) => {
 
 export const UpdateBlog = createAsyncThunk('blogs/updateBlog', async (data) => {
   try {
-    const response = await jwtInterceptor.post("https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/updateBlog", data, axiosConfig);
+    const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}blog/updateBlog`, data, axiosConfig);
     return response.data;
   } catch (error) {
     console.log(error)
@@ -36,10 +39,12 @@ export const UpdateBlog = createAsyncThunk('blogs/updateBlog', async (data) => {
 
 export const DeleteBlogById = createAsyncThunk('blogs/deleteBlogById', async (id) => {
   try {
-    const response = await jwtInterceptor.delete(`https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/blog/deleteBlog?blogId=${id}`, axiosConfig);
+    const response = await jwtInterceptor.delete(`${process.env.REACT_APP_API_ENDPOINT}blog/deleteBlog?blogId=${id}`, axiosConfig);
     return response.data;
   } catch (error) {
-    console.log(error)
+    if (!error.response) {
+      throw error
+    }
   }
 })
 
@@ -78,6 +83,7 @@ const blogSlice = createSlice({
     });
     builder.addCase(SaveBlog.rejected, (state, action) => {
       state.isError = true
+      console.log("errorr", action.payload)
     })
 
     // ----------------Update Blog----------------------------

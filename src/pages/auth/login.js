@@ -1,14 +1,14 @@
-import { Avatar, Box, Button, Checkbox, FormControlLabel, Grid, Link, Paper, TextField, Typography, } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { Avatar, Box, Button, Checkbox, CircularProgress, FormControlLabel, Grid, Paper, TextField, Typography, } from '@mui/material'
+import React, { useState } from 'react'
 import LockIcon from '@mui/icons-material/Lock';
 import { styled } from "@mui/material/styles";
 import { useNavigate } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../../redux/slice/auth';
 import routeNames from '../../router/routeNames';
+import axios from 'axios';
+
 
 const schema = yup.object({
   emailId: yup.string().email().required(),
@@ -16,43 +16,40 @@ const schema = yup.object({
 }).required();
 
 export default function Login() {
-  const dispatch = useDispatch();
   const navigate = useNavigate()
-  const UserDetails = useSelector(state => state.auth.data)
-  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")));
-  const { register, control, handleSubmit, formState: { errors } } = useForm({
+  const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   });
+  const [loginError, setLoginError] = useState(false)
+  const [isClicked, setIsClicked] = useState(false);
 
-  useEffect(() => {
-    if (UserDetails) {
-      if (UserDetails.passwordChangeRequired) {
-        navigate(routeNames.CHNAGEPASSWORD)
-      } else {
-        navigate("/")
-      }
-    }
-  }, [UserDetails])
-
-  useEffect(() => {
-    if (userDetails) {
-      if (userDetails.passwordChangeRequired) {
-        navigate(routeNames.CHNAGEPASSWORD)
-      } else {
-        navigate("/")
-      }
-    }
-  }, [userDetails])
-
-  const onSubmit = (loginDetails) => {
+  const onSubmit = async (loginDetails) => {
+    setIsClicked(true)
     let payload = {
       "emailId": loginDetails.emailId,
       "password": loginDetails.password,
       "grantType": "token"
     }
-    dispatch(login(payload))
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}auth/admin/login`, payload);
+      if (response.data) {
+        if (response.data.passwordChangeRequired) {
+          navigate(routeNames.CHNAGEPASSWORD)
+        } else {
+          localStorage.setItem("userDetails", JSON.stringify(response.data));
+          localStorage.setItem("token", response.data.accessToken);
+          setLoginError(false)
+          navigate(routeNames.DASHBOARD)
+          window.location.reload()
+        }
+      }
+    } catch (error) {
+      setLoginError(true)
+      console.error(error);
+      setIsClicked(false)
+    }
   }
-  console.log("UserDetails", userDetails)
+
   return (
     <Container container component="main">
       <Wrapper item xs={12} sm={8} md={5} lg={4} component={Paper} elevation={1} square>
@@ -100,11 +97,11 @@ export default function Login() {
                     />
                   )}
                 />
+                {loginError && <Typography sx={{ color: 'red' }}>Please enter correct email and password!</Typography>}
               </Grid>
             </Grid>
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
-            <SubmitButton type="submit" fullWidth variant="contained" color="primary">Sign In</SubmitButton>
-
+            <SubmitButton startIcon={<CircularProgress size="18px" color="inherit" sx={{ display: isClicked ? "block" : 'none' }} />} disabled={isClicked} type="submit" fullWidth variant="contained" color="primary">Sign In</SubmitButton>
             {/* <Grid container>
               <Grid item>
                 <Link href="#" variant="body2">
@@ -117,13 +114,13 @@ export default function Login() {
           </FormCont>
         </PaperCont>
       </Wrapper>
-    </Container>
+    </Container >
   )
 }
 
 const Container = styled(Grid)(({ theme }) => ({
   height: "100vh",
-  backgroundImage: `url('https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+  backgroundImage: `url('https://images.unsplash.com/photo-1488998427799-e3362cec87c3?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
   backgroundRepeat: "no-repeat",
   backgroundPosition: "center",
   backgroundSize: "cover",
@@ -162,7 +159,8 @@ const FormCont = styled(`form`)(({ theme }) => ({
 }))
 
 const SubmitButton = styled(Button)(({ theme }) => ({
-  margin: theme.spacing(3, 0, 2)
+  margin: theme.spacing(3, 0, 2),
+  height: '50px'
 }));
 
 // https://images.unsplash.com/photo-1529539795054-3c162aab037a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D

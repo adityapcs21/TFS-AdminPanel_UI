@@ -2,20 +2,19 @@ import React, { useEffect, useState } from 'react'
 import ReusableTable from '../../components/SharedComponent/ReusableTable';
 import { Button, Grid } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetAllSubscribedUser } from '../../redux/slice/subscribedUser';
 import { DeleteAdminById, GetAllUserList } from '../../redux/slice/manageUser';
 import Loader from '../../common/loader';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import CreateAdmin from '../../components/UserManagement/CreateAdmin';
 import UpdateAdmin from '../../components/UserManagement/UpdateAdmin';
+import Swal from 'sweetalert2';
 
 const columns = [
   { id: 'name', label: 'Name' },
   { id: 'emailId', label: 'Email Id' },
-  { id: 'userRole', label: 'User Role' },
   { id: 'group', label: 'Group' },
   { id: 'subgroup', label: 'Sub Group' },
-  // { id: "deleted", label: "Deleted" },
+  { id: 'userRole', label: 'User Role' },
   { id: 'updatedDate', label: 'Last Updated On' },
 ];
 
@@ -39,7 +38,24 @@ export default function UserManagement() {
   }, [isUserUpdated])
 
   const handleDelete = (row) => {
-    dispatch(DeleteAdminById(row.emailId))
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to delete this?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success"
+        });
+        dispatch(DeleteAdminById(row.emailId))
+      }
+    });
   }
 
   const handleEdit = (row) => {

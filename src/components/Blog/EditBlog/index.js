@@ -18,9 +18,7 @@ import FullScreenLoader from '../../../common/FullscreenLoader';
 
 const schema = yup.object().shape({
  title: yup.string().required(),
- // createdBy: yup.string().required(),
  description: yup.string().required(),
- // externalLink: yup.string().url().optional(),
  attachments: yup.array().of(yup.mixed().required('Image is required')),
 });
 
@@ -29,9 +27,9 @@ const EditBlog = ({ data, onClose }) => {
  const { blogId, title, createdBy, description, attachments } = data;
 
  const isLoading = useSelector((state) => state.blog.isMediaUploading)
- console.log("selector", isLoading)
  const [file, setFile] = useState(attachments);
- const [fileName, setFileName] = useState([])
+ const [fileName, setFileName] = useState([]);
+ const [prevImages, setPrevImages] = useState(attachments)
  const { control, setValue, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });
@@ -64,44 +62,52 @@ const EditBlog = ({ data, onClose }) => {
      file: item.File
     }
     let response = await getS3SignedUrl(payload1);
-    resultsArray.push(response);
+    resultsArray.push(response.url);
    }));
 
    let payload = {
     "blogId": data.blogId,
     "title": data.title,
     "description": data.description,
-    "externalLink": data.externalLink,
     "createdBy": data.createdBy,
-    "attachments": resultsArray
+    "attachments": [...resultsArray, ...prevImages]
    }
    dispatch(UpdateBlog(payload))
+   onClose()
   }
-  dispatch(UpdateBlog(data))
-
-  onClose()
+  else {
+   dispatch(UpdateBlog(data))
+   onClose()
+  }
  };
 
  const handleFileChange = (e) => {
   const files = e.target.files;
-
-  // Preview all selected images
   const urls = Array.from(files).map((file) => {
    let name = file.name
-   setFileName(prevState => [...prevState, { Name: name, "File": file }])
+   setFileName(prevState => [...prevState, { Name: name, "File": file, isNew: true }])
    const reader = new FileReader();
    return new Promise((resolve) => {
     reader.onloadend = () => {
-     resolve(reader.result);
+     resolve({ Name: name, "file": reader.result });
     };
     reader.readAsDataURL(file);
    });
   });
 
   Promise.all(urls).then((results) => {
-   setFile(results);
+   setFile(prevState => [...prevState, results[0]]);
   });
  };
+
+ const handleRemoveImages = (img) => {
+  let filtered = file.filter((item) => item != img)
+  let Filtered2 = fileName.filter(item2 => item2.Name != img.Name)
+  let filtered3 = prevImages.filter((item3) => item3 != img)
+  setFileName(Filtered2)
+  setFile(filtered)
+  setPrevImages(filtered3)
+ }
 
  return (
   <Container >
@@ -141,6 +147,7 @@ const EditBlog = ({ data, onClose }) => {
        <Editor
         editorState={editorState}
         onEditorStateChange={onEditorStateChange}
+        editorClassName="richtext-editor-textarea"
        />
       </Box>
      </Grid>
@@ -171,20 +178,11 @@ const EditBlog = ({ data, onClose }) => {
       <Grid container spacing={2}>
        {file && file.map((media, index) => {
         return (
-         // <Grid item key={index} >
-         //  <Box sx={{ position: 'relative', width: '80px', height: '80px', }}>
-         //   <img src={media} alt="Preview" style={{ height: '80px', width: '80px', borderRadius: '5px' }} />
-         //   <Box sx={{ width: '100%', height: '100%', position: 'absolute', bottom: '0px', background: 'rgba(0, 0, 0, .6)' }}></Box>
-         //   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'absolute', top: '1px', right: '1px', borderRadius: '100%', border: '2px solid white' }}>
-         //    <CancelIcon fontSize='16px' />
-         //   </Box>
-         //  </Box>
-         // </Grid>
          <Grid item>
           <ImageWrapper key={index}>
-           <DisplayAttachment src={media} />
+           <DisplayAttachment src={media.file || media} />
            <CloseIconCont>
-            <CancelIcon />
+            <CancelIcon onClick={() => handleRemoveImages(media)} />
            </CloseIconCont>
           </ImageWrapper>
          </Grid>

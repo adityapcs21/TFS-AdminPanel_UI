@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetAllUserList } from '../../redux/slice/manageUser';
 import { GetAllSubscribedUser, UnsubscribeUser } from '../../redux/slice/subscribedUser';
 import Loader from '../../common/loader';
+import Swal from 'sweetalert2';
 
 
 
@@ -20,8 +21,6 @@ export default function SubscribedEmail() {
  const emailSubscriptionList = useSelector((state) => state.subscribedUser.SubscribedUser)
  const isUpdated = useSelector((state) => state.subscribedUser.SubscribedUserUpdated)
 
- console.log("subscribed user", emailSubscriptionList)
-
  useEffect(() => {
   if (isUpdated) {
    dispatch(GetAllSubscribedUser())
@@ -33,7 +32,24 @@ export default function SubscribedEmail() {
  }, [])
 
  const handleDelete = (row) => {
-  dispatch(UnsubscribeUser(row.emailId))
+  Swal.fire({
+   title: "Are you sure?",
+   text: "You want to unsubscribe?",
+   icon: "warning",
+   showCancelButton: true,
+   confirmButtonColor: "#3085d6",
+   cancelButtonColor: "#d33",
+   confirmButtonText: "Yes, unsubscribe it!"
+  }).then((result) => {
+   if (result.isConfirmed) {
+    Swal.fire({
+     title: "Deleted!",
+     text: "Your file has been deleted.",
+     icon: "success"
+    });
+    dispatch(UnsubscribeUser(row.emailId))
+   }
+  });
  }
 
  return (

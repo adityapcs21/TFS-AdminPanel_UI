@@ -1,6 +1,5 @@
-import { lazy } from 'react';
 import { Navigate } from 'react-router-dom'
-const Layout = lazy(() => import('../common/layout'));
+import Layout from '../common/layout';
 
 const ProtectedRoute = () => {
  // Check authentication status (replace this with your actual authentication check)

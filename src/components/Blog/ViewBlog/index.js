@@ -2,19 +2,18 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { TextField, Button, Grid, Container, Box, Typography} from '@mui/material';
+import { TextField, Button, Grid, Container, Box, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 const schema = yup.object().shape({
  title: yup.string().required(),
  createdBy: yup.string().required(),
  description: yup.string().required(),
- externalLink: yup.string().url().required(),
  media: yup.string().url().required(),
 });
 
 const ViewBlog = ({ data, onClose }) => {
- const { title, createdBy, createdDate, description, attachments, externalLink, deleted } = data
+ const { title, createdBy, createdDate, description, attachments } = data
 
  const { control, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
@@ -81,20 +80,7 @@ const ViewBlog = ({ data, onClose }) => {
        )}
       />
      </Grid>
-     <Grid item xs={12}>
-      <Controller
-       disabled
-       name="externalLink"
-      defaultValue={externalLink}
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="External Link" {...field} error={!!errors.externalLink} helperText={errors.externalLink?.message} />
-       )}
-      />
-     </Grid>
-     {/* <Grid xs={12}>
-      <TextField label="Deleted" disabled value={deleted} />
-     </Grid> */}
+
      <Grid item xs={12}>
       <Typography>Attachments</Typography>
       <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>

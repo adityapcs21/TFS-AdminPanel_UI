@@ -7,6 +7,7 @@ import EditBlog from '../../components/Blog/EditBlog';
 import Loader from '../../common/loader';
 import ViewBlog from '../../components/Blog/ViewBlog';
 import AddNewBlog from '../../components/Blog/AddNewBlog';
+import Swal from 'sweetalert2';
 const ReusableTable = lazy(() => import("../../components/SharedComponent/ReusableTable"));
 
 const columns = [
@@ -14,21 +15,18 @@ const columns = [
   { id: "createdBy", label: "Created By" },
   { id: 'createdDate', label: 'Published On' },
   { id: 'description', label: 'Description' },
-  { id: 'externalLink', label: 'External Link' },
   { id: 'attachments', label: 'Thumbnails' },
 ];
 
 export default function Blog() {
   const dispatch = useDispatch();
-  const BlogData = useSelector((state) => state.blog.BlogData)
+  const BlogData = useSelector((state) => state.blog.BlogData?.blogList)
   const NewBlogAdded = useSelector((state) => state.blog.newBlogAdded)
-
 
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [editRowsData, setEditRowsData] = useState({})
-  const [rowData, setRowData] = useState([])
+  const [editRowsData, setEditRowsData] = useState({});
 
   useEffect(() => {
     if (NewBlogAdded) {
@@ -36,18 +34,30 @@ export default function Blog() {
     }
   }, [NewBlogAdded])
 
-  useEffect(() => {
-    if (BlogData) {
-      setRowData(BlogData.blogList)
-    }
-  }, [BlogData])
 
   useEffect(() => {
     dispatch(getAllBlogs())
   }, [])
 
   const handleDeleteRows = (row) => {
-    dispatch(DeleteBlogById(row.blogId))
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to delete this?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success"
+        });
+        dispatch(DeleteBlogById(row.blogId));
+      }
+    });
   }
 
   const handleView = (row) => {
@@ -64,6 +74,23 @@ export default function Blog() {
     setOpenAddModal(prevState => !prevState)
   }
 
+  const handleCloseAddModal = (event, reason) => {
+    if (reason && reason === "backdropClick")
+      return;
+    setOpenAddModal(prevState => !prevState)
+  }
+
+  const handleCloseViewModal = (event, reason) => {
+    if (reason && reason === "backdropClick")
+      return;
+    setOpenViewModal(prevState => !prevState)
+  }
+
+  const handleCloseEditModal = (event, reason) => {
+    if (reason && reason === "backdropClick")
+      return;
+    setOpenEditModal(prevState => !prevState)
+  }
 
   return (
     <Grid container spacing={2} sx={{ width: '100%' }}>
@@ -71,10 +98,10 @@ export default function Blog() {
         <Button onClick={() => AddBlog()} variant="contained" color="primary">Add Blog</Button>
       </Grid>
       <Grid item xs={12}>
-        {rowData ?
+        {BlogData ?
           <ReusableTable
             columns={columns}
-            data={rowData}
+            data={BlogData}
             onDelete={handleDeleteRows}
             onView={handleView}
             onEdit={handleEdit}
@@ -83,15 +110,15 @@ export default function Blog() {
           <Loader />
         }
       </Grid>
-      <ReusbaleDialog maxWidth="md" open={openAddModal} onClose={() => setOpenAddModal(prevState => !prevState)}>
+      <ReusbaleDialog maxWidth="md" open={openAddModal} onClose={handleCloseAddModal}>
         <AddNewBlog onClose={() => setOpenAddModal(prevState => !prevState)} />
       </ReusbaleDialog>
 
-      <ReusbaleDialog maxWidth="md" open={openEditModal} onClose={() => setOpenEditModal(prevState => !prevState)}>
+      <ReusbaleDialog maxWidth="md" open={openEditModal} onClose={handleCloseEditModal}>
         <EditBlog data={editRowsData} onClose={() => setOpenEditModal(prevState => !prevState)} />
       </ReusbaleDialog>
 
-      <ReusbaleDialog maxWidth={"md"} open={openViewModal} onClose={() => setOpenViewModal(prevState => !prevState)}>
+      <ReusbaleDialog maxWidth={"md"} open={openViewModal} onClose={handleCloseViewModal}>
         <ViewBlog data={editRowsData} onClose={() => setOpenViewModal(prevState => !prevState)} />
       </ReusbaleDialog>
     </Grid >

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Backdrop, CircularProgress } from '@mui/material';
+import { Backdrop, Box, CircularProgress } from '@mui/material';
 
 const backdropStyle = {
  zIndex: 1500, // You can adjust this value based on your layout
@@ -9,8 +9,10 @@ const backdropStyle = {
 const FullScreenLoader = ({ loading }) => {
  return (
   <Backdrop style={backdropStyle} open={loading}>
-   <h1>Please wait file is being uploaded!</h1>
-   <CircularProgress color="inherit" />
+   <Box>
+    <h1>Please wait...!</h1>
+    <CircularProgress color="inherit" />
+   </Box>
   </Backdrop>
  );
 };

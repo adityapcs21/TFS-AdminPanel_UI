@@ -5,13 +5,14 @@ import * as yup from 'yup';
 import { TextField, Button, Grid, Container, Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getS3SignedUrl } from '../../../helpers/mediaUpload';
 import { SaveGallery } from '../../../redux/slice/gallery';
+import FullScreenLoader from '../../../common/FullscreenLoader';
 
 
 const schema = yup.object().shape({
- title: yup.string().required(),
+ title: yup.string().optional(),
  createdBy: yup.string().required(),
  type: yup.string().optional(),
  attachments: yup.array().of(yup.mixed().required('Image is required')),
@@ -22,15 +23,15 @@ const AddImageInGallery = ({ onClose }) => {
 
  const [file, setFile] = useState([]);
  const [fileName, setFileName] = useState([])
+ const isLoading = useSelector((state) => state.blog.isMediaUploading);
  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
  const { control, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });
 
-
- console.log(errors)
  async function onSubmit(data) {
   const resultsArray = [];
+  let uid;
   await Promise.all(fileName.map(async (item) => {
    let payload1 = {
     mediaType: "galleryAttachments/images",
@@ -38,14 +39,16 @@ const AddImageInGallery = ({ onClose }) => {
     file: item.File
    }
    let response = await getS3SignedUrl(payload1);
-   resultsArray.push(response);
+   resultsArray.push(response.url);
+   uid = response.uid
   }));
 
   let payload = {
    "title": data.title,
    "createdBy": data.createdBy,
    "attachments": resultsArray,
-   "type": "image"
+   "type": "image",
+   "galleryId": uid
   }
   dispatch(SaveGallery(payload))
   onClose()
@@ -152,6 +155,7 @@ const AddImageInGallery = ({ onClose }) => {
      </Grid>
     </Grid>
    </form>
+   <FullScreenLoader loading={isLoading} />
   </Container>
  );
 };

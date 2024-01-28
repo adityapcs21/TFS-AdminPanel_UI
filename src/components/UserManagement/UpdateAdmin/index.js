@@ -1,11 +1,12 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { UpdateAdminUser } from '../../../redux/slice/manageUser';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { MenuItem, TextField, Button, Grid, Container, Box, Typography } from '@mui/material';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 
 const userRoles = [
  {
@@ -47,18 +48,28 @@ const validationSchema = yup.object().shape({
 const UpdateAdmin = ({ onClose, editData }) => {
  const { emailId, name, userRole, group, subgroup } = editData
 
+ const [selectedFirst, setSelectedFirst] = useState(group);
+ const [selectedSecond, setSelectedSecond] = useState(subgroup)
+
  const dispatch = useDispatch()
  const { control, handleSubmit, watch, formState: { errors } } = useForm({
   resolver: yupResolver(validationSchema),
  });
 
+ useEffect(() => {
+  setSelectedFirst(watch('group'))
+ }, [watch('group')])
+
+
+ useEffect(() => {
+  setSelectedSecond(watch('subgroup'))
+ }, [watch('subgroup')])
+
  const firstSelectOptions = userRoles.map((role) => ({ label: role.name, value: role.name }));
- const selectedFirst = watch('group');
 
  const secondSelectOptions = userRoles
   .find((role) => role.name === selectedFirst)
   ?.subgroup.map((subgroup) => ({ label: subgroup.name, value: subgroup.name })) || [];
- const selectedSecond = watch('subgroup');
 
  const thirdSelectOptions = userRoles
   .find((role) => role.name === selectedFirst)
@@ -77,7 +88,10 @@ const UpdateAdmin = ({ onClose, editData }) => {
     <Typography variant='h5'>Update Admin</Typography>
     <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
    </Box>
-   <form onSubmit={handleSubmit(onSubmit)}>
+   <form onSubmit={handleSubmit((data) => {
+    data.status = "ACTIVE";
+    onSubmit(data);
+   })}>
     <Grid container spacing={2}>
      <Grid item xs={12}>
       <Controller
@@ -179,10 +193,10 @@ const UpdateAdmin = ({ onClose, editData }) => {
      <Grid item xs={12}>
       <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>
        <Button variant="contained" color="warning" onClick={onClose}>Cancel</Button>
-       <Button type="submit" variant="contained" color="primary">Update Admin</Button>
+       <Button type="submit" variant="contained" color="primary">Update User</Button>
       </Box>
      </Grid>
-     
+
     </Grid>
    </form>
   </Container>
