@@ -29,7 +29,7 @@ import RssFeedIcon from '@mui/icons-material/RssFeed';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import InfoIcon from '@mui/icons-material/Info';
 
-const drawerWidth = 260;
+const drawerWidth = 270;
 
 export const menuOptions = {
   "SUPER USER": [
@@ -61,7 +61,7 @@ const openedMixin = (theme) => ({
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
   }),
-  overflowX: 'hidden',
+  overflow: 'hidden',
 });
 
 const closedMixin = (theme) => ({
@@ -114,7 +114,7 @@ const AppBar = styled(MuiAppBar, {
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     width: drawerWidth,
-    flexShrink: 0,
+    flex: `0 0 ${drawerWidth}px`,
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
     ...(open && {
@@ -154,7 +154,7 @@ export default function MiniDrawer() {
 
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', flex: 1 }}>
       <CssBaseline />
       <AppBar position="fixed" open={open} elevation={0}>
         <Toolbar>
@@ -319,7 +319,7 @@ export default function MiniDrawer() {
             })}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flex: '1 1 100%', p: 3 }}>
         {/* this will be rebdered */}
         <Outlet />
         {/* <DataGridTable /> */}

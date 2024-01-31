@@ -1,7 +1,7 @@
-import { Button, Grid } from '@mui/material'
+import { Button, Grid, Pagination } from '@mui/material'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { GetAllGallery } from '../../../redux/slice/gallery';
+import { GetAllGallery, galleryLoading } from '../../../redux/slice/gallery';
 import BlogCard from '../../../components/ImageGallery/GalleryCard';
 import ReusbaleDialog from '../../../components/SharedComponent/ReusableDialog';
 import { useState } from 'react';
@@ -12,16 +12,51 @@ export default function ImageGallery() {
     const dispatch = useDispatch();
     const AllGallery = useSelector((state) => state.gallery.Gallery.galleryList);
     const isGalleryUpdated = useSelector((state) => state.gallery.newGalleryAdded)
+    const Gallery = useSelector((state) => state.gallery.Gallery);
+    const isLoading = useSelector((state) => state.gallery.isLoading);
 
     const [openAddModal, setOpenAddModal] = useState(false)
+    const [page, setPage] = React.useState(1);
+    const [perPageResult, setPerpageResult] = useState(8);
+    const [totalPages, setTotalPages] = useState(1)
+    const handleChange = (event, value) => {
+        setPage(value);
+    };
 
     useEffect(() => {
-        dispatch(GetAllGallery("image"))
-    }, [])
+        let payload = {
+            "title": "",
+            "type": "image", //image,video
+            "createdDateFrom": "",
+            "createdDateTo": "",
+            "pageNo": page,
+            "perPageResults": perPageResult
+
+        }
+        dispatch(galleryLoading())
+        dispatch(GetAllGallery(payload))
+    }, [page])
+
+    useEffect(() => {
+        if (Gallery) {
+            const totalNoOfPages = Math.ceil(Gallery.size / perPageResult)
+            setTotalPages(totalNoOfPages)
+        }
+    }, [Gallery])
 
     useEffect(() => {
         if (isGalleryUpdated) {
-            dispatch(GetAllGallery("image"))
+            dispatch(galleryLoading())
+            let payload = {
+                "title": "",
+                "type": "image", 
+                "createdDateFrom": "",
+                "createdDateTo": "",
+                "pageNo": page,
+                "perPageResults": perPageResult
+
+            }
+            dispatch(GetAllGallery(payload))
         }
     }, [isGalleryUpdated])
 
@@ -30,7 +65,7 @@ export default function ImageGallery() {
             <Grid item xs={12}>
                 <Button variant='contained' onClick={() => setOpenAddModal(prevState => !prevState)}>Upload Image</Button>
             </Grid>
-            {AllGallery && AllGallery.length > 0 ? AllGallery.map((item, index) => {
+            {!isLoading && AllGallery && AllGallery.length > 0 ? AllGallery.map((item, index) => {
                 return (
                     <Grid key={index} item xs={6} md={4} lg={3} >
                         < BlogCard data={item} title={item.title} createdBy={item.createdBy} date={item.createdDate} media={item.attachments[0]} />
@@ -41,6 +76,11 @@ export default function ImageGallery() {
                     <Loader />
                 </Grid>
             }
+
+
+            <Grid item xs={12} marginTop={3}>
+                <Pagination color="primary" count={totalPages} page={page} onChange={handleChange} />
+            </Grid>
 
             <ReusbaleDialog maxWidth="md" open={openAddModal} onClose={() => setOpenAddModal(prevState => !prevState)}>
                 <AddImageInGallery onClose={() => setOpenAddModal(prevState => !prevState)} />

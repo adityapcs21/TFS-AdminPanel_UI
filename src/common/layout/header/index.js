@@ -175,7 +175,7 @@ export default function Header({ isOpen }) {
   );
 
   return (
-    <Box sx={{ display: "flex", alignItems: 'center', flexGrow: 1 }}>
+    <Box sx={{ minHeight: 'inherit', display: "flex", alignItems: 'center', flexGrow: 1 }}>
       {/* <Toolbar> */}
       <Typography
         variant="h6"

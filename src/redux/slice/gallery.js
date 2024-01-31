@@ -7,18 +7,18 @@ let axiosConfig = {
  }
 };
 
-export const GetAllGallery = createAsyncThunk('gallery/getAllGallery', async (type) => {
+export const GetAllGallery = createAsyncThunk('gallery/getAllGallery', async (data) => {
  try {
-  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}gallery/getAllGallery?type=${type}`)
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}gallery/getAllGallery`, data, axiosConfig)
   return response.data;
  } catch (error) {
   console.error(error);
  }
 })
 
-export const GetAllVideoGallery = createAsyncThunk('gallery/getAllVideoGallery', async (type) => {
+export const GetAllVideoGallery = createAsyncThunk('gallery/getAllVideoGallery', async (data) => {
  try {
-  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}gallery/getAllGallery?type=${type}`)
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}gallery/getAllGallery`, data, axiosConfig)
   return response.data;
  } catch (error) {
   console.error(error);
@@ -67,6 +67,9 @@ const gallerySlice = createSlice({
  reducers: {
   galleryIsUpdating: (state) => {
    state.isMediaUploading = true
+  },
+  galleryLoading: (state, action) => {
+   state.isLoading = true;
   }
  },
  extraReducers: (builder) => {
@@ -126,6 +129,6 @@ const gallerySlice = createSlice({
   })
  },
 })
-export const { galleryIsUpdating } = gallerySlice.actions;
+export const { galleryIsUpdating, galleryLoading } = gallerySlice.actions;
 
 export default gallerySlice.reducer;
