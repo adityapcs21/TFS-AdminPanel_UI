@@ -7,6 +7,8 @@ import manageAdminUser from './slice/manageUser';
 import galleryReducer from './slice/gallery'
 import bannerReducer from './slice/banner'
 import customerQueryReducer from "./slice/customer-query";
+import studentsReducer from "./slice/students";
+import manageSubscriptionReducer from "./slice/manageSubscription"
 
 export const store = configureStore({
  reducer: {
@@ -17,6 +19,8 @@ export const store = configureStore({
   manageUser: manageAdminUser,
   gallery: galleryReducer,
   banner: bannerReducer,
-  customerQuery: customerQueryReducer
+  customerQuery: customerQueryReducer,
+  students: studentsReducer,
+  manageSubscription: manageSubscriptionReducer
  }
 });

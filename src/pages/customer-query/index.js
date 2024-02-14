@@ -4,6 +4,7 @@ import ReusableTable from '../../components/SharedComponent/ReusableTable'
 import { useDispatch, useSelector } from 'react-redux'
 import { GetCustomerQuery } from '../../redux/slice/customer-query';
 import Loader from '../../common/loader';
+import { useState } from 'react';
 
 // "queryId": "4ee09e62-018d-1000-a8de-15814bf4e77c",
 // "name": "vishal",
@@ -24,11 +25,22 @@ const columns = [
 ];
 export default function CustomerQuery() {
  const dispatch = useDispatch()
- const customerQueryData = useSelector((state) => state.customerQuery.data?.queryList)
+ const customerQueryData = useSelector((state) => state.customerQuery.data?.queryList);
+ const [page, setPage] = useState(0);
+ const [rowsPerPage, setRowsPerPage] = useState(5);
 
  useEffect(() => {
   dispatch(GetCustomerQuery())
  }, [])
+
+ const handleChangePage = (_, newPage) => {
+  setPage(newPage);
+};
+
+const handleChangeRowsPerPage = (event) => {
+  setRowsPerPage(parseInt(event.target.value, 10));
+  setPage(0);
+};
  return (
   <Grid container>
    {
@@ -38,6 +50,10 @@ export default function CustomerQuery() {
        columns={columns}
        data={customerQueryData}
        disableActionButton
+       onPageChange={handleChangePage}
+       onRowsPerPageChange={handleChangeRowsPerPage}
+       page={page}
+       rowsPerPage={rowsPerPage}
       />
      </Grid>
      :

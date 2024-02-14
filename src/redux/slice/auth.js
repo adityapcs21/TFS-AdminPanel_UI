@@ -5,6 +5,8 @@ import axios from "axios";
 export const login = createAsyncThunk('auth/login', async (data) => {
  try {
   const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}auth/admin/login`, data);
+  localStorage.setItem("token", response.data.accessToken);
+  localStorage.setItem("userDetails", JSON.stringify(response.data));
   return response.data;
  } catch (error) {
   console.error(error);
@@ -15,7 +17,8 @@ export const login = createAsyncThunk('auth/login', async (data) => {
 const initialState = {
  isLoading: false,
  data: null,
- isError: false
+ isError: false,
+ token: localStorage.getItem("token")
 }
 
 const authSlice = createSlice({
@@ -24,6 +27,9 @@ const authSlice = createSlice({
  reducers: {
   setUserDetails: (state, action) => {
    state.data = action.payload
+  },
+  setUserToken: (state, action) => {
+   state.token = action.payload
   }
  },
  extraReducers: (builder) => {
@@ -57,5 +63,5 @@ const authSlice = createSlice({
  // }
 
 })
-export const { setUserDetails } = authSlice.actions;
+export const { setUserDetails, setUserToken } = authSlice.actions;
 export default authSlice.reducer;

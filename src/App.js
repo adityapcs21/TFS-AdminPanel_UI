@@ -5,7 +5,7 @@ import Router from './router';
 import { ThemeProvider } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setUserDetails } from './redux/slice/auth';
+import { setUserDetails, setUserToken } from './redux/slice/auth';
 
 function App() {
   const dispatch = useDispatch()
@@ -13,12 +13,15 @@ function App() {
 
   useEffect(() => {
     if (token) {
+      console.log("called--", token.accessToken)
       dispatch(setUserDetails(token))
+      dispatch(setUserToken(token.accessToken))
     }
   }, [token])
 
   return (
     <div className="App">
+      
       <HashRouter basename='/'>
         <ThemeProvider theme={theme} >
           <Router />

@@ -7,9 +7,9 @@ let axiosConfig = {
   }
 };
 
-export const getAllBlogs = createAsyncThunk('blogs/getAllBlogs', async () => {
+export const getAllBlogs = createAsyncThunk('blogs/getAllBlogs', async (data) => {
   try {
-    const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}blog/getAllBlogs`)
+    const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}blog/getAllBlogs`, data)
     return response.data;
   } catch (error) {
     console.error(error);
@@ -62,6 +62,9 @@ const blogSlice = createSlice({
   reducers: {
     mediaIsUploading: (state) => {
       state.isMediaUploading = true
+    },
+    blogIsLoading: (state, action) => {
+      state.isLoading = true;
     }
   },
   extraReducers: (builder) => {
@@ -107,5 +110,5 @@ const blogSlice = createSlice({
     })
   },
 })
-export const { mediaIsUploading } = blogSlice.actions;
+export const { mediaIsUploading, blogIsLoading } = blogSlice.actions;
 export default blogSlice.reducer;

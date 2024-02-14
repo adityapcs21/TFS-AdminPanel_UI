@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react'
 import ReusableTable from '../../components/SharedComponent/ReusableTable';
 import { Button, Grid } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { DeleteAdminById, GetAllUserList } from '../../redux/slice/manageUser';
+import { DeleteAdminById, GetAllUserList, manageAdminIsLoading } from '../../redux/slice/manageUser';
 import Loader from '../../common/loader';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import CreateAdmin from '../../components/UserManagement/CreateAdmin';
 import UpdateAdmin from '../../components/UserManagement/UpdateAdmin';
 import Swal from 'sweetalert2';
+
 
 const columns = [
   { id: 'name', label: 'Name' },
@@ -20,20 +21,44 @@ const columns = [
 
 export default function UserManagement() {
   const dispatch = useDispatch()
-  const manageUserData = useSelector((state) => state.manageUser.UserList)
+  const manageUserData = useSelector((state) => state.manageUser.UserList?.userList)
   const isUserUpdated = useSelector((state) => state.manageUser.UserUpdated)
-
+  const totalCount = useSelector((state) => state.manageUser.UserList?.size);
+  const isLoading = useSelector((state) => state.manageUser.isLoading);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editData, setEditData] = useState(false)
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(6);
+
 
   useEffect(() => {
-    dispatch(GetAllUserList())
-  }, [])
+    dispatch(manageAdminIsLoading())
+    let payload = {
+      "name": "",
+      "emailId": "",
+      "group": "",  //existing 
+      "subgroup": "", //existing
+      "userRole": "", //existing
+      "pageNo": page + 1,
+      "perPageResults": rowsPerPage
+    }
+    dispatch(GetAllUserList(payload))
+  }, [page, rowsPerPage])
 
   useEffect(() => {
     if (isUserUpdated) {
-      dispatch(GetAllUserList())
+      dispatch(manageAdminIsLoading())
+      let payload = {
+        "name": "",
+        "emailId": "",
+        "group": "",  //existing 
+        "subgroup": "", //existing
+        "userRole": "", //existing
+        "pageNo": page+1,
+        "perPageResults": rowsPerPage
+      }
+      dispatch(GetAllUserList(payload))
     }
   }, [isUserUpdated])
 
@@ -63,6 +88,15 @@ export default function UserManagement() {
     setOpenEditModal(prevState => !prevState)
   }
 
+  const handleChangePage = (_, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
@@ -70,8 +104,19 @@ export default function UserManagement() {
       </Grid>
       <Grid item xs={12}>
         {
-          manageUserData && manageUserData.length > 0 ?
-            <ReusableTable disableView columns={columns} data={manageUserData} onDelete={handleDelete} onEdit={handleEdit} />
+          !isLoading && manageUserData ?
+            <ReusableTable
+              disableView
+              columns={columns}
+              data={manageUserData}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              count={totalCount}
+            />
             :
             <Loader />
         }

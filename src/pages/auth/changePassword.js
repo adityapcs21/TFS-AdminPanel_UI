@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, CircularProgress, FormControl, Grid, Paper, TextField, Typography, } from '@mui/material'
+import { Avatar, Box, Button, CircularProgress, FormControl, Grid, IconButton, InputAdornment, Paper, TextField, Typography, } from '@mui/material'
 import React, { useState } from 'react'
 import LockIcon from '@mui/icons-material/Lock';
 import { styled } from "@mui/material/styles";
@@ -8,6 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import routeNames from '../../router/routeNames';
 import axios from 'axios';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const validationSchema = yup.object().shape({
   emailId: yup.string().email('Invalid email').required('Email is required'),
@@ -23,6 +24,11 @@ export default function ChangePassword() {
   });
   const [loginError, setLoginError] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleTogglePassword = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
 
   const onSubmit = async (data) => {
     setIsClicked(true)
@@ -81,12 +87,21 @@ export default function ChangePassword() {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        type="password"
+                        type={showPassword ? "text" : "password"} 
                         label="Password"
                         variant="outlined"
                         fullWidth
                         error={!!errors.password}
                         helperText={errors.password?.message}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton onClick={handleTogglePassword} edge="end">
+                                {showPassword ? <Visibility size="small" /> : <VisibilityOff size="small" />}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                     )}
                   />
@@ -100,12 +115,21 @@ export default function ChangePassword() {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         label="New Password"
                         variant="outlined"
                         fullWidth
                         error={!!errors.newPassword}
                         helperText={errors.newPassword?.message}
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton onClick={handleTogglePassword} edge="end">
+                                {showPassword ? <Visibility size="small" /> : <VisibilityOff size="small" />}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                     )}
                   />

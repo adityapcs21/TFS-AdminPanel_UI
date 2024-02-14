@@ -1,7 +1,7 @@
 import { Button, Grid } from '@mui/material'
 import React, { lazy, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { DeleteBlogById, getAllBlogs } from '../../redux/slice/blog';
+import { DeleteBlogById, blogIsLoading, getAllBlogs } from '../../redux/slice/blog';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import EditBlog from '../../components/Blog/EditBlog';
 import Loader from '../../common/loader';
@@ -22,22 +22,43 @@ export default function Blog() {
   const dispatch = useDispatch();
   const BlogData = useSelector((state) => state.blog.BlogData?.blogList)
   const NewBlogAdded = useSelector((state) => state.blog.newBlogAdded)
+  const totalPages = useSelector((state) => state.blog.BlogData?.size)
+  const isLoading = useSelector((state) => state.blog.isLoading)
 
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [openAddModal, setOpenAddModal] = useState(false);
   const [editRowsData, setEditRowsData] = useState({});
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     if (NewBlogAdded) {
-      dispatch(getAllBlogs())
+      let payload = {
+        "title": "",
+        "description": "",
+        "createdDateFrom": "",
+        "createdDateTo": "",
+        "pageNo": page + 1,
+        "perPageResults": rowsPerPage
+      }
+      dispatch(getAllBlogs(payload))
     }
   }, [NewBlogAdded])
 
 
   useEffect(() => {
-    dispatch(getAllBlogs())
-  }, [])
+    dispatch(blogIsLoading())
+    let payload = {
+      "title": "",
+      "description": "",
+      "createdDateFrom": "",
+      "createdDateTo": "",
+      "pageNo": page + 1,
+      "perPageResults": rowsPerPage
+    }
+    dispatch(getAllBlogs(payload))
+  }, [page, rowsPerPage])
 
   const handleDeleteRows = (row) => {
     Swal.fire({
@@ -92,19 +113,33 @@ export default function Blog() {
     setOpenEditModal(prevState => !prevState)
   }
 
+  const handleChangePage = (_, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <Grid container spacing={2} sx={{ width: '100%' }}>
       <Grid item xs={12}>
         <Button onClick={() => AddBlog()} variant="contained" color="primary">Add Blog</Button>
       </Grid>
       <Grid item xs={12}>
-        {BlogData ?
+        {!isLoading && BlogData ?
           <ReusableTable
             columns={columns}
             data={BlogData}
             onDelete={handleDeleteRows}
             onView={handleView}
             onEdit={handleEdit}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            count={totalPages}
           />
           :
           <Loader />

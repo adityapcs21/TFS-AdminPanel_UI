@@ -1,15 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import jwtInterceptor from "../../helpers/jwtInterceptors";
-import axios from "axios";
 
 let axiosConfig = {
  headers: {
   "Authorization": localStorage.getItem("token")
  }
 };
-export const GetAllUserList = createAsyncThunk('manageUser/getUsersList', async () => {
+
+export const GetAllUserList = createAsyncThunk('manageUser/getUsersList', async (data) => {
  try {
-  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}managerUser/admin/getUsersList`, axiosConfig)
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}managerUser/admin/getUsersList`, data, axiosConfig)
   return response.data;
 
  } catch (error) {
@@ -55,11 +55,16 @@ const initialState = {
 const manageUser = createSlice({
  name: "manageUser",
  initialState,
+ reducers: {
+  manageAdminIsLoading: (state, action) => {
+   state.isLoading = true
+  }
+ },
  extraReducers: (builder) => {
   builder.addCase(GetAllUserList.fulfilled, (state, action) => {
    state.isLoading = false;
    state.UserUpdated = false
-   state.UserList = action.payload?.userList
+   state.UserList = action.payload
   });
   builder.addCase(GetAllUserList.rejected, (state, action) => {
    console.log("Error", action.payload);
@@ -99,5 +104,5 @@ const manageUser = createSlice({
   })
  },
 })
-
+export const { manageAdminIsLoading } = manageUser.actions;
 export default manageUser.reducer;

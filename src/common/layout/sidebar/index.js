@@ -28,12 +28,15 @@ import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import RssFeedIcon from '@mui/icons-material/RssFeed';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import InfoIcon from '@mui/icons-material/Info';
+import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
+
 
 const drawerWidth = 270;
 
 export const menuOptions = {
   "SUPER USER": [
-    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon color='inherit' />, subCategory: [{ label: 'Admin', subCatUrl: routeNames.USERMANAGEMENT }, { label: 'Email Subscribed User', subCatUrl: routeNames.SUBSCRIBEDEMAIL }, { label: 'Customer Query', subCatUrl: routeNames.CUSTOMERQUERY }, { label: 'All Students', subCatUrl: routeNames.STUDENTS }, { label: 'Renew Pending Students', subCatUrl: routeNames.RENEWPENDINGSTUDENTS }] },
+    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon color='inherit' />, subCategory: [{ label: 'Admin', subCatUrl: routeNames.USERMANAGEMENT }, { label: 'Email Subscribed User', subCatUrl: routeNames.SUBSCRIBEDEMAIL }, { label: 'Customer Query', subCatUrl: routeNames.CUSTOMERQUERY }, { label: 'All Students', subCatUrl: routeNames.STUDENTS }, { label: 'Batch Change Requests', subCatUrl: routeNames.STUDENTBATCHCHANGE }, { label: 'Update Profile', subCatUrl: routeNames.UPDATEPROFILE }, { label: 'Renew Pending Students', subCatUrl: routeNames.RENEWPENDINGSTUDENTS }] },
+    { label: 'Manage Subscription', url: routeNames.MANAGESUBSCRIPTION, icons: <RequestQuoteIcon color='inherit' />, subCategory: [] },
     { label: 'Blog', url: routeNames.BLOG, icons: <RssFeedIcon color='inherit' />, subCategory: [] },
     { label: 'Gallery', url: routeNames.GALLERY, icons: <CollectionsIcon color='inherit' />, subCategory: [{ label: 'Images', subCatUrl: routeNames.IMAGEGALLERY }, { label: 'Videos', subCatUrl: routeNames.VIDEOGALLERY }] },
     { label: 'About-Us', url: routeNames.ABOUTUS, icons: <InfoIcon color='inherit' />, subCategory: [] },
@@ -205,7 +208,12 @@ export default function MiniDrawer() {
             </Box>
           </ListItem>
         </List>
-        <List>
+        <List sx={{
+          overflow: 'auto',
+          '&::-webkit-scrollbar': {
+            width: '1px'
+          }
+        }}>
           {!userDetails?.passwordChangeRequired
             && menuOptions[userDetails.role].map((page, index) => {
               return (

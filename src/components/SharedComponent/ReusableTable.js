@@ -8,20 +8,10 @@ import styled from '@emotion/styled';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
 
-const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, disableDelete, disableEdit, disableActionButton }) => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, disableDelete, disableEdit, disableActionButton, onPageChange, onRowsPerPageChange, page, rowsPerPage, count }) => {
   const [orderBy, setOrderBy] = useState('');
   const [order, setOrder] = useState('asc');
 
-  const handleChangePage = (_, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const handleSort = (property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -55,8 +45,8 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, d
         <TableHead>
           <TableRow>
 
-            {columns.map((column) => (
-              <TableCell variant='head' sx={{ textWrap: 'nowrap', fontWeight: 600 }} key={column.id}>
+            {columns.map((column, key) => (
+              <TableCell variant='head' sx={{ textWrap: 'nowrap', fontWeight: 600 }} key={key}>
                 <TableSortLabel
                   active={orderBy === column.id}
                   direction={orderBy === column.id ? order : 'asc'}
@@ -70,45 +60,42 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, d
           </TableRow>
         </TableHead>
         <TableBody>
-          {sortedData && sortedData
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((row) => (
-              <TableRow key={row.id}>
-                {columns.map((column) => {
-                  return (
-                    <TableCell key={column.id}>
+          {sortedData && sortedData.map((row, index) => (
+            <TableRow key={index}>
+              {columns.map((column) => {
+                return (
+                  <TableCell key={column.id}>
+                    {IsImage(row[column.id])}
+                  </TableCell>
+                )
+              })}
+              {!disableActionButton && <TableCell>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  {!disableView && <IconContainer onClick={() => onView(row)}>
+                    <VisibilityIcon />
+                  </IconContainer>}
 
-                      {IsImage(row[column.id])}
-                    </TableCell>
-                  )
-                })}
-                {!disableActionButton && <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    {!disableView && <IconContainer onClick={() => onView(row)}>
-                      <VisibilityIcon />
-                    </IconContainer>}
+                  {!disableEdit && <IconContainer onClick={() => onEdit(row)}>
+                    <EditIcon />
+                  </IconContainer >}
 
-                    {!disableEdit && <IconContainer onClick={() => onEdit(row)}>
-                      <EditIcon />
-                    </IconContainer >}
-
-                    {!disableDelete && <IconContainer onClick={() => onDelete(row)}>
-                      <DeleteIcon />
-                    </IconContainer>}
-                  </Box>
-                </TableCell>}
-              </TableRow>
-            ))}
+                  {!disableDelete && <IconContainer onClick={() => onDelete(row)}>
+                    <DeleteIcon />
+                  </IconContainer>}
+                </Box>
+              </TableCell>}
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[2, 5, 10, 25]}
         component="div"
-        count={data && data.length}
+        count={count}
         rowsPerPage={rowsPerPage}
         page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+        onPageChange={onPageChange}
+        onRowsPerPageChange={onRowsPerPageChange}
       />
     </TableContainer>
   );

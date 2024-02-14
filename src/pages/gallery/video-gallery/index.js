@@ -1,4 +1,4 @@
-import { Button, Grid, Pagination, TablePagination } from '@mui/material'
+import { Box, Button, Grid, Pagination, TablePagination } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -84,7 +84,9 @@ export default function VideoGallery() {
             }
 
             <Grid item xs={12} marginTop={3}>
-                <Pagination color='primary' count={totalPages} page={page} onChange={handleChange} />
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <Pagination color='primary' count={totalPages} page={page} onChange={handleChange} />
+                </Box>
             </Grid>
             <ReusbaleDialog maxWidth="md" open={openAddModal} onClose={() => setOpenAddModal(prevState => !prevState)}>
                 <AddVideoGallery onClose={() => setOpenAddModal(prevState => !prevState)} />

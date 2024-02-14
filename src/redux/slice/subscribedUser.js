@@ -6,10 +6,9 @@ let axiosConfig = {
   "Authorization": localStorage.getItem("token")
  }
 };
-export const GetAllSubscribedUser = createAsyncThunk('subscribedUser/getAllSubscribedUser', async () => {
+export const GetAllSubscribedUser = createAsyncThunk('subscribedUser/getAllSubscribedUser', async (data) => {
  try {
-  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}emailSubscribe/getAllSubscriptions`, axiosConfig)
-  console.log("response", response)
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}emailSubscribe/getAllSubscriptions`, data, axiosConfig)
   if (response && response.status === 200) {
    return response.data
   } else {
@@ -42,11 +41,16 @@ const initialState = {
 const subscribedUser = createSlice({
  name: "subscribedUser",
  initialState,
+ reducers: {
+  subscribedUserIsLoading: (state, action) => {
+   state.isLoading = true
+  }
+ },
  extraReducers: (builder) => {
   builder.addCase(GetAllSubscribedUser.fulfilled, (state, action) => {
    state.isLoading = false;
    state.SubscribedUserUpdated = false
-   state.SubscribedUser = action.payload?.emailSubscriptionList
+   state.SubscribedUser = action.payload
   });
   builder.addCase(GetAllSubscribedUser.rejected, (state, action) => {
    console.log("Error", action.payload);
@@ -63,5 +67,5 @@ const subscribedUser = createSlice({
   });
  },
 })
-
+export const { subscribedUserIsLoading } = subscribedUser.actions;
 export default subscribedUser.reducer;

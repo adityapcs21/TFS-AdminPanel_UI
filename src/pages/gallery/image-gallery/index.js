@@ -1,4 +1,4 @@
-import { Button, Grid, Pagination } from '@mui/material'
+import { Box, Button, Grid, Pagination } from '@mui/material'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { GetAllGallery, galleryLoading } from '../../../redux/slice/gallery';
@@ -49,7 +49,7 @@ export default function ImageGallery() {
             dispatch(galleryLoading())
             let payload = {
                 "title": "",
-                "type": "image", 
+                "type": "image",
                 "createdDateFrom": "",
                 "createdDateTo": "",
                 "pageNo": page,
@@ -79,7 +79,9 @@ export default function ImageGallery() {
 
 
             <Grid item xs={12} marginTop={3}>
-                <Pagination color="primary" count={totalPages} page={page} onChange={handleChange} />
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <Pagination color="primary" count={totalPages} page={page} onChange={handleChange} />
+                </Box>
             </Grid>
 
             <ReusbaleDialog maxWidth="md" open={openAddModal} onClose={() => setOpenAddModal(prevState => !prevState)}>

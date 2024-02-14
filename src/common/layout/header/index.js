@@ -87,10 +87,10 @@ export default function Header({ isOpen }) {
         },
       }}
       anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'end',
-      }}
+      // anchorOrigin={{
+      //   vertical: 'bottom',
+      //   // horizontal: 'end',
+      // }}
       id={menuId}
       keepMounted
       transformOrigin={{
@@ -203,7 +203,7 @@ export default function Header({ isOpen }) {
           </Badge>
         </IconButton> */}
         <IconButton
-          size="large"
+          size="small"
           edge="end"
           aria-label="account of current user"
           aria-controls={menuId}
@@ -216,7 +216,7 @@ export default function Header({ isOpen }) {
               <Avatar
                 alt="Remy Sharp"
                 src="https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
-                sx={{ width: 35, height: 35, boxShadow: '0px 5px 5px 0px rgba(44, 44, 44, 0.2)' }}
+                sx={{ width: 36, height: 36, boxShadow: '0px 5px 5px 0px rgba(44, 44, 44, 0.2)' }}
               />
               :
               <InitialImg>
