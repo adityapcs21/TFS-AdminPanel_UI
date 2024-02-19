@@ -13,7 +13,6 @@ function App() {
 
   useEffect(() => {
     if (token) {
-      console.log("called--", token.accessToken)
       dispatch(setUserDetails(token))
       dispatch(setUserToken(token.accessToken))
     }
@@ -21,7 +20,7 @@ function App() {
 
   return (
     <div className="App">
-      
+
       <HashRouter basename='/'>
         <ThemeProvider theme={theme} >
           <Router />
@@ -32,3 +31,12 @@ function App() {
 }
 
 export default App;
+
+
+
+// renewal lead access
+// get details api check
+// search reset button
+//no data found
+//student natch change -> currentBatchNo => update name to id
+//payment tab

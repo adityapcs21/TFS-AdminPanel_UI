@@ -1,7 +1,7 @@
 import { Button, Grid } from '@mui/material'
 import React, { lazy, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { DeleteBlogById, blogIsLoading, getAllBlogs } from '../../redux/slice/blog';
+import { DeleteBlogById, GetBlogDetails, blogIsLoading, getAllBlogs } from '../../redux/slice/blog';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import EditBlog from '../../components/Blog/EditBlog';
 import Loader from '../../common/loader';
@@ -31,6 +31,7 @@ export default function Blog() {
   const [editRowsData, setEditRowsData] = useState({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [blogDetails, showBlogDetails] = useState({})
 
   useEffect(() => {
     if (NewBlogAdded) {
@@ -66,8 +67,8 @@ export default function Blog() {
       text: "You want to delete this?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#2c4c74",
+      cancelButtonColor: "#f36334",
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
       if (result.isConfirmed) {
@@ -82,8 +83,11 @@ export default function Blog() {
   }
 
   const handleView = (row) => {
-    setEditRowsData(row)
-    setOpenViewModal(prevState => !prevState)
+    dispatch(GetBlogDetails(row.blogId))
+      .then((response) => {
+        showBlogDetails(response.payload)
+        setOpenViewModal(prevState => !prevState)
+      })
   }
 
   const handleEdit = (row) => {
@@ -153,8 +157,8 @@ export default function Blog() {
         <EditBlog data={editRowsData} onClose={() => setOpenEditModal(prevState => !prevState)} />
       </ReusbaleDialog>
 
-      <ReusbaleDialog maxWidth={"md"} open={openViewModal} onClose={handleCloseViewModal}>
-        <ViewBlog data={editRowsData} onClose={() => setOpenViewModal(prevState => !prevState)} />
+      <ReusbaleDialog maxWidth={"lg"} open={openViewModal} onClose={handleCloseViewModal}>
+        <ViewBlog data={blogDetails} onClose={() => setOpenViewModal(prevState => !prevState)} />
       </ReusbaleDialog>
     </Grid >
   )

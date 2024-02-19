@@ -29,6 +29,7 @@ import RssFeedIcon from '@mui/icons-material/RssFeed';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import InfoIcon from '@mui/icons-material/Info';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 
 const drawerWidth = 270;
@@ -37,6 +38,7 @@ export const menuOptions = {
   "SUPER USER": [
     { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon color='inherit' />, subCategory: [{ label: 'Admin', subCatUrl: routeNames.USERMANAGEMENT }, { label: 'Email Subscribed User', subCatUrl: routeNames.SUBSCRIBEDEMAIL }, { label: 'Customer Query', subCatUrl: routeNames.CUSTOMERQUERY }, { label: 'All Students', subCatUrl: routeNames.STUDENTS }, { label: 'Batch Change Requests', subCatUrl: routeNames.STUDENTBATCHCHANGE }, { label: 'Update Profile', subCatUrl: routeNames.UPDATEPROFILE }, { label: 'Renew Pending Students', subCatUrl: routeNames.RENEWPENDINGSTUDENTS }] },
     { label: 'Manage Subscription', url: routeNames.MANAGESUBSCRIPTION, icons: <RequestQuoteIcon color='inherit' />, subCategory: [] },
+    { label: 'Manage Payments', url: routeNames.MANAGEPAYMENT, icons: <AccountBalanceIcon color='inherit' />, subCategory: [] },
     { label: 'Blog', url: routeNames.BLOG, icons: <RssFeedIcon color='inherit' />, subCategory: [] },
     { label: 'Gallery', url: routeNames.GALLERY, icons: <CollectionsIcon color='inherit' />, subCategory: [{ label: 'Images', subCatUrl: routeNames.IMAGEGALLERY }, { label: 'Videos', subCatUrl: routeNames.VIDEOGALLERY }] },
     { label: 'About-Us', url: routeNames.ABOUTUS, icons: <InfoIcon color='inherit' />, subCategory: [] },
@@ -44,10 +46,10 @@ export const menuOptions = {
     { label: 'Banner', url: routeNames.BANNER, icons: <CollectionsIcon color='inherit' />, subCategory: [] },
   ],
   "RENEWAL LEAD": [
-    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon color='inherit' />, subCategory: [{ label: 'All Students', subCatUrl: "#" }, { label: 'Renew Pending Students', subCatUrl: "#" }, { label: 'Assigned Students', subCatUrl: "#" }] },
+    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon color='inherit' />, subCategory: [{ label: 'All Students', subCatUrl: routeNames.STUDENTS }, { label: 'Assigned Students', subCatUrl: "#" }] },
   ],
   "RENEWAL": [
-    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon color='inherit' />, subCategory: [{ label: 'Renew Pending Students', subCatUrl: "#" }, { label: 'Assigned Students', subCatUrl: "#" }] },
+    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon color='inherit' />, subCategory: [{ label: 'All Students', subCatUrl: routeNames.STUDENTS }, { label: 'Assigned Students', subCatUrl: "#" }] },
   ],
   "TIC BUDDY": [
     { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon color='inherit' />, subCategory: [{ label: 'Assigned Students', subCatUrl: "#" }] },
@@ -137,7 +139,7 @@ export default function MiniDrawer() {
   const [open, setOpen] = React.useState(true);
   const [openPages, setOpenPages] = React.useState(false);
   const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")));
-  const [activeIndex, setActiveIndex] = useState();
+  const [activeIndex, setActiveIndex] = useState(0);
   const [activeSubIndex, setActiveSubIndex] = useState();
 
 

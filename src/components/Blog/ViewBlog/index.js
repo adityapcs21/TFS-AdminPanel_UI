@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { TextField, Button, Grid, Container, Box, Typography } from '@mui/material';
+import { TextField, Button, Grid, Container, Box, Typography, Stack } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import AvatarWithLetters from '../../SharedComponent/ReusableAvatar';
+import moment from 'moment';
+
 
 const schema = yup.object().shape({
  title: yup.string().required(),
@@ -13,7 +16,7 @@ const schema = yup.object().shape({
 });
 
 const ViewBlog = ({ data, onClose }) => {
- const { title, createdBy, createdDate, description, attachments } = data
+ const { title, createdBy, createdDate, updatedDate, description, attachments, comments } = data
 
  const { control, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
@@ -22,6 +25,8 @@ const ViewBlog = ({ data, onClose }) => {
  const onSubmit = (data) => {
   console.log(data);
  };
+
+
 
 
  return (
@@ -39,7 +44,7 @@ const ViewBlog = ({ data, onClose }) => {
        defaultValue={title}
        control={control}
        render={({ field }) => (
-        <TextField fullWidth label="Title" {...field} error={!!errors.title} helperText={errors.title?.message} />
+        <TextField size='small' fullWidth label="Title" {...field} error={!!errors.title} helperText={errors.title?.message} />
        )}
       />
      </Grid>
@@ -50,16 +55,16 @@ const ViewBlog = ({ data, onClose }) => {
        defaultValue={createdBy}
        control={control}
        render={({ field }) => (
-        <TextField fullWidth label="Created By" {...field} error={!!errors.createdBy} helperText={errors.createdBy?.message} />
+        <TextField size='small' fullWidth label="Created By" {...field} error={!!errors.createdBy} helperText={errors.createdBy?.message} />
        )}
       />
      </Grid>
-     <Grid item xs={6}>
+     {/* <Grid item xs={6}>
       <TextField fullWidth label="Created On" disabled value={createdDate} />
      </Grid>
      <Grid item xs={6}>
-      <TextField fullWidth label="Updated On" disabled value={createdDate} />
-     </Grid>
+      <TextField fullWidth label="Updated On" disabled value={updatedDate} />
+     </Grid> */}
 
      <Grid item xs={12}>
       <Controller
@@ -69,8 +74,9 @@ const ViewBlog = ({ data, onClose }) => {
        control={control}
        render={({ field }) => (
         <TextField id="outlined-multiline-static"
+         size='small'
          multiline
-         rows={4}
+         rows={3}
          fullWidth
          label="Description"
          {...field}
@@ -82,7 +88,7 @@ const ViewBlog = ({ data, onClose }) => {
      </Grid>
 
      <Grid item xs={12}>
-      <Typography>Attachments</Typography>
+      <Typography variant='h6'>Attachments</Typography>
       <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
        {attachments && attachments.map((media) => (
         <Box>
@@ -90,7 +96,26 @@ const ViewBlog = ({ data, onClose }) => {
         </Box>
        ))}
       </Box>
+     </Grid>
 
+     <Grid item xs={12}>
+      <Typography variant='h6'>Comments</Typography>
+      <Box sx={{ maxHeight: '100px', overflow: 'auto' }}>
+       {comments ? comments.map((item, index) => (
+        < Stack direction={'row'} spacing={2} mb={1}>
+         <AvatarWithLetters fullName={item.userName} />
+         <Box>
+          <Stack direction="row" spacing={2}>
+           <Typography sx={{ fontSize: '13px', fontWeight: 600 }}>{item.userName}</Typography>
+           <Typography sx={{ fontSize: '13px', color: "lightgray", fontWeight: '400' }}>{item.createdDate}</Typography>
+          </Stack>
+          <Typography sx={{ fontSize: '14px', fontWeight: '400' }}>{item.text}</Typography>
+         </Box>
+        </Stack>
+       )) :
+        <Typography>No comments found</Typography>
+       }
+      </Box>
      </Grid>
      <Grid item xs={12}>
       <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>
@@ -99,7 +124,7 @@ const ViewBlog = ({ data, onClose }) => {
      </Grid>
     </Grid>
    </form>
-  </Container>
+  </Container >
  );
 };
 

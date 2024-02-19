@@ -13,7 +13,15 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 const validationSchema = yup.object().shape({
   emailId: yup.string().email('Invalid email').required('Email is required'),
   password: yup.string().required('Password is required'),
-  newPassword: yup.string().required('New Password is required'),
+  newPassword: yup
+    .string()
+    .required('Password is required')
+    .min(8, 'Password must be at least 8 characters')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/,
+      'Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 digit, and 1 special character'
+    ),
+
   grantType: yup.string().required('Grant Type is required').oneOf(['password_change'], 'Invalid Grant Type'),
 });
 
@@ -87,7 +95,7 @@ export default function ChangePassword() {
                     render={({ field }) => (
                       <TextField
                         {...field}
-                        type={showPassword ? "text" : "password"} 
+                        type={showPassword ? "text" : "password"}
                         label="Password"
                         variant="outlined"
                         fullWidth

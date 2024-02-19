@@ -84,8 +84,8 @@ export default function Banner() {
    text: "You want to delete this banner?",
    icon: "warning",
    showCancelButton: true,
-   confirmButtonColor: "#3085d6",
-   cancelButtonColor: "#d33",
+   confirmButtonColor: "#2c4c74",
+   cancelButtonColor: "#f36334",
    confirmButtonText: "Yes, delete it!"
   }).then((result) => {
    if (result.isConfirmed) {

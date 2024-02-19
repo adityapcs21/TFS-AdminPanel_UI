@@ -29,7 +29,7 @@ const UpdateSubscriptionPlan = ({ data, onClose }) => {
       text: "You want to update plan?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
+      confirmButtonColor: "#2c4c74",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, update it!"
     }).then((result) => {

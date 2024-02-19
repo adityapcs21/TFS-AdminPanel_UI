@@ -1,6 +1,6 @@
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { TextField, Button, Container, Grid, Box, Typography } from '@mui/material';
+import { TextField, Button, Container, Grid, Box, Typography, FormControl, InputLabel, MenuItem, FormHelperText, Select } from '@mui/material';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import CloseIcon from '@mui/icons-material/Close';
@@ -10,7 +10,7 @@ import { CreateSubscriptionPlan } from '../../../redux/slice/manageSubscription'
 
 const schema = yup.object().shape({
  fees: yup.number().required('Fees is required').positive('Fees must be a positive number'),
- planName: yup.string().required('Plan Name is required'),
+ planName: yup.string().oneOf(['Annual', 'Half Yearly', 'Quarterly']),
 });
 
 const AddSubscriptionPlan = ({ onClose }) => {
@@ -54,20 +54,21 @@ const AddSubscriptionPlan = ({ onClose }) => {
        name="planName"
        control={control}
        render={({ field }) => (
-        <TextField
-         {...field}
-         label="Plan Name"
-         variant="outlined"
-         fullWidth
-         error={!!errors.planName}
-         helperText={errors.planName?.message}
-        />
+        <FormControl fullWidth>
+         <InputLabel>Plan Name</InputLabel>
+         <Select {...field} error={!!errors.planName} label="Subscription Type">
+          <MenuItem value="Annual">Annual</MenuItem>
+          <MenuItem value="Half Yearly">Half Yearly</MenuItem>
+          <MenuItem value="Quarterly">Quarterly</MenuItem>
+         </Select>
+         <FormHelperText>{errors.planName?.message}</FormHelperText>
+        </FormControl>
        )}
       />
      </Grid>
      <Grid item xs={12}>
       <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>
-       <Button type="submit" variant="contained" color="warning" >Cancel</Button>
+       <Button onClick={onClose} variant="contained" color="warning" >Cancel</Button>
        <Button type="submit" variant="contained" color="primary">Add Plan</Button>
       </Box>
      </Grid>

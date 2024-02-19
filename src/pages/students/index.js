@@ -1,14 +1,16 @@
 import React, { useEffect } from 'react'
 import ReusableTable from '../../components/SharedComponent/ReusableTable';
-import { Button, Grid } from '@mui/material';
+import { Badge, Box, Button, Grid, Stack, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../../common/loader';
 import Swal from 'sweetalert2';
 import { useState } from 'react';
-import { GetAllStudentsList, deleteStudent } from '../../redux/slice/students';
+import students, { GetAllStudentsList, GetStudentDetails, StudentDataIsLoading, applyStudentFilter, clearStudentFilter, deleteStudent } from '../../redux/slice/students';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import UpdateStudent from '../../components/students/EditStudent';
 import ViewStudent from '../../components/students/ViewStudent';
+import FilterStudents from '../../components/students/FilterStudents';
+import moment from 'moment';
 
 
 const columns = [
@@ -21,8 +23,8 @@ const columns = [
   { id: 'subscriptionType', label: "Subscription Type" },
   { id: 'lastLoginDate', label: "Last Login Date" },
   { id: 'lastChangePasswordDate', label: "Last Password Change" },
-  { id: 'status', label: "Status" },
-  { id: 'incorrectPasswordCount', label: "Incorrect Password Count" },
+  // { id: 'status', label: "Status" },
+  // { id: 'incorrectPasswordCount', label: "Incorrect Password Count" },
 ]
 
 export default function Students() {
@@ -31,55 +33,56 @@ export default function Students() {
   const isUpdated = useSelector((state) => state.students.StudentsDataUpdated)
   const totalPages = useSelector((state) => state.students.StudentList?.size);
   const isLoading = useSelector((state) => state.students.isLoading);
+  const appliedFilters = useSelector((state) => state.students.AppliedFilters);
 
+  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")));
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);
-  const [editData, setEditData] = useState({})
+  const [editData, setEditData] = useState({});
+  const [viewData, setViewData] = useState({})
+  const [openFilterModal, setOpenFilterModal] = useState(false)
 
+  // useEffect(() => {
+  //   if (isUpdated) {
+  //     let payload = {
+  //       "pageNo": page + 1,
+  //       "perPageResults": rowsPerPage,
+  //       "status": "", //"ACTIVE", "IN-ACTIVE"
+  //       "uniqueId": "",
+  //       "emailId": "",
+  //       "mobileNo": "",
+  //       "firstName": "",
+  //       "lastName": "",
+  //       "batchNo": "",
+  //       "subscriptionType": "", // Annual, Half Yearly
+  //       "subscriptionStatus": "", //"ACTIVE", "IN-ACTIVE",
+  //       "renewalDue": "",//"YES" or blank,
+  //       "subscriptionEndDateFrom": "",// "09-02-2024"
+  //       "subscriptionEndDateTo": ""
+  //     }
+  //     dispatch(GetAllStudentsList(payload))
+  //   }
+  // }, [isUpdated])
 
   useEffect(() => {
-    if (isUpdated) {
-      let payload = {
-        "pageNo": page + 1,
-        "perPageResults": rowsPerPage,
-        "status": "", //"ACTIVE", "IN-ACTIVE"
-        "uniqueId": "",
-        "emailId": "",
-        "mobileNo": "",
-        "firstName": "",
-        "lastName": "",
-        "batchNo": "",
-        "subscriptionType": "", // Annual, Half Yearly
-        "subscriptionStatus": "", //"ACTIVE", "IN-ACTIVE",
-        "renewalDue": "",//"YES" or blank,
-        "subscriptionEndDateFrom": "",// "09-02-2024"
-        "subscriptionEndDateTo": ""
-      }
-      dispatch(GetAllStudentsList(payload))
-    }
-  }, [isUpdated])
 
-  useEffect(() => {
     let payload = {
       "pageNo": page + 1,
       "perPageResults": rowsPerPage,
-      "status": "", //"ACTIVE", "IN-ACTIVE"
-      "uniqueId": "",
-      "emailId": "",
-      "mobileNo": "",
-      "firstName": "",
-      "lastName": "",
-      "batchNo": "",
-      "subscriptionType": "", // Annual, Half Yearly
-      "subscriptionStatus": "", //"ACTIVE", "IN-ACTIVE",
-      "renewalDue": "",//"YES" or blank,
-      "subscriptionEndDateFrom": "",// "09-02-2024"
-      "subscriptionEndDateTo": ""
+      "status": appliedFilters.status,
+      "search": appliedFilters?.search,
+      "batchNo": appliedFilters?.batchNo,
+      "subscriptionType": appliedFilters.subscriptionType,
+      "subscriptionStatus": appliedFilters.subscriptionStatus,
+      "renewalDue": appliedFilters?.renewalDue,
+      "subscriptionEndDateFrom": appliedFilters.subscriptionEndDateFrom,
+      "subscriptionEndDateTo": appliedFilters.subscriptionEndDateTo
     }
+
     dispatch(GetAllStudentsList(payload))
-  }, [page, rowsPerPage])
+  }, [page, rowsPerPage, isUpdated, appliedFilters])
 
   const handleDelete = (row) => {
     Swal.fire({
@@ -87,8 +90,8 @@ export default function Students() {
       text: "You want to delete?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#2c4c74",
+      cancelButtonColor: "#f36334",
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
       if (result.isConfirmed) {
@@ -112,36 +115,103 @@ export default function Students() {
   };
 
   const handleView = (data) => {
-    setOpenViewModal(data)
-    setOpenViewModal(true)
+    dispatch(StudentDataIsLoading())
+    console.log(data)
+    // setViewData(data)
+    let payload = {
+      uniqueId: data.uniqueId
+    }
+    dispatch(GetStudentDetails(payload))
+      .then((res) => {
+        setOpenViewModal(true)
+      })
   }
 
   const handleEdit = (data) => {
-    setEditData(data)
-    setOpenEditModal(true)
+    dispatch(StudentDataIsLoading())
+    let payload = {
+      uniqueId: data.uniqueId
+    }
+    dispatch(GetStudentDetails(payload))
+      .then((res) => {
+        setOpenEditModal(true)
+      })
+  }
+
+  const handleFilter = (data) => {
+    // Handle form submission
+    if (data.subscriptionEndDateFrom && data.subscriptionEndDateFrom) {
+      data.subscriptionEndDateFrom = moment(data.subscriptionEndDateFrom).format('DD-MM-YYYY');
+      data.subscriptionEndDateTo = moment(data.subscriptionEndDateTo).format('DD-MM-YYYY');
+    }
+    setPage(0);
+    setRowsPerPage(5)
+    dispatch(StudentDataIsLoading())
+    dispatch(applyStudentFilter(data))
+    setOpenFilterModal(prevState => !prevState)
+  };
+
+  const handleClearFilter = () => {
+    dispatch(clearStudentFilter())
   }
 
   return (
     <Grid container spacing={2}>
-      {/* <Grid item xs={12}>
-        <Button variant="contained" color="primary">Send Email </Button>
-      </Grid> */}
+      <Grid item xs={12}>
+        <Box sx={{ display: 'flex', gap: '20px' }}>
+          <Badge badgeContent={Object.keys(appliedFilters).length} color="secondary">
+            <Button onClick={() => setOpenFilterModal(prevState => !prevState)} variant="contained" color="primary">Filter </Button>
+          </Badge>
+          <Button onClick={() => handleClearFilter()} variant="contained" color="primary">Clear Filter </Button>
+
+          <Stack direction="row" spacing={1} alignItems="center">
+            {
+              appliedFilters && Object.entries(appliedFilters).map(([key, val]) => (
+                < Box key={key} sx={{ display: "flex" }}>
+                  <Typography sx={{ fontSize: '12px' }}><strong>{key}:</strong></Typography>
+                  <Typography sx={{ fontSize: '12px' }} >{val},</Typography>
+                </Box>
+              ))
+            }
+          </Stack>
+        </Box>
+      </Grid >
       <Grid item xs={12}>
         {!isLoading && StudentData && StudentData.length > 0 ?
-          <ReusableTable
-            columns={columns}
-            data={StudentData}
-            onDelete={handleDelete}
-            onView={handleView}
-            onEdit={handleEdit}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            count={totalPages}
-          />
+
+          userDetails.role === "SUPER USER" ?
+            <ReusableTable
+              columns={columns}
+              data={StudentData}
+              onDelete={handleDelete}
+              onView={handleView}
+              onEdit={handleEdit}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              count={totalPages}
+            />
+            :
+            <ReusableTable
+              columns={columns}
+              data={StudentData}
+              disableDelete
+              disableEdit
+              onView={handleView}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              count={totalPages}
+            />
           :
-          <Loader />
+          StudentData && StudentData.length === 0 ?
+            <Grid item xs={12} sx={{ minHeight: '400px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Typography variant='h5'>No Record found</Typography>
+            </Grid>
+            :
+            <Loader />
         }
       </Grid>
 
@@ -151,8 +221,12 @@ export default function Students() {
 
 
       <ReusbaleDialog maxWidth="md" open={openViewModal} onClose={() => setOpenViewModal(prevState => !prevState)}>
-        <ViewStudent data={editData} onClose={() => setOpenViewModal(prevState => !prevState)} />
+        <ViewStudent onClose={() => setOpenViewModal(prevState => !prevState)} />
       </ReusbaleDialog>
-    </Grid>
+
+      <ReusbaleDialog maxWidth="sm" open={openFilterModal} onClose={() => setOpenFilterModal(prevState => !prevState)}>
+        <FilterStudents handleFilter={handleFilter} onClose={() => setOpenFilterModal(prevState => !prevState)} />
+      </ReusbaleDialog>
+    </Grid >
   )
 }

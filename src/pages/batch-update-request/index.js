@@ -10,6 +10,7 @@ import Loader from '../../common/loader';
 const columns = [
   { id: 'userName', label: 'Name' },
   { id: "batchNo", label: "Batch NO" },
+  { id: "currentBatchNo", label: "Current Batch NO" },
   { id: 'subscriptionEndDate', label: 'Subscription EndDate' },
   { id: 'subscriptionStartDate', label: 'Subscription StartDate' },
   { id: 'price', label: 'Price' },
@@ -24,8 +25,6 @@ export default function BatchUpdateRequest() {
   const ListSize = useSelector((state) => state.students.BatchUpdateList?.size);
   const isLoading = useSelector((state) => state.students.isLoading);
   const StudentsDataUpdated = useSelector(state => state.StudentsDataUpdated)
-
-  console.log("Batc", BatchUpdateList)
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);

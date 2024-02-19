@@ -1,40 +1,23 @@
 import CloseIcon from '@mui/icons-material/Close';
-import React, { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React from 'react';
 import { TextField, Button, Grid, Container, Box, Typography } from '@mui/material';
-import { useDispatch } from 'react-redux';
-import moment from 'moment';
-import { UpdateStudentData } from '../../redux/slice/students';
+import { useSelector } from 'react-redux';
 
 
-const ViewStudent = ({ onClose, data }) => {
+const ViewStudent = ({ onClose }) => {
+ const StudentDetails = useSelector((state) => state.students.StudentDetails?.userList[0]);
+
  const {
-  uniqueId,
   emailAddress,
   mobileNumber,
   firstName,
   lastName,
   batchNo,
   subscriptionEndDate,
+  subscriptionStartDate,
   subscriptionType,
-  createdDate,
-  updatedDate,
-  deleted,
   status,
-  incorrectPasswordCount,
-  otp,
- } = data
-
- const dispatch = useDispatch()
- const { control, handleSubmit, formState: { errors } } = useForm({});
-
-
- const onSubmit = (data) => {
-  data.subscriptionEndDate = moment(subscriptionEndDate, 'YYYY-MM-DD').format('DD/MM/YYYY')
-  dispatch(UpdateStudentData(data))
-  onClose()
- };
-
+ } = StudentDetails
 
  return (
   <Container >
@@ -42,206 +25,112 @@ const ViewStudent = ({ onClose, data }) => {
     <Typography variant='h5'>View Student Details</Typography>
     <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
    </Box>
-   <form onSubmit={handleSubmit((data) => {
-    data.uniqueId = uniqueId;
-    onSubmit(data);
-   })}>
+   <form >
     <Grid container spacing={2}>
 
-     <Grid item xs={12} md={6}>
-      <Controller
+     <Grid item xs={6}>
+      <TextField
        disabled
-       defaultValue={firstName}
+       label="First Name"
+       variant="outlined"
+       fullWidth
        name="firstName"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="First Name" {...field} error={!!errors.firstName} helperText={errors.firstName?.message} />
-       )}
+       value={firstName}
       />
-      <Box sx={{ minHeight: '16px' }}></Box>
      </Grid>
 
-     <Grid item xs={12} md={6}>
-      <Controller
+     <Grid item xs={6}>
+      <TextField
        disabled
-       defaultValue={lastName}
+       label="Last Name"
+       variant="outlined"
+       fullWidth
        name="lastName"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="Last Name" {...field} error={!!errors.lastName} helperText={errors.lastName?.message} />
-       )}
+       value={lastName}
       />
-      <Box sx={{ minHeight: '16px' }}></Box>
      </Grid>
 
-     <Grid item xs={12} md={6}>
-      <Controller
+     <Grid item xs={6}>
+      <TextField
        disabled
-       defaultValue={emailAddress}
+       label="Email Address"
+       variant="outlined"
+       fullWidth
        name="emailAddress"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="Email Id" {...field} error={!!errors.emailAddress} helperText={errors.emailAddress?.message} />
-       )}
+       value={emailAddress}
       />
-      <Box sx={{ minHeight: '16px' }}></Box>
      </Grid>
 
-     <Grid item xs={12} md={6}>
-      <Controller
+     <Grid item xs={6}>
+      <TextField
        disabled
-       defaultValue={mobileNumber}
+       label="Mobile Number"
+       variant="outlined"
+       fullWidth
        name="mobileNumber"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="Mobile Number" {...field} error={!!errors.mobileNumber} helperText={errors.mobileNumber?.message} />
-       )}
-      />
-      <Box sx={{ minHeight: '16px' }}></Box>
-     </Grid>
-
-     <Grid item xs={12} md={4}>
-      <Controller
-       disabled
-       name="createdDate"
-       control={control}
-       defaultValue={moment(createdDate, 'DD/MM/YYYY').format('YYYY-MM-DD')}
-       render={({ field }) => (
-        <TextField
-         {...field}
-         label="created Date"
-         type="date"
-         fullWidth
-         error={!!errors.createdDate}
-         helperText={errors.createdDate?.message}
-        />
-       )}
+       value={mobileNumber}
       />
      </Grid>
 
-     <Grid item xs={12} md={4}>
-      <Controller
+     <Grid item xs={6}>
+      <TextField
        disabled
-       name="updatedDate"
-       control={control}
-       defaultValue={moment(updatedDate, 'DD/MM/YYYY').format('YYYY-MM-DD')}
-       render={({ field }) => (
-        <TextField
-         {...field}
-         label="Updated Date"
-         type="date"
-         fullWidth
-         error={!!errors.updatedDate}
-         helperText={errors.updatedDate?.message}
-        />
-       )}
-      />
-     </Grid>
-
-     <Grid item xs={12} md={4}>
-      <Controller
-       disabled
+       label="Subscription End Date"
+       variant="outlined"
+       fullWidth
        name="subscriptionEndDate"
-       control={control}
-       defaultValue={moment(subscriptionEndDate, 'DD/MM/YYYY').format('YYYY-MM-DD')}
-       render={({ field }) => (
-        <TextField
-         {...field}
-         label="Subscription End Date"
-         type="date"
-         fullWidth
-         error={!!errors.subscriptionEndDate}
-         helperText={errors.subscriptionEndDate?.message}
-        />
-       )}
+       value={subscriptionEndDate}
+
       />
      </Grid>
-
-     <Grid item xs={12} md={4}>
-      <Controller
+     <Grid item xs={6}>
+      <TextField
        disabled
-       defaultValue={batchNo}
+       label="Subscription Start Date"
+       variant="outlined"
+       fullWidth
+       name="subscriptionStartDate"
+       value={subscriptionStartDate}
+
+      />
+     </Grid>
+     <Grid item xs={4}>
+      <TextField
+       disabled
+       label="Batch No"
+       variant="outlined"
+       fullWidth
        name="batchNo"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="Batch Number" {...field} error={!!errors.batchNo} helperText={errors.batchNo?.message} />
-       )}
+       value={batchNo}
       />
-      <Box sx={{ minHeight: '16px' }}></Box>
      </Grid>
-
-     <Grid item xs={12} md={4}>
-      <Controller
+     <Grid item xs={4}>
+      <TextField
        disabled
-       defaultValue={subscriptionType}
+       fullWidth
+       label="Subscription Type"
+       id="subscriptionType"
        name="subscriptionType"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="Subscription Type" {...field} error={!!errors.subscriptionType} helperText={errors.subscriptionType?.message} />
-       )}
+       value={subscriptionType}
       />
-      <Box sx={{ minHeight: '16px' }}></Box>
      </Grid>
 
-
-     <Grid item xs={12} md={4}>
-      <Controller
+     <Grid item xs={4}>
+      <TextField
        disabled
-       defaultValue={incorrectPasswordCount}
-       name="incorrectPasswordCount"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="Subscription Type" {...field} error={!!errors.incorrectPasswordCount} helperText={errors.incorrectPasswordCount?.message} />
-       )}
-      />
-      <Box sx={{ minHeight: '16px' }}></Box>
-     </Grid>
-
-     <Grid item xs={12} md={4}>
-      <Controller
-       disabled
-       defaultValue={incorrectPasswordCount}
-       name="incorrectPasswordCount"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="Subscription Type" {...field} error={!!errors.incorrectPasswordCount} helperText={errors.incorrectPasswordCount?.message} />
-       )}
-      />
-      <Box sx={{ minHeight: '16px' }}></Box>
-     </Grid>
-
-     <Grid item xs={12} md={4}>
-      <Controller
-       disabled
-       defaultValue={status}
+       fullWidth
+       label="Status"
+       id="status"
        name="status"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="Status" {...field} error={!!errors.status} helperText={errors.status?.message} />
-       )}
+       value={status}
       />
-      <Box sx={{ minHeight: '16px' }}></Box>
-     </Grid>
-
-     <Grid item xs={12} md={4}>
-      <Controller
-       disabled
-       defaultValue={otp}
-       name="otp"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="otp" {...field} error={!!errors.otp} helperText={errors.otp?.message} />
-       )}
-      />
-      <Box sx={{ minHeight: '16px' }}></Box>
      </Grid>
 
      <Grid item xs={12}>
-      <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>
-       <Button variant="contained" color="warning" onClick={onClose}>Cancel</Button>
-      </Box>
+      <Button onClick={onClose} variant="contained" color="secondary">
+       Cancel
+      </Button>
      </Grid>
-
     </Grid>
    </form>
   </Container>

@@ -59,8 +59,8 @@ export default function SubscribedEmail() {
       text: "You want to unsubscribe?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
+      confirmButtonColor: "#2c4c74",
+      cancelButtonColor: "#f36334",
       confirmButtonText: "Yes, unsubscribe it!"
     }).then((result) => {
       if (result.isConfirmed) {

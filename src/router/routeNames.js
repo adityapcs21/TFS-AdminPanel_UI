@@ -6,6 +6,7 @@ const routeNames = {
  BLOG: '/blog',
  USERMANAGEMENT: '/user-management',
  MANAGESUBSCRIPTION: '/manage-subscription',
+ MANAGEPAYMENT: '/manage-payment',
  SUBSCRIBEDEMAIL: '/subscribed-email',
  IMAGEGALLERY: '/image-gallery',
  VIDEOGALLERY: '/video-gallery',

@@ -6,20 +6,27 @@ let axiosConfig = {
   "Authorization": localStorage.getItem("token")
  }
 };
-export const GetAllStudentsList = createAsyncThunk('students/getAllStudents', async (data, thunkApi) => {
+export const GetAllStudentsList = createAsyncThunk('students/getAllStudents', async (data, { rejectWithValue }) => {
  try {
-  let token = thunkApi.getState().auth;
-  console.log("tokenThunk", token)
   const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}managerUser/student/getUsersList`, data, axiosConfig)
-  if (response && response.status === 200) {
-   return response.data
-  } else {
-   console.log(response)
-   return
+  return response.data
+ } catch (err) {
+  if (!err.response) {
+   throw err
   }
- } catch (error) {
-  console.log("error", error)
-  return
+  return rejectWithValue(err.response.data)
+ }
+})
+
+export const GetStudentDetails = createAsyncThunk('students/getStudentDetails', async (data, { rejectWithValue }) => {
+ try {
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}managerUser/student/getUsersList`, data, axiosConfig)
+  return response.data
+ } catch (err) {
+  if (!err.response) {
+   throw err
+  }
+  return rejectWithValue(err.response.data)
  }
 })
 
@@ -127,7 +134,9 @@ const initialState = {
  BatchUpdateList: [],
  ProfileUpdateRequestList: [],
  isError: false,
- StudentsDataUpdated: false
+ StudentsDataUpdated: false,
+ AppliedFilters: {},
+ StudentDetails: {}
 }
 
 const students = createSlice({
@@ -136,6 +145,12 @@ const students = createSlice({
  reducers: {
   StudentDataIsLoading: (state, action) => {
    state.isLoading = true
+  },
+  applyStudentFilter: (state, action) => {
+   state.AppliedFilters = action.payload
+  },
+  clearStudentFilter: (state, action) => {
+   state.AppliedFilters = {}
   }
  },
  extraReducers: (builder) => {
@@ -145,6 +160,16 @@ const students = createSlice({
    state.StudentList = action.payload
   });
   builder.addCase(GetAllStudentsList.rejected, (state, action) => {
+   console.log("Error", action.payload);
+   state.isError = true
+  });
+
+  builder.addCase(GetStudentDetails.fulfilled, (state, action) => {
+   state.isLoading = false;
+   state.StudentsDataUpdated = false
+   state.StudentDetails = action.payload
+  });
+  builder.addCase(GetStudentDetails.rejected, (state, action) => {
    console.log("Error", action.payload);
    state.isError = true
   });
@@ -199,5 +224,5 @@ const students = createSlice({
 
  },
 })
-export const { StudentDataIsLoading } = students.actions;
+export const { StudentDataIsLoading, applyStudentFilter, clearStudentFilter } = students.actions;
 export default students.reducer;

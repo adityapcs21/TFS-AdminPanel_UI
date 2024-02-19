@@ -7,44 +7,63 @@ let axiosConfig = {
   }
 };
 
-export const getAllBlogs = createAsyncThunk('blogs/getAllBlogs', async (data) => {
+export const getAllBlogs = createAsyncThunk('blogs/getAllBlogs', async (data, { rejectWithValue }) => {
   try {
     const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}blog/getAllBlogs`, data)
-    return response.data;
-  } catch (error) {
-    console.error(error);
+    return response.data
+  } catch (err) {
+    if (!err.response) {
+      throw err
+    }
+    return rejectWithValue(err.response.data)
   }
 })
 
-export const SaveBlog = createAsyncThunk('blogs/saveBlog', async (data) => {
+export const SaveBlog = createAsyncThunk('blogs/saveBlog', async (data, { rejectWithValue }) => {
   try {
     const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}blog/createBlog`, data, axiosConfig)
-    console.log("------", response)
-    if (response && response.data) {
-      return response.data;
+    return response.data
+  } catch (err) {
+    if (!err.response) {
+      throw err
     }
-  } catch (error) {
-    console.log(error)
+    return rejectWithValue(err.response.data)
   }
 })
 
-export const UpdateBlog = createAsyncThunk('blogs/updateBlog', async (data) => {
+export const UpdateBlog = createAsyncThunk('blogs/updateBlog', async (data, { rejectWithValue }) => {
   try {
     const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}blog/updateBlog`, data, axiosConfig);
-    return response.data;
-  } catch (error) {
-    console.log(error)
+    return response.data
+  } catch (err) {
+    if (!err.response) {
+      throw err
+    }
+    return rejectWithValue(err.response.data)
   }
 })
 
-export const DeleteBlogById = createAsyncThunk('blogs/deleteBlogById', async (id) => {
+export const DeleteBlogById = createAsyncThunk('blogs/deleteBlogById', async (id, { rejectWithValue }) => {
   try {
     const response = await jwtInterceptor.delete(`${process.env.REACT_APP_API_ENDPOINT}blog/deleteBlog?blogId=${id}`, axiosConfig);
-    return response.data;
-  } catch (error) {
-    if (!error.response) {
-      throw error
+    return response.data
+  } catch (err) {
+    if (!err.response) {
+      throw err
     }
+    return rejectWithValue(err.response.data)
+  }
+});
+
+export const GetBlogDetails = createAsyncThunk('blogs/getBlogDetails', async (id, { rejectWithValue }) => {
+  try {
+    const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}blog/getBlogDetails?blogId=${id}`);
+    return response.data
+  } catch (err) {
+    if (!err.response) {
+      throw err
+    }
+    return rejectWithValue(err.response.data)
   }
 })
 
@@ -53,7 +72,8 @@ const initialState = {
   BlogData: {},
   isError: false,
   newBlogAdded: false,
-  isMediaUploading: false
+  isMediaUploading: false,
+  BlogDetails: {}
 }
 
 const blogSlice = createSlice({
@@ -106,6 +126,14 @@ const blogSlice = createSlice({
       state.BlogData = action.payload
     });
     builder.addCase(DeleteBlogById.rejected, (state, action) => {
+      state.isError = true
+    })
+    //------------------------blog details-----------------------------
+    builder.addCase(GetBlogDetails.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.BlogDetails = action.payload
+    });
+    builder.addCase(GetBlogDetails.rejected, (state, action) => {
       state.isError = true
     })
   },

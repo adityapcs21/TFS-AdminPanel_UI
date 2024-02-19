@@ -6,6 +6,7 @@ import moment from "moment"
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from "react-redux"
 import { ApproveBatchUpdateRequest } from "../../redux/slice/students"
+import Swal from "sweetalert2"
 
 
 const schema = yup.object({
@@ -19,7 +20,7 @@ const schema = yup.object({
 const actionOption = [{ value: "APPROVED", label: 'APPROVED' }, { value: "CANCELLED", label: 'CANCELLED' }, { value: "PROCESS", label: 'PROCESS' }, { value: "REJECT", label: 'REJECT' }, { value: "APPROVE", label: "APPROVE" }]
 
 export default function ApproveStudentModal({ data, onClose }) {
- const { userName, requestStatus, price, subscriptionStartDate, subscriptionEndDate } = data;
+ const { uniqueId, userName, requestStatus, price, subscriptionStartDate, subscriptionEndDate } = data;
  const dispatch = useDispatch();
 
  const {
@@ -31,10 +32,29 @@ export default function ApproveStudentModal({ data, onClose }) {
  })
  console.log(errors)
  const onSubmit = (data, event) => {
-
-  data.subscriptionStartDate = moment(data.subscriptionStartDate).format('DD/MM/YYYY');
-  data.subscriptionEndDate = moment(data.subscriptionEndDate).format('DD/MM/YYYY');
-  dispatch(ApproveBatchUpdateRequest(data))
+  delete data["userName"];
+  data.uniqueId = uniqueId
+  data.subscriptionStartDate = moment(data.subscriptionStartDate).format('DD-MM-YYYY');
+  data.subscriptionEndDate = moment(data.subscriptionEndDate).format('DD-MM-YYYY');
+  onClose()
+  Swal.fire({
+   title: "Are you sure?",
+   text: "You want to process?",
+   icon: "warning",
+   showCancelButton: true,
+   confirmButtonColor: "#2c4c74",
+   cancelButtonColor: "#d33",
+   confirmButtonText: "Yes, process it!"
+  }).then((result) => {
+   if (result.isConfirmed) {
+    Swal.fire({
+     title: "Success!",
+     text: "Your request has been processed.",
+     icon: "success"
+    });
+    dispatch(ApproveBatchUpdateRequest(data))
+   }
+  });
  }
 
 
@@ -149,8 +169,8 @@ export default function ApproveStudentModal({ data, onClose }) {
     </Grid>
     <Grid item xs={12} mt={2}>
      <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>
-      <Button type="submit" variant="contained" color="warning" name="REJECT">REJECT</Button>
-      <Button type="submit" variant="contained" color="primary" name="PROCESS">PROCESS</Button>
+      {(requestStatus === "SUBMITTED" || requestStatus === "PENDING") && <Button type="submit" variant="contained" color="warning" name="REJECT">REJECT</Button>}
+      {requestStatus === "SUBMITTED" && <Button type="submit" variant="contained" color="primary" name="PROCESS">PROCESS</Button>}
      </Box>
     </Grid>
    </form>

@@ -4,7 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { TextField, Button, Grid, Container, Box, Typography } from '@mui/material';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { UpdateStudentData } from '../../redux/slice/students';
 
@@ -16,14 +16,16 @@ const validationSchema = yup.object().shape({
  lastName: yup.string().required(),
  emailAddress: yup.string().email().required(),
  mobileNumber: yup.string().matches(phoneRegExp, 'Phone number is not valid'),
- subscriptionStartDate: yup.date().required(),
- subscriptionEndDate: yup.date().required(),
+ subscriptionStartDate: yup.date("This is not valid date").required("Subscription start date is required."),
+ subscriptionEndDate: yup.date().required("Subscription end date is required."),
  subscriptionType: yup.string().required(),
  batchNo: yup.number().required(),
  status: yup.string().required(),
 });
 
 const UpdateStudent = ({ onClose, editData }) => {
+ const StudentDetails = useSelector((state) => state.students.StudentDetails?.userList[0]);
+
  const {
   uniqueId,
   batchNo,
@@ -35,7 +37,7 @@ const UpdateStudent = ({ onClose, editData }) => {
   subscriptionStartDate,
   subscriptionEndDate,
   subscriptionType,
- } = editData
+ } = StudentDetails
 
  const dispatch = useDispatch()
  const { control, handleSubmit, formState: { errors } } = useForm({
