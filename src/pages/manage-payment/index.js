@@ -31,8 +31,9 @@ export default function ManagePayment() {
  useEffect(() => {
   let payload = {
    "userId": "10011",
-   "paymentStatus": appliedFilters.paymentStatus,//created, attempted, paid
-   "fromDate": appliedFilters.fromDate, //21-01-2024
+   "paymentStatus": appliedFilters.paymentStatus,
+   "action": appliedFilters.action,
+   "fromDate": appliedFilters.fromDate,
    "toDate": appliedFilters.toDate,
    "pageNo": page + 1,
    "perPageResults": rowsPerPage
@@ -50,15 +51,24 @@ export default function ManagePayment() {
  };
 
  const handleFilter = (data) => {
-  if (data.fromDate && data.fromDate) {
+
+  if (data.toDate === null || data.fromDate === null) {
+   delete data["fromDate"];
+   delete data["toDate"];
+  } else {
    data.fromDate = moment(data.fromDate).format('DD-MM-YYYY');
    data.toDate = moment(data.toDate).format('DD-MM-YYYY');
+
   }
-  setPage(0);
-  setRowsPerPage(5)
-  dispatch(ManagePaymentIsLoading())
-  dispatch(ApplyFilters(data))
-  setOpenFilterModal(prevState => !prevState)
+  if (Object.keys(data).length > 0) {
+
+   setPage(0);
+   setRowsPerPage(5)
+   dispatch(ManagePaymentIsLoading())
+   dispatch(ApplyFilters(data))
+   setOpenFilterModal(prevState => !prevState)
+  }
+
  };
 
  const handleClearFilter = () => {

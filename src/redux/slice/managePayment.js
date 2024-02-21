@@ -52,6 +52,6 @@ const managePayment = createSlice({
 
  },
 })
-export const { ApplyFilters, ManagePaymentIsLoading,ClearPaymentFilter } = managePayment.actions;
+export const { ApplyFilters, ManagePaymentIsLoading, ClearPaymentFilter } = managePayment.actions;
 
 export default managePayment.reducer;
