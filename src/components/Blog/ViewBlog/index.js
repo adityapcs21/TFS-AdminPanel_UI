@@ -31,12 +31,12 @@ const ViewBlog = ({ data, onClose }) => {
 
  return (
   <Container >
-   <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>
+   <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '6px 0px' }}>
     <Typography variant='h5'>View Blog Details</Typography>
     <CloseIcon sx={{ cursor: 'pointer' }} onClick={onClose} />
    </Box>
    <form onSubmit={handleSubmit(onSubmit)}>
-    <Grid container spacing={2}>
+    <Grid container spacing={1}>
      <Grid item xs={6}>
       <Controller
        disabled
@@ -100,8 +100,8 @@ const ViewBlog = ({ data, onClose }) => {
 
      <Grid item xs={12}>
       <Typography variant='h6'>Comments</Typography>
-      <Box sx={{ maxHeight: '100px', overflow: 'auto' }}>
-       {comments ? comments.map((item, index) => (
+      <Box sx={{ maxHeight: '180px', overflow: 'auto' }}>
+       {comments && comments.length > 0 ? comments.map((item, index) => (
         < Stack direction={'row'} spacing={2} mb={1}>
          <AvatarWithLetters fullName={item.userName} />
          <Box>

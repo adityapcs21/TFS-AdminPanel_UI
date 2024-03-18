@@ -8,6 +8,9 @@ import { useDispatch } from 'react-redux';
 import { setUserDetails, setUserToken } from './redux/slice/auth';
 
 function App() {
+  if (process.env.NODE_ENV !== 'development') {
+    console.log = function () { }
+  }
   const dispatch = useDispatch()
   const [token, setToken] = useState(JSON.parse(localStorage.getItem("userDetails")))
 

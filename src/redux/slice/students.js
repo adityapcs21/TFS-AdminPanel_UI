@@ -9,12 +9,15 @@ let axiosConfig = {
 export const GetAllStudentsList = createAsyncThunk('students/getAllStudents', async (data, { rejectWithValue }) => {
  try {
   const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}managerUser/student/getUsersList`, data, axiosConfig)
-  return response.data
- } catch (err) {
-  if (!err.response) {
-   throw err
+  if (response && response.status === 200) {
+   return response.data
+  } else {
+   console.log(response)
+   return
   }
-  return rejectWithValue(err.response.data)
+ } catch (error) {
+  console.log("error", error)
+  return
  }
 })
 

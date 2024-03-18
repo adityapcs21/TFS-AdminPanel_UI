@@ -6,33 +6,39 @@ let axiosConfig = {
   "Authorization": localStorage.getItem("token")
  }
 };
-export const GetAllSubscriptionPlan = createAsyncThunk('manageSubscription/getAllStudents', async () => {
+
+
+// export const GetAllSubscriptionPlan = createAsyncThunk('manageSubscription/getAllSubscriptionPlan', async ({ rejectWithValue }) => {
+//  try {
+//   const response = await jwtInterceptor.get(`https://rudf4zn65l.execute-api.ap-south-1.amazonaws.com/dev/gallery/getAllGallery`)
+//   console.log("fghjkl", response)
+//   return response.data
+//  } catch (err) {
+//   if (!err.response) {
+//    throw err
+//   }
+//   return rejectWithValue(err.response.data)
+//  }
+// })
+
+export const GetAllSubscriptionPlan = createAsyncThunk('manageSubscription/getAllSubscriptionPlan', async () => {
  try {
-  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}managePlan/getAllSubscriptionPlan`)
-  if (response && response.status === 200) {
-   return response.data
-  } else {
-   console.log(response)
-   return
-  }
+  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}managePlan/getAllSubscriptionPlan`, axiosConfig)
+  return response.data;
  } catch (error) {
-  console.log("error", error)
-  return
+  console.error(error);
  }
 })
 
-export const CreateSubscriptionPlan = createAsyncThunk('manageSubscription/createSubscriptionPlan', async (data) => {
+export const CreateSubscriptionPlan = createAsyncThunk('manageSubscription/createSubscriptionPlan', async (data, { rejectWithValue }) => {
  try {
   const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}managePlan/createSubscriptionPlan`, data, axiosConfig)
-  if (response && response.status === 200) {
-   return response.data
-  } else {
-   console.log(response)
-   return
+  return response.data
+ } catch (err) {
+  if (!err.response) {
+   throw err
   }
- } catch (error) {
-  console.log("error", error)
-  return
+  return rejectWithValue(err.response.data)
  }
 })
 

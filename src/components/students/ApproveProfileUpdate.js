@@ -5,6 +5,7 @@ import { Box, Button, Container, Grid, TextField, Typography } from "@mui/materi
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from "react-redux"
 import { ApproveProfileUpdateRequest } from "../../redux/slice/students"
+import { useState } from "react";
 
 
 const schema = yup.object({
@@ -16,15 +17,16 @@ export default function ApproveProfileUpdate({ data, onClose }) {
  const { uniqueId } = data;
 
  const dispatch = useDispatch();
+ const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")));
+
 
  const { handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  })
- console.log("errpr", errors)
 
  const onSubmit = (data) => {
-  console.log("data", data)
   dispatch(ApproveProfileUpdateRequest(data))
+  onClose()
  }
 
 
@@ -173,13 +175,19 @@ export default function ApproveProfileUpdate({ data, onClose }) {
       </Grid>
       <Grid item xs={12} mt={2}>
        <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>
-        <Button name="REJECT" type="submit" variant="contained" color="warning" >REJECT</Button>
-        <Button name="APPROVE" type="submit" variant="contained" color="primary">APPROVE</Button>
+        {userDetails.role === "SUPER USER"
+         && data.requestStatus === "SUBMITTED" &&
+         <>
+          <Button name="REJECT" type="submit" variant="contained" color="warning" >REJECT</Button>
+          <Button name="APPROVE" type="submit" variant="contained" color="primary">APPROVE</Button>
+         </>
+
+        }
        </Box>
       </Grid>
      </form>
     </Grid>
-   </Grid>
+   </Grid >
   </Container >
  )
 }

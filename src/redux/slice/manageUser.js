@@ -45,6 +45,18 @@ export const DeleteAdminById = createAsyncThunk('manageUser/deleteUser', async (
  }
 })
 
+export const UnlockAdmin = createAsyncThunk('manageUser/unlockAdmin', async (emailId, { rejectWithValue }) => {
+ try {
+  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}managerUser/admin/unlock?emailId=${emailId}`, axiosConfig);
+  return response.data
+ } catch (err) {
+  if (!err.response) {
+   throw err
+  }
+  return rejectWithValue(err.response.data)
+ }
+})
+
 const initialState = {
  isLoading: false,
  UserList: [],
@@ -100,6 +112,13 @@ const manageUser = createSlice({
   });
   builder.addCase(DeleteAdminById.rejected, (state, action) => {
    console.log("Error", action.payload);
+   state.isError = true
+  })
+
+  builder.addCase(UnlockAdmin.fulfilled, (state, action) => {
+   state.isLoading = false;
+  });
+  builder.addCase(UnlockAdmin.rejected, (state, action) => {
    state.isError = true
   })
  },

@@ -10,6 +10,9 @@ import customerQueryReducer from "./slice/customer-query";
 import studentsReducer from "./slice/students";
 import manageSubscriptionReducer from "./slice/manageSubscription";
 import managePaymentReducer from './slice/managePayment'
+import buddyAssignmentReducer from './slice/buddyAssignment'
+import eventsReducer from './slice/events'
+
 
 export const store = configureStore({
  reducer: {
@@ -23,6 +26,8 @@ export const store = configureStore({
   customerQuery: customerQueryReducer,
   students: studentsReducer,
   manageSubscription: manageSubscriptionReducer,
-  managePayment: managePaymentReducer
+  managePayment: managePaymentReducer,
+  buddyAssignment: buddyAssignmentReducer,
+  events: eventsReducer
  }
 });

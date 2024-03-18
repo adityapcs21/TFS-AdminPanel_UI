@@ -30,13 +30,28 @@ import CollectionsIcon from '@mui/icons-material/Collections';
 import InfoIcon from '@mui/icons-material/Info';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import EventIcon from '@mui/icons-material/Event';
 
 
 const drawerWidth = 270;
 
 export const menuOptions = {
   "SUPER USER": [
-    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon color='inherit' />, subCategory: [{ label: 'Admin', subCatUrl: routeNames.USERMANAGEMENT }, { label: 'Email Subscribed User', subCatUrl: routeNames.SUBSCRIBEDEMAIL }, { label: 'Customer Query', subCatUrl: routeNames.CUSTOMERQUERY }, { label: 'All Students', subCatUrl: routeNames.STUDENTS }, { label: 'Batch Change Requests', subCatUrl: routeNames.STUDENTBATCHCHANGE }, { label: 'Update Profile', subCatUrl: routeNames.UPDATEPROFILE }, { label: 'Renew Pending Students', subCatUrl: routeNames.RENEWPENDINGSTUDENTS }] },
+    {
+      label: 'Manage User',
+      url: routeNames.USERMANAGEMENT,
+      icons: <SupervisorAccountIcon color='inherit' />,
+      subCategory: [
+        { label: 'Admin', subCatUrl: routeNames.USERMANAGEMENT },
+        { label: 'Email Subscribed User', subCatUrl: routeNames.SUBSCRIBEDEMAIL },
+        { label: 'Customer Query', subCatUrl: routeNames.CUSTOMERQUERY },
+        { label: 'All Students', subCatUrl: routeNames.STUDENTS },
+        { label: 'Batch Change Requests', subCatUrl: routeNames.STUDENTBATCHCHANGE },
+        { label: 'Update Profile Requests', subCatUrl: routeNames.UPDATEPROFILE },
+        { label: 'Assign Buddy', subCatUrl: routeNames.ASSIGNBUDDY },
+        { label: 'My Assigned User', subCatUrl: routeNames.MYASSIGNEDUSER },
+      ]
+    },
     { label: 'Manage Subscription', url: routeNames.MANAGESUBSCRIPTION, icons: <RequestQuoteIcon color='inherit' />, subCategory: [] },
     { label: 'Manage Payments', url: routeNames.MANAGEPAYMENT, icons: <AccountBalanceIcon color='inherit' />, subCategory: [] },
     { label: 'Blog', url: routeNames.BLOG, icons: <RssFeedIcon color='inherit' />, subCategory: [] },
@@ -44,9 +59,21 @@ export const menuOptions = {
     { label: 'About-Us', url: routeNames.ABOUTUS, icons: <InfoIcon color='inherit' />, subCategory: [] },
     // { label: 'Contact-Us', url: routeNames.CONTACTUS, icons: <ContactMailIcon />, subCategory: [] },
     { label: 'Banner', url: routeNames.BANNER, icons: <CollectionsIcon color='inherit' />, subCategory: [] },
+    { label: 'Events', url: routeNames.EVENTS, icons: <EventIcon color='inherit' />, subCategory: [] },
   ],
   "RENEWAL LEAD": [
-    { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon color='inherit' />, subCategory: [{ label: 'All Students', subCatUrl: routeNames.STUDENTS }, { label: 'Assigned Students', subCatUrl: "#" }] },
+    {
+      label: 'Manage User',
+      url: routeNames.USERMANAGEMENT,
+      icons: <SupervisorAccountIcon color='inherit' />,
+      subCategory: [
+        { label: 'All Students', subCatUrl: routeNames.STUDENTS },
+        { label: 'Assign Buddy', subCatUrl: routeNames.ASSIGNBUDDY },
+        { label: 'My Assigned User', subCatUrl: routeNames.MYASSIGNEDUSER },
+        { label: 'Assigned Students', subCatUrl: "#" },
+        { label: 'Batch Change Requests', subCatUrl: routeNames.STUDENTBATCHCHANGE },
+      ]
+    },
   ],
   "RENEWAL": [
     { label: 'Manage User', url: routeNames.USERMANAGEMENT, icons: <SupervisorAccountIcon color='inherit' />, subCategory: [{ label: 'All Students', subCatUrl: routeNames.STUDENTS }, { label: 'Assigned Students', subCatUrl: "#" }] },
@@ -57,6 +84,7 @@ export const menuOptions = {
   "SOCIAL MEDIA MANAGER": [
     { label: 'Gallery', url: routeNames.GALLERY, icons: <CollectionsIcon color='inherit' />, subCategory: [{ label: 'Images', subCatUrl: routeNames.IMAGEGALLERY }, { label: 'Videos', subCatUrl: routeNames.VIDEOGALLERY }] },
     { label: 'Banner', url: routeNames.BANNER, icons: <CollectionsIcon color='inherit' />, subCategory: [] },
+    { label: 'Events', url: routeNames.EVENTS, icons: <EventIcon color='inherit' />, subCategory: [] },
   ]
 }
 

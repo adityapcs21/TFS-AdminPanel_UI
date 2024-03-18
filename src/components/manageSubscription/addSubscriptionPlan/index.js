@@ -20,8 +20,6 @@ const AddSubscriptionPlan = ({ onClose }) => {
  });
 
  const onSubmit = (data) => {
-  // Handle form submission logic here
-  console.log(data);
   dispatch(CreateSubscriptionPlan(data))
  };
 
@@ -59,7 +57,7 @@ const AddSubscriptionPlan = ({ onClose }) => {
          <Select {...field} error={!!errors.planName} label="Subscription Type">
           <MenuItem value="Annual">Annual</MenuItem>
           <MenuItem value="Half Yearly">Half Yearly</MenuItem>
-          <MenuItem value="Quarterly">Quarterly</MenuItem>
+          {/* <MenuItem value="Quarterly">Quarterly</MenuItem> */}
          </Select>
          <FormHelperText>{errors.planName?.message}</FormHelperText>
         </FormControl>

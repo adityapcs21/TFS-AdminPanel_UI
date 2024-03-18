@@ -6,6 +6,7 @@ import { ApplyFilters, ClearPaymentFilter, GetPaymentList, ManagePaymentIsLoadin
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog'
 import ManagePaymentFilters from '../../components/managePayment/ManagePaymentFilter'
 import moment from 'moment'
+import Loader from '../../common/loader'
 
 const columns = [
  { id: 'transactionId', label: "Transaction Id" },
@@ -23,6 +24,8 @@ export default function ManagePayment() {
  const PaymentList = useSelector(state => state.managePayment.paymentDetails?.transactionList)
  const totalPages = useSelector(state => state.managePayment.paymentDetails?.size);
  const appliedFilters = useSelector(state => state.managePayment.appliedFilters);
+ const isLoading = useSelector(state => state.managePayment.isLoading);
+
 
  const [page, setPage] = useState(0);
  const [rowsPerPage, setRowsPerPage] = useState(6);
@@ -30,7 +33,7 @@ export default function ManagePayment() {
 
  useEffect(() => {
   let payload = {
-   "userId": "10011",
+   // "userId": "10011",
    "paymentStatus": appliedFilters.paymentStatus,
    "action": appliedFilters.action,
    "fromDate": appliedFilters.fromDate,
@@ -38,6 +41,7 @@ export default function ManagePayment() {
    "pageNo": page + 1,
    "perPageResults": rowsPerPage
   }
+  dispatch(ManagePaymentIsLoading())
   dispatch(GetPaymentList(payload))
  }, [page, rowsPerPage, appliedFilters])
 
@@ -97,16 +101,21 @@ export default function ManagePayment() {
     </Box>
    </Grid>
    <Grid item xs={12}>
-    <ReusableTable
-     columns={columns}
-     data={PaymentList}
-     disableActionButton
-     onPageChange={handleChangePage}
-     onRowsPerPageChange={handleChangeRowsPerPage}
-     page={page}
-     rowsPerPage={rowsPerPage}
-     count={totalPages}
-    />
+    {
+     isLoading ?
+      <Loader />
+      :
+      <ReusableTable
+       columns={columns}
+       data={PaymentList}
+       disableActionButton
+       onPageChange={handleChangePage}
+       onRowsPerPageChange={handleChangeRowsPerPage}
+       page={page}
+       rowsPerPage={rowsPerPage}
+       count={totalPages}
+      />
+    }
    </Grid>
 
    <ReusbaleDialog maxWidth="sm" open={openFilterModal} onClose={() => setOpenFilterModal(prevState => !prevState)}>

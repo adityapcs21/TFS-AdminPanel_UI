@@ -24,7 +24,7 @@ export default function BatchUpdateRequest() {
   const BatchUpdateList = useSelector((state) => state.students.BatchUpdateList?.userList);
   const ListSize = useSelector((state) => state.students.BatchUpdateList?.size);
   const isLoading = useSelector((state) => state.students.isLoading);
-  const StudentsDataUpdated = useSelector(state => state.StudentsDataUpdated)
+  const StudentsDataUpdated = useSelector(state => state.students.StudentsDataUpdated)
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -34,9 +34,9 @@ export default function BatchUpdateRequest() {
 
   useEffect(() => {
     let payload = {
-      "requestId": "",
-      "uniqueId": "",
-      "requestStatus": "",//APPROVED,REJECTED,CANCELLED,FAILED,PENDING,SUBMITTED
+      // "requestId": "",
+      // "uniqueId": "",
+      // "requestStatus": "",
       "pageNo": page + 1,
       "perPageResults": rowsPerPage
     }
@@ -48,9 +48,6 @@ export default function BatchUpdateRequest() {
   useEffect(() => {
     if (StudentsDataUpdated) {
       let payload = {
-        "requestId": "",
-        "uniqueId": "",
-        "requestStatus": "",//APPROVED,REJECTED,CANCELLED,FAILED,PENDING,SUBMITTED
         "pageNo": page + 1,
         "perPageResults": rowsPerPage
       }

@@ -15,7 +15,11 @@ const routeNames = {
  STUDENTBATCHCHANGE: '/student-batch-change',
  UPDATEPROFILE: '/student-profile-update',
  RENEWPENDINGSTUDENTS: '/renew-pending-students',
+ ASSIGNBUDDY: '/assign-buddy',
+ MYASSIGNEDUSER: '/my-assigned-user',
  CONTACTUS: '/contact-us',
- BANNER: '/banner'
+ BANNER: '/banner',
+ EVENTS: '/event'
+
 }
 export default routeNames;

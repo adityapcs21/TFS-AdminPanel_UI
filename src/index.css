@@ -33,3 +33,13 @@ code {
 .richtext-editor-textarea .public-DraftStyleDefault-block{
   margin: 0 !important;
 }
+
+.event-text-editor{
+  min-height: 80px;
+  max-height: 80px;
+  padding: 0px 10px;
+}
+
+.event-text-editor .public-DraftStyleDefault-block{
+  margin: 0 !important;
+}

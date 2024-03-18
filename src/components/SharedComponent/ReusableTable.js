@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, IconButton, Box,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, TableSortLabel, IconButton, Box, Tooltip,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import styled from '@emotion/styled';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 
-const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, disableDelete, disableEdit, disableActionButton, onPageChange, onRowsPerPageChange, page, rowsPerPage, count }) => {
+
+const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, disableDelete, disableEdit, disableActionButton, onPageChange, onRowsPerPageChange, page, rowsPerPage, count, unlock, handleUnlock }) => {
   const [orderBy, setOrderBy] = useState('');
   const [order, setOrder] = useState('asc');
 
@@ -57,6 +59,8 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, d
               </TableCell>
             ))}
             {!disableActionButton && <TableCell sx={{ textWrap: 'nowrap', fontWeight: 600 }}>Actions</TableCell>}
+
+
           </TableRow>
         </TableHead>
         <TableBody>
@@ -69,21 +73,42 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, d
                   </TableCell>
                 )
               })}
-              {!disableActionButton && <TableCell>
-                <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  {!disableView && <IconContainer onClick={() => onView(row)}>
-                    <VisibilityIcon />
-                  </IconContainer>}
+              {!disableActionButton &&
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    {!disableView &&
+                      <IconContainer onClick={() => onView(row)}>
+                        <Tooltip title="View">
+                          <VisibilityIcon />
+                        </Tooltip>
+                      </IconContainer>}
 
-                  {!disableEdit && <IconContainer onClick={() => onEdit(row)}>
-                    <EditIcon />
-                  </IconContainer >}
+                    {!disableEdit &&
+                      <IconContainer onClick={() => onEdit(row)}>
+                        <Tooltip title="Update">
+                          <EditIcon />
+                        </Tooltip>
+                      </IconContainer >
+                    }
 
-                  {!disableDelete && <IconContainer onClick={() => onDelete(row)}>
-                    <DeleteIcon />
-                  </IconContainer>}
-                </Box>
-              </TableCell>}
+                    {!disableDelete &&
+                      <IconContainer onClick={() => onDelete(row)}>
+                        <Tooltip title="Delete">
+                          <DeleteIcon />
+                        </Tooltip>
+                      </IconContainer>
+                    }
+
+                    {unlock &&
+                      <IconContainer onClick={() => handleUnlock(row)}>
+                        <Tooltip title="Unlock User">
+                          <LockOpenIcon />
+                        </Tooltip>
+                      </IconContainer>}
+
+                  </Box>
+                </TableCell>
+              }
             </TableRow>
           ))}
         </TableBody>

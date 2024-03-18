@@ -20,15 +20,12 @@ const AddBannerModal = ({ onClose }) => {
   const dispatch = useDispatch()
   const isLoading = useSelector((state) => state.banner.isMediaUploading);
 
-  console.log("banner", isLoading)
-
   const [file, setFile] = useState([]);
   const [fileName, setFileName] = useState([])
   const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
-  console.log("file", file)
 
   async function onSubmit(data) {
     const resultsArray = [];
@@ -50,7 +47,6 @@ const AddBannerModal = ({ onClose }) => {
       "url": resultsArray.toString(),
       "bannerId": uid
     }
-    console.log("payload", payload)
     dispatch(CreateBanner(payload))
     onClose()
   };
@@ -122,7 +118,6 @@ const AddBannerModal = ({ onClose }) => {
                 Upload
               </Button>
               {file && file.length > 0 && file.map((item) => {
-                console.log("item", item)
                 return (
                   <Box sx={{ width: '80px', height: '80px', position: 'relative' }}>
                     <img src={item} width="80px" height="80px" alt='thumbnail' />

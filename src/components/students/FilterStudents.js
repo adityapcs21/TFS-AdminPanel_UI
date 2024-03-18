@@ -56,10 +56,7 @@ export default function FilterStudents({ onClose, handleFilter }) {
     },
   });
 
-  console.log("appliedFilters", appliedFilters)
-
   const ResetFilter = () => {
-    console.log("callasdm")
     reset({
       search: "",
       status: "",

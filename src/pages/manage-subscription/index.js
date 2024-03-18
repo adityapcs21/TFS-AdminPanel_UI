@@ -7,6 +7,7 @@ import AddSubscriptionPlan from '../../components/manageSubscription/addSubscrip
 import UpdateSubscriptionPlan from '../../components/manageSubscription/updateSubscriptionPlan'
 import Swal from 'sweetalert2'
 import Loader from '../../common/loader'
+import { GetPaymentList } from '../../redux/slice/managePayment'
 
 
 
@@ -23,8 +24,9 @@ export default function ManageSubscription() {
 
 
   useEffect(() => {
-    dispatch(subscriptionDataLoading());
+    console.log("bdjbod")
     dispatch(GetAllSubscriptionPlan())
+    dispatch(subscriptionDataLoading());
   }, []);
 
   useEffect(() => {
@@ -84,7 +86,7 @@ export default function ManageSubscription() {
         <Grid container spacing={3}>
           {
             !isLoading ? data && data.map((item, index) => (
-              <Grid item xs={4}>
+              <Grid item xs={4} key={index}>
                 <Card sx={{ maxWidth: 345, padding: '20px' }}>
                   <Box sx={{ background: '#ecf0fa', width: '100%', overflow: "hidden", padding: '10px 20px', borderRadius: '5px', display: 'flex', justifyContent: 'center' }}>
                     <Typography sx={{ fontSize: '18px', fontWeight: '500', textTransform: 'uppercase', }}>{item.planName}</Typography>

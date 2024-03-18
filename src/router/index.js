@@ -14,6 +14,9 @@ import BatchUpdateRequest from "../pages/batch-update-request/index.js";
 import UpdateProfile from "../pages/update-profile/index.js";
 import ManageSubscription from "../pages/manage-subscription/index.js";
 import ManagePayment from "../pages/manage-payment/index.js";
+import AssignBuddy from "../pages/assign-buddy/index.js";
+import MyAssignedUser from "../pages/my-assigned-user/index.js";
+import Events from "../pages/events/index.js";
 // import CustomerQuery from "../pages/customer-query/index.js";
 
 
@@ -45,11 +48,14 @@ const Router = () => {
           <Route path={routeNames.STUDENTBATCHCHANGE} element={<BatchUpdateRequest />} />
           <Route path={routeNames.UPDATEPROFILE} element={<UpdateProfile />} />
           <Route path={routeNames.RENEWPENDINGSTUDENTS} element={<RenewPendingStudents />} />
+          <Route path={routeNames.ASSIGNBUDDY} element={<AssignBuddy />} />
+          <Route path={routeNames.MYASSIGNEDUSER} element={<MyAssignedUser />} />
           <Route path={routeNames.ABOUTUS} element={< AboutUs />} />
           <Route path={routeNames.CONTACTUS} element={< ContactUs />} />
           <Route path={routeNames.IMAGEGALLERY} element={< ImageGallery />} />
           <Route path={routeNames.VIDEOGALLERY} element={<VideoGallery />} />
           <Route path={routeNames.BANNER} element={<Banner />} />
+          <Route path={routeNames.EVENTS} element={<Events />} />
         </Route>
         {/* <Route path={routeNames.ERROR} element={<ErrorPage />} /> */}
       </Routes>

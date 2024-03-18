@@ -37,7 +37,7 @@ const schema = yup.object().shape({
 
 const ManagePaymentFilters = ({ handleFilter, onClose }) => {
   const appliedFilters = useSelector(state => state.managePayment.appliedFilters);
-  console.log(appliedFilters)
+
   const { handleSubmit, control, reset, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
