@@ -2,11 +2,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import { UpdateAdminUser } from '../../../redux/slice/manageUser';
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { MenuItem, TextField, Button, Grid, Container, Box, Typography } from '@mui/material';
+import { MenuItem, TextField, Button, Grid, Container, Box, Typography, Tabs, Tab } from '@mui/material';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
+import ChangePassword from '../ChangeAdminPassword';
 
 const userRoles = [
  {
@@ -50,6 +51,8 @@ const UpdateAdmin = ({ onClose, editData }) => {
 
  const [selectedFirst, setSelectedFirst] = useState(group);
  const [selectedSecond, setSelectedSecond] = useState(subgroup)
+ const [value, setValue] = React.useState(0);
+
 
  const dispatch = useDispatch()
  const { control, handleSubmit, watch, formState: { errors } } = useForm({
@@ -81,124 +84,178 @@ const UpdateAdmin = ({ onClose, editData }) => {
   onClose()
  };
 
+ const handleChange = (event, newValue) => {
+  setValue(newValue);
+ };
+
+ function a11yProps(index) {
+  return {
+   id: `full-width-tab-${index}`,
+   'aria-controls': `full-width-tabpanel-${index}`,
+  };
+ }
+
+ function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+   <div
+    role="tabpanel"
+    hidden={value !== index}
+    id={`full-width-tabpanel-${index}`}
+    aria-labelledby={`full-width-tab-${index}`}
+    {...other}
+   >
+    {value === index && (
+     <Box sx={{ p: 3 }}>
+      {children}
+     </Box>
+    )}
+   </div>
+  );
+ }
+
 
  return (
-  <Container >
-   <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>
-    <Typography variant='h5'>Update Admin</Typography>
-    <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
-   </Box>
-   <form onSubmit={handleSubmit((data) => {
-    data.status = "ACTIVE";
-    onSubmit(data);
-   })}>
-    <Grid container spacing={2}>
-     <Grid item xs={12}>
-      <Controller
-       defaultValue={emailId}
-       name="emailId"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="Email Id" {...field} error={!!errors.emailId} helperText={errors.emailId?.message} />
-       )}
-      />
-      <Box sx={{ minHeight: '16px' }}></Box>
-     </Grid>
-     <Grid item xs={12} md={6}>
-      <Controller
-       defaultValue={name}
-       name="name"
-       control={control}
-       render={({ field }) => (
-        <TextField fullWidth label="Name" {...field} error={!!errors.name} helperText={errors.name?.message} />
-       )}
-      />
-      <Box sx={{ minHeight: '16px' }}></Box>
-     </Grid>
-     <Grid item xs={12} md={6}>
-      <Controller
-       defaultValue={group}
-       name="group"
-       control={control}
-       render={({ field }) => (
-        <TextField
-         {...field}
-         select
-         label="Groups"
-         variant="outlined"
-         fullWidth
-         error={!!errors.group}
-         helperText={errors.group?.message}
-        >
-         {firstSelectOptions.map((option, key) => (
-          <MenuItem key={key} value={option.value}>
-           {option.label}
-          </MenuItem>
-         ))}
-        </TextField>
-       )}
-      />
-     </Grid>
-     <Grid item xs={12} md={6}>
-      <Controller
-       defaultValue={subgroup}
-       name="subgroup"
-       control={control}
-       render={({ field }) => (
-        <TextField
-         {...field}
-         disabled={!selectedFirst}
-         select
-         label="Sub Group"
-         variant="outlined"
-         fullWidth
-         error={!!errors.subgroup}
-         helperText={errors.subgroup?.message}
-        >
-         {secondSelectOptions.map((option, key) => (
-          <MenuItem key={key} value={option.value}>
-           {option.label}
-          </MenuItem>
-         ))}
-        </TextField>
-       )}
-      />
-     </Grid>
-     <Grid item xs={12} md={6}>
-      <Controller
-       defaultValue={userRole}
-       name="userRole"
-       control={control}
-       render={({ field }) => (
-        <TextField
-         {...field}
-         disabled={!selectedFirst || !selectedSecond}
-         select
-         label="User Roles"
-         variant="outlined"
-         fullWidth
-         error={!!errors.userRole}
-         helperText={errors.userRole?.message}
-        >
-         {thirdSelectOptions.map((option, key) => (
-          <MenuItem key={key} value={option.value}>
-           {option.label}
-          </MenuItem>
-         ))}
-        </TextField>
-       )}
-      />
-     </Grid>
+  <Container>
+   <Grid container spacing={2}>
+    <Grid item xs={12}>
+     <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>
+      {/* <Typography variant='h5'>Add Action to user</Typography> */}
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
+       <Tabs
+        value={value}
+        onChange={handleChange}
+        textColor="secondary"
+        indicatorColor="secondary"
+        aria-label="secondary tabs example"
+       >
+        <Tab label="Update User" {...a11yProps(0)} />
+        <Tab label="Change Password" {...a11yProps(1)} />
+       </Tabs>
 
-     <Grid item xs={12}>
-      <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>
-       <Button variant="contained" color="warning" onClick={onClose}>Cancel</Button>
-       <Button type="submit" variant="contained" color="primary">Update User</Button>
+       <TabPanel value={value} index={0}>
+        <form onSubmit={handleSubmit((data) => {
+         data.status = "ACTIVE";
+         onSubmit(data);
+        })}>
+         <Grid container spacing={2}>
+          <Grid item xs={12}>
+           <Controller
+            defaultValue={emailId}
+            name="emailId"
+            control={control}
+            render={({ field }) => (
+             <TextField fullWidth label="Email Id" {...field} error={!!errors.emailId} helperText={errors.emailId?.message} />
+            )}
+           />
+           <Box sx={{ minHeight: '16px' }}></Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+           <Controller
+            defaultValue={name}
+            name="name"
+            control={control}
+            render={({ field }) => (
+             <TextField fullWidth label="Name" {...field} error={!!errors.name} helperText={errors.name?.message} />
+            )}
+           />
+           <Box sx={{ minHeight: '16px' }}></Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+           <Controller
+            defaultValue={group}
+            name="group"
+            control={control}
+            render={({ field }) => (
+             <TextField
+              {...field}
+              select
+              label="Groups"
+              variant="outlined"
+              fullWidth
+              error={!!errors.group}
+              helperText={errors.group?.message}
+             >
+              {firstSelectOptions.map((option, key) => (
+               <MenuItem key={key} value={option.value}>
+                {option.label}
+               </MenuItem>
+              ))}
+             </TextField>
+            )}
+           />
+          </Grid>
+          <Grid item xs={12} md={6}>
+           <Controller
+            defaultValue={subgroup}
+            name="subgroup"
+            control={control}
+            render={({ field }) => (
+             <TextField
+              {...field}
+              disabled={!selectedFirst}
+              select
+              label="Sub Group"
+              variant="outlined"
+              fullWidth
+              error={!!errors.subgroup}
+              helperText={errors.subgroup?.message}
+             >
+              {secondSelectOptions.map((option, key) => (
+               <MenuItem key={key} value={option.value}>
+                {option.label}
+               </MenuItem>
+              ))}
+             </TextField>
+            )}
+           />
+          </Grid>
+          <Grid item xs={12} md={6}>
+           <Controller
+            defaultValue={userRole}
+            name="userRole"
+            control={control}
+            render={({ field }) => (
+             <TextField
+              {...field}
+              disabled={!selectedFirst || !selectedSecond}
+              select
+              label="User Roles"
+              variant="outlined"
+              fullWidth
+              error={!!errors.userRole}
+              helperText={errors.userRole?.message}
+             >
+              {thirdSelectOptions.map((option, key) => (
+               <MenuItem key={key} value={option.value}>
+                {option.label}
+               </MenuItem>
+              ))}
+             </TextField>
+            )}
+           />
+          </Grid>
+
+          <Grid item xs={12}>
+           <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>
+            <Button variant="contained" color="warning" onClick={onClose}>Cancel</Button>
+            <Button type="submit" variant="contained" color="primary">Update User</Button>
+           </Box>
+          </Grid>
+
+         </Grid>
+        </form>
+       </TabPanel>
+       <TabPanel value={value} index={1} >
+        <ChangePassword onClose={onClose} />
+       </TabPanel>
       </Box>
-     </Grid>
-
+      <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
+     </Box>
     </Grid>
-   </form>
+
+   </Grid>
   </Container>
  );
 };

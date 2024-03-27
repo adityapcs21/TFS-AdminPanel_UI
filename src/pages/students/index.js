@@ -5,12 +5,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../../common/loader';
 import Swal from 'sweetalert2';
 import { useState } from 'react';
-import students, { GetAllStudentsList, GetStudentDetails, StudentDataIsLoading, applyStudentFilter, clearStudentFilter, deleteStudent } from '../../redux/slice/students';
+import students, { GetAllStudentsList, GetStudentDetails, SendEmailToActiveSubscriptionUsers, StudentDataIsLoading, applyStudentFilter, clearStudentFilter, deleteStudent } from '../../redux/slice/students';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import UpdateStudent from '../../components/students/EditStudent';
 import ViewStudent from '../../components/students/ViewStudent';
 import FilterStudents from '../../components/students/FilterStudents';
 import moment from 'moment';
+import SendEmailModal from '../../components/SharedComponent/SendEmailModal';
 
 
 const columns = [
@@ -43,6 +44,8 @@ export default function Students() {
   const [editData, setEditData] = useState({});
   const [viewData, setViewData] = useState({})
   const [openFilterModal, setOpenFilterModal] = useState(false)
+  const [openEmailModal, setOpenEmailModal] = useState(false)
+
 
   // useEffect(() => {
   //   if (isUpdated) {
@@ -155,10 +158,43 @@ export default function Students() {
     dispatch(clearStudentFilter())
   }
 
+  const onSubmit = (data) => {
+    setOpenEmailModal(prevState => !prevState)
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to send email?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2c4c74",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, send it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(SendEmailToActiveSubscriptionUsers(data))
+          .then((response) => {
+            if (response.payload && response.payload.message) {
+              Swal.fire({
+                title: "Not Sent!",
+                text: response.payload.message,
+                icon: "error"
+              });
+            } else {
+              Swal.fire({
+                title: "Email Sent!",
+                text: response.payload.data,
+                icon: "success"
+              });
+            }
+          })
+      }
+    });
+  };
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <Box sx={{ display: 'flex', gap: '20px' }}>
+          <Button variant="contained" color="primary">Send Email</Button>
           <Badge badgeContent={Object.keys(appliedFilters).length} color="secondary">
             <Button onClick={() => setOpenFilterModal(prevState => !prevState)} variant="contained" color="primary">Filter </Button>
           </Badge>
@@ -219,13 +255,16 @@ export default function Students() {
         <UpdateStudent editData={editData} onClose={() => setOpenEditModal(prevState => !prevState)} />
       </ReusbaleDialog>
 
-
       <ReusbaleDialog maxWidth="md" open={openViewModal} onClose={() => setOpenViewModal(prevState => !prevState)}>
         <ViewStudent onClose={() => setOpenViewModal(prevState => !prevState)} />
       </ReusbaleDialog>
 
       <ReusbaleDialog maxWidth="sm" open={openFilterModal} onClose={() => setOpenFilterModal(prevState => !prevState)}>
         <FilterStudents handleFilter={handleFilter} onClose={() => setOpenFilterModal(prevState => !prevState)} />
+      </ReusbaleDialog>
+
+      <ReusbaleDialog maxWidth="md" open={openEmailModal} onClose={() => setOpenEmailModal(prevState => !prevState)}>
+        <SendEmailModal onSubmit={onSubmit} onClose={() => setOpenEmailModal(prevState => !prevState)} />
       </ReusbaleDialog>
     </Grid >
   )

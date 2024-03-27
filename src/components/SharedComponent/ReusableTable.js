@@ -99,7 +99,7 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, d
                       </IconContainer>
                     }
 
-                    {unlock &&
+                    {unlock && row.status === "LOCKED" &&
                       <IconContainer onClick={() => handleUnlock(row)}>
                         <Tooltip title="Unlock User">
                           <LockOpenIcon />

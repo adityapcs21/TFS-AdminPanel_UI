@@ -1,17 +1,12 @@
 import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
 import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
 import { red } from '@mui/material/colors';
 import moment from 'moment';
 import { Box, Typography } from '@mui/material';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import EditIcon from '@mui/icons-material/Edit';
 import ReusbaleDialog from '../../SharedComponent/ReusableDialog';
 import "yet-another-react-lightbox/styles.css";
-import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { DeleteGalleryById } from '../../../redux/slice/gallery';
 import UpdateVideoGallery from '../UpdateVideo';
@@ -51,6 +46,13 @@ export default function VideoCard({ title, createdBy, updatedDate, media, onDele
         dispatch(DeleteGalleryById(data.galleryId))
       }
     });
+  }
+
+
+  const handleCloseEditModal = (event, reason) => {
+    if (reason && reason === "backdropClick")
+      return;
+    setOpenEditModal(prevState => !prevState)
   }
   return (
     <Card sx={{ maxWidth: 345 }}>
@@ -99,7 +101,7 @@ export default function VideoCard({ title, createdBy, updatedDate, media, onDele
         <Typography sx={{ color: 'darkblue', cursor: 'pointer' }} onClick={() => handleUpdate()}>Edit</Typography>
       </Box>
 
-      <ReusbaleDialog maxWidth="md" open={openEditModal} onClose={() => setOpenEditModal(prevState => !prevState)}>
+      <ReusbaleDialog maxWidth="md" open={openEditModal} onClose={handleCloseEditModal}>
         <UpdateVideoGallery data={editRowsData} onClose={() => setOpenEditModal(prevState => !prevState)} />
       </ReusbaleDialog>
     </Card>

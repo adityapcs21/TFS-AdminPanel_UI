@@ -21,7 +21,7 @@ export default function Banner() {
  const [hovered, setHovered] = useState(false);
  const [activeIndex, setActiveIndex] = useState()
  const [page, setPage] = React.useState(1);
- const [perPageResult, setPerpageResult] = useState(2);
+ const [perPageResult, setPerpageResult] = useState(8);
  const [totalPages, setTotalPages] = useState(1)
 
 
@@ -145,11 +145,15 @@ export default function Banner() {
      }
     </Grid>
    </Grid>
-   <Grid item xs={12} marginTop={3}>
-    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-     <Pagination color='primary' count={totalPages} page={page} onChange={handleChange} />
-    </Box>
-   </Grid>
+
+   {totalPages && totalPages > 1 &&
+    <Grid item xs={12} marginTop={3}>
+     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Pagination color='primary' count={totalPages} page={page} onChange={handleChange} />
+     </Box>
+    </Grid>
+   }
+
    <ReusbaleDialog maxWidth="md" open={openAddModal} onClose={() => setOpenAddModal(prevState => !prevState)}>
     <AddBannerModal onClose={() => setOpenAddModal(!openAddModal)} />
    </ReusbaleDialog>

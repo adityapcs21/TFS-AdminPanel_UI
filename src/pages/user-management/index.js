@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import ReusableTable from '../../components/SharedComponent/ReusableTable';
 import { Badge, Box, Button, Grid, Stack, Typography, IconButton, styled, Tooltip } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { DeleteAdminById, GetAllUserList, UnlockAdmin, manageAdminIsLoading } from '../../redux/slice/manageUser';
+import { ApplyFilters, DeleteAdminById, GetAllUserList, UnlockAdmin, manageAdminIsLoading } from '../../redux/slice/manageUser';
 import Loader from '../../common/loader';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import CreateAdmin from '../../components/UserManagement/CreateAdmin';
 import UpdateAdmin from '../../components/UserManagement/UpdateAdmin';
 import Swal from 'sweetalert2';
 import NothingToShow from '../../components/SharedComponent/NothingToShow';
+import UserManagementFilter from '../../components/UserManagement/FilterModal';
 
 
 const columns = [
@@ -26,7 +27,7 @@ export default function UserManagement() {
   const isUserUpdated = useSelector((state) => state.manageUser.UserUpdated)
   const totalCount = useSelector((state) => state.manageUser.UserList?.size);
   const isLoading = useSelector((state) => state.manageUser.isLoading);
-  const appliedFilters = {}
+  const appliedFilters = useSelector((state) => state.manageUser.ApplyFilters);
 
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -40,26 +41,26 @@ export default function UserManagement() {
   useEffect(() => {
     dispatch(manageAdminIsLoading())
     let payload = {
-      "name": "",
-      "emailId": "",
-      "group": "",  //existing 
-      "subgroup": "", //existing
-      "userRole": "", //existing
+      "name": appliedFilters && appliedFilters.name,
+      "emailId": appliedFilters && appliedFilters.emailId,
+      "group": appliedFilters && appliedFilters.group,
+      "subgroup": appliedFilters && appliedFilters.subgroup,
+      "userRole": appliedFilters && appliedFilters.userRole,
       "pageNo": page + 1,
       "perPageResults": rowsPerPage
     }
     dispatch(GetAllUserList(payload))
-  }, [page, rowsPerPage])
+  }, [page, rowsPerPage, appliedFilters])
 
   useEffect(() => {
     if (isUserUpdated) {
       dispatch(manageAdminIsLoading())
       let payload = {
-        "name": "",
-        "emailId": "",
-        "group": "",  //existing 
-        "subgroup": "", //existing
-        "userRole": "", //existing
+        "name": appliedFilters && appliedFilters.name,
+        "emailId": appliedFilters && appliedFilters.emailId,
+        "group": appliedFilters && appliedFilters.group,
+        "subgroup": appliedFilters && appliedFilters.subgroup,
+        "userRole": appliedFilters && appliedFilters.userRole,
         "pageNo": page + 1,
         "perPageResults": rowsPerPage
       }
@@ -104,9 +105,9 @@ export default function UserManagement() {
 
 
   const handleFilter = (data) => {
-
     if (Object.keys(data).length > 0) {
-
+      dispatch(ApplyFilters(data))
+      dispatch(manageAdminIsLoading())
       setPage(0);
       setRowsPerPage(5)
 
@@ -117,8 +118,6 @@ export default function UserManagement() {
   const handleClearFilter = () => {
     // dispatch(ClearPaymentFilter())
   }
-
-
 
   const onUnlockAdmin = (row) => {
     Swal.fire({
@@ -142,8 +141,6 @@ export default function UserManagement() {
               });
             }
           })
-
-
       }
     });
   }
@@ -155,7 +152,7 @@ export default function UserManagement() {
         <Stack justifyContent="space-between" direction="row">
           <Button variant='contained' onClick={() => setOpenCreateModal(prevState => !prevState)}>Create User Admin</Button>
           <Box sx={{ display: 'flex', gap: '20px' }}>
-            <Badge badgeContent={Object.keys(appliedFilters).length} color="secondary">
+            <Badge badgeContent={appliedFilters && Object.keys(appliedFilters).length} color="secondary">
               <Button onClick={() => setOpenFilterModal(prevState => !prevState)} variant="contained" color="primary">Filter </Button>
             </Badge>
             <Button onClick={() => handleClearFilter()} variant="contained" color="primary">Clear Filter </Button>
@@ -206,12 +203,9 @@ export default function UserManagement() {
       </ReusbaleDialog>
 
       <ReusbaleDialog maxWidth="sm" open={openFilterModal} onClose={() => setOpenFilterModal(prevState => !prevState)}>
-        {/* <ManagePaymentFilters handleFilter={handleFilter} onClose={() => setOpenFilterModal(prevState => !prevState)} /> */}
+        <UserManagementFilter handleFilter={handleFilter} onClose={() => setOpenFilterModal(prevState => !prevState)} />
       </ReusbaleDialog>
     </Grid>
   )
 }
 
-const IconContainer = styled(IconButton)({
-  opacity: "0.9"
-})

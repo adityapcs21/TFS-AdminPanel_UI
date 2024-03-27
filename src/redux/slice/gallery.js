@@ -77,6 +77,7 @@ const gallerySlice = createSlice({
    state.isLoading = false;
    state.Gallery = action.payload
    state.newGalleryAdded = false
+   state.isMediaUploading=false
   });
   builder.addCase(GetAllGallery.rejected, (state, action) => {
    console.log("Error", action.payload);
@@ -87,6 +88,7 @@ const gallerySlice = createSlice({
    state.isLoading = false;
    state.Video = action.payload
    state.newGalleryAdded = false
+   state.isMediaUploading=false
   });
   builder.addCase(GetAllVideoGallery.rejected, (state, action) => {
    console.log("Error", action.payload);

@@ -37,9 +37,3 @@ export default App;
 
 
 
-// renewal lead access
-// get details api check
-// search reset button
-//no data found
-//student natch change -> currentBatchNo => update name to id
-//payment tab

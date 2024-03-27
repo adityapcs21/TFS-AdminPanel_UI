@@ -57,11 +57,25 @@ export const UnlockAdmin = createAsyncThunk('manageUser/unlockAdmin', async (ema
  }
 })
 
+export const ChangeAdminPassword = createAsyncThunk('managerUser/changePasswordr', async (data, { rejectWithValue }) => {
+ try {
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}managerUser/admin/changePassword`, data, axiosConfig)
+  return response.data
+ } catch (err) {
+  if (!err.response) {
+   throw err
+  }
+  return rejectWithValue(err.response.data)
+ }
+})
+
 const initialState = {
  isLoading: false,
  UserList: [],
  isError: false,
- UserUpdated: false
+ UserUpdated: false,
+ appliedFilters: {},
+ passwordChange: {}
 }
 
 const manageUser = createSlice({
@@ -70,7 +84,10 @@ const manageUser = createSlice({
  reducers: {
   manageAdminIsLoading: (state, action) => {
    state.isLoading = true
-  }
+  },
+  ApplyFilters: (state, action) => {
+   state.appliedFilters = action.payload
+  },
  },
  extraReducers: (builder) => {
   builder.addCase(GetAllUserList.fulfilled, (state, action) => {
@@ -121,7 +138,15 @@ const manageUser = createSlice({
   builder.addCase(UnlockAdmin.rejected, (state, action) => {
    state.isError = true
   })
+
+  builder.addCase(ChangeAdminPassword.fulfilled, (state, action) => {
+   state.isLoading = false;
+   state.passwordChange = action.payload;
+  });
+  builder.addCase(ChangeAdminPassword.rejected, (state, action) => {
+   state.isError = true
+  })
  },
 })
-export const { manageAdminIsLoading } = manageUser.actions;
+export const { manageAdminIsLoading, ApplyFilters } = manageUser.actions;
 export default manageUser.reducer;

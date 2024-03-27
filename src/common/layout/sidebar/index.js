@@ -285,7 +285,7 @@ export default function MiniDrawer() {
                     <Collapse in={openPages && activeIndex === index} timeout="auto" unmountOnExit>
                       <List component="div" disablePadding>
                         {page.subCategory.map((item, subIndex) => (
-                          <ListItem onClick={() => navigate(item.subCatUrl)} key={subIndex} disablePadding sx={{ display: 'block' }}>
+                          <Box onClick={() => navigate(item.subCatUrl)} key={subIndex} sx={{ display: 'block' }}>
                             <ListItemButton
                               onClick={() => setActiveSubIndex(subIndex)}
                               sx={{
@@ -317,7 +317,7 @@ export default function MiniDrawer() {
                               </ListItemIcon>
                               <ListItemText primary={item.label} sx={{ opacity: open ? 1 : 0 }} />
                             </ListItemButton>
-                          </ListItem>
+                          </Box>
                         ))}
                       </List>
                     </Collapse>

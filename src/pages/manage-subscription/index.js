@@ -24,7 +24,6 @@ export default function ManageSubscription() {
 
 
   useEffect(() => {
-    console.log("bdjbod")
     dispatch(GetAllSubscriptionPlan())
     dispatch(subscriptionDataLoading());
   }, []);

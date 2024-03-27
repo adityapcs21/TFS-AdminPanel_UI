@@ -64,6 +64,12 @@ export default function VideoGallery() {
         console.log(item)
     };
 
+    const handleCloseAddModal = (event, reason) => {
+        if (reason && reason === "backdropClick")
+            return;
+        setOpenAddModal(prevState => !prevState)
+    }
+
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -88,7 +94,8 @@ export default function VideoGallery() {
                     <Pagination color='primary' count={totalPages} page={page} onChange={handleChange} />
                 </Box>
             </Grid>
-            <ReusbaleDialog maxWidth="md" open={openAddModal} onClose={() => setOpenAddModal(prevState => !prevState)}>
+
+            <ReusbaleDialog maxWidth="md" open={openAddModal} onClose={handleCloseAddModal}>
                 <AddVideoGallery onClose={() => setOpenAddModal(prevState => !prevState)} />
             </ReusbaleDialog>
         </Grid>

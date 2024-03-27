@@ -13,14 +13,29 @@ const schema = yup.object({
  userName: yup.string().required(),
  action: yup.string().optional(),
  price: yup.string().required(),
- subscriptionStartDate: yup.date().required('Subscription start date is required'),
- subscriptionEndDate: yup.date().required('Subscription end date is required').min(yup.ref('subscriptionStartDate'), 'End date must be greater than or equal to start date'),
+ // subscriptionStartDate: yup.date().required('Subscription start date is required'),
+ subscriptionEndDate: yup.date().required('Subscription end date is required'),
+
 });
 
 const actionOption = [{ value: "APPROVED", label: 'APPROVED' }, { value: "CANCELLED", label: 'CANCELLED' }, { value: "PROCESS", label: 'PROCESS' }, { value: "REJECT", label: 'REJECT' }, { value: "APPROVE", label: "APPROVE" }]
 
+function GenerateDate() {
+ const options = [];
+ let currentDate = moment();
+ for (let i = 0; i < 18; i++) {
+  currentDate = currentDate.add(1, 'month');
+  currentDate.date(20);
+  options.push(currentDate.format('MM/DD/YYYY'));
+ }
+ return options;
+}
+
+const options = GenerateDate();
+
+console.log(options);
 export default function ApproveStudentModal({ data, onClose }) {
- const { uniqueId, userName, requestStatus, price, subscriptionStartDate, subscriptionEndDate } = data;
+ const { uniqueId, userName, requestStatus, price, subscriptionEndDate } = data;
  const dispatch = useDispatch();
 
  const {
@@ -30,11 +45,11 @@ export default function ApproveStudentModal({ data, onClose }) {
  } = useForm({
   resolver: yupResolver(schema),
  })
- console.log(errors)
+
  const onSubmit = (data, event) => {
   delete data["userName"];
   data.uniqueId = uniqueId
-  data.subscriptionStartDate = moment(data.subscriptionStartDate).format('DD-MM-YYYY');
+  // data.subscriptionStartDate = moment(data.subscriptionStartDate).format('DD-MM-YYYY');
   data.subscriptionEndDate = moment(data.subscriptionEndDate).format('DD-MM-YYYY');
   onClose()
   Swal.fire({
@@ -66,7 +81,6 @@ export default function ApproveStudentModal({ data, onClose }) {
    </Box>
    <form onSubmit={handleSubmit((data, event) => {
     const buttonName = event.nativeEvent.submitter.name;
-    console.log("evevent", buttonName)
     if (buttonName === 'PROCESS') {
      data.action = "PROCESS"
     } else if (buttonName === 'REJECT') {
@@ -131,7 +145,7 @@ export default function ApproveStudentModal({ data, onClose }) {
       <Box sx={{ minHeight: '16px' }}></Box>
      </Grid>
 
-     <Grid item xs={12} md={6}>
+     {/* <Grid item xs={12} md={6}>
       <Controller
        name="subscriptionStartDate"
        control={control}
@@ -147,22 +161,28 @@ export default function ApproveStudentModal({ data, onClose }) {
         />
        )}
       />
-     </Grid>
+     </Grid> */}
 
      <Grid item xs={12} md={6}>
       <Controller
        name="subscriptionEndDate"
        control={control}
-       defaultValue={moment(subscriptionEndDate, 'DD/MM/YYYY').format('YYYY-MM-DD')}
+       defaultValue={subscriptionEndDate || ''}
        render={({ field }) => (
         <TextField
          {...field}
+         select
          label="Subscription End Date"
-         type="date"
          fullWidth
          error={!!errors.subscriptionEndDate}
          helperText={errors.subscriptionEndDate?.message}
-        />
+        >
+         {options.map((option, index) => (
+          <MenuItem key={index} value={option}>
+           {option}
+          </MenuItem>
+         ))}
+        </TextField>
        )}
       />
      </Grid>

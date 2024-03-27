@@ -10,7 +10,7 @@ import moment from 'moment';
 const schema = yup.object().shape({
   userId: yup.string().optional(),
   paymentStatus: yup.string().oneOf(['created', 'attempted', 'paid', '']).optional(),
-  action: yup.string().oneOf(['SUBSCRIPTION', 'BATCH_UPDATE', ""]).optional(),
+  actionName: yup.string().oneOf(['SUBSCRIPTION', 'BATCH_UPDATE', ""]).optional(),
   fromDate: yup.string().nullable()
     .test({
       test: function (startDate) {
@@ -44,7 +44,7 @@ const ManagePaymentFilters = ({ handleFilter, onClose }) => {
       "userId": appliedFilters.userId,
       "paymentStatus": appliedFilters.paymentStatus,
       "fromDate": appliedFilters.fromDate ? moment(appliedFilters.fromDate, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
-      "action": appliedFilters.action,
+      "actionName": appliedFilters.actionName,
       "toDate": appliedFilters.toDate ? moment(appliedFilters.toDate, 'DD-MM-YYYY').format('YYYY-MM-DD') : null,
     }
   });
@@ -56,7 +56,7 @@ const ManagePaymentFilters = ({ handleFilter, onClose }) => {
   return (
     <Container>
       <Box sx={{ display: "flex", justifyContent: 'space-between', marginBottom: "20px" }}>
-        <Typography variant='h5'>Filter Student</Typography>
+        <Typography variant='h5'>Filter Payment</Typography>
         <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
       </Box>
       <form onSubmit={handleSubmit(handleFilter)}>
@@ -96,14 +96,14 @@ const ManagePaymentFilters = ({ handleFilter, onClose }) => {
 
           <Grid item xs={12} md={6}>
             <Controller
-              name="action"
+              name="actionName"
               control={control}
               render={({ field }) => (
                 <FormControl fullWidth>
                   <InputLabel>Action</InputLabel>
                   <Select
                     {...field}
-                    error={!!errors.action}
+                    error={!!errors.actionName}
                     label="Action"
                     value={field.value || ''}
                   >

@@ -118,10 +118,8 @@ export default function Login() {
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
             <SubmitButton startIcon={<CircularProgress size="18px" color="inherit" sx={{ display: isClicked ? "block" : 'none' }} />} disabled={isClicked} type="submit" fullWidth variant="contained" color="primary">Sign In</SubmitButton>
             {/* <Grid container>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
+              <Grid item xs={12}>
+                <Box>Don't remember </Box>
               </Grid>
             </Grid> */}
             <Box mt={5}>
@@ -153,7 +151,8 @@ const Wrapper = styled(Grid)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  justifyContent: "center"
+  justifyContent: "center",
+  paddingTop: "16px"
 }));
 
 const PaperCont = styled(Box)(({ theme }) => ({
@@ -168,7 +167,7 @@ const AvatarCont = styled(Avatar)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.main
 }))
 
-const FormCont = styled(`form`)(({ theme }) => ({
+const FormCont = styled("form")(({ theme }) => ({
   width: "100%", // Fix IE 11 issue.
   marginTop: theme.spacing(1)
 }))

@@ -4,53 +4,20 @@ import { TextField, Button, Container, Grid, Box, Typography } from '@mui/materi
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import CloseIcon from '@mui/icons-material/Close';
-import { useDispatch } from 'react-redux';
-import Swal from 'sweetalert2';
-import { SendEmailToActiveSubscriptionUsers } from '../../redux/slice/students';
+
 
 const schema = yup.object().shape({
   subject: yup.string().required('subject is required'),
   message: yup.string().required('message is required'),
 });
 
-const SendEmailModal = ({ onClose }) => {
-  const dispatch = useDispatch();
+const SendEmailModal = ({ onClose,onSubmit }) => {
 
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    onClose()
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You want to send email?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#2c4c74",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, send it!"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        dispatch(SendEmailToActiveSubscriptionUsers(data))
-          .then((response) => {
-            if (response.payload && response.payload.message) {
-              Swal.fire({
-                title: "Not Sent!",
-                text: response.payload.message,
-                icon: "error"
-              });
-            } else {
-              Swal.fire({
-                title: "Email Sent!",
-                text: response.payload.data,
-                icon: "success"
-              });
-            }
-          })
-      }
-    });
-  };
+
 
   return (
     <Container maxWidth="md">

@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useDispatch, useSelector } from 'react-redux';
 import { getS3SignedUrl } from '../../../helpers/mediaUpload';
-import { SaveGallery } from '../../../redux/slice/gallery';
+import { SaveGallery, galleryIsUpdating } from '../../../redux/slice/gallery';
 import FullScreenLoader from '../../../common/FullscreenLoader';
 
 
@@ -23,13 +23,15 @@ const AddImageInGallery = ({ onClose }) => {
 
  const [file, setFile] = useState([]);
  const [fileName, setFileName] = useState([])
- const isLoading = useSelector((state) => state.blog.isMediaUploading);
+ const isLoading = useSelector((state) => state.gallery.isMediaUploading);
+ console.log("isLoading", isLoading)
  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
  const { control, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });
 
  async function onSubmit(data) {
+  dispatch(galleryIsUpdating())
   const resultsArray = [];
   let uid;
   await Promise.all(fileName.map(async (item) => {
@@ -50,6 +52,7 @@ const AddImageInGallery = ({ onClose }) => {
    "type": "image",
    "galleryId": uid
   }
+
   dispatch(SaveGallery(payload))
   onClose()
  };

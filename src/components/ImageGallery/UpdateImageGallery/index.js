@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useDispatch, useSelector } from 'react-redux';
 import { getS3SignedUrl } from '../../../helpers/mediaUpload';
-import { UpdateGallery } from '../../../redux/slice/gallery';
+import { UpdateGallery, galleryIsUpdating } from '../../../redux/slice/gallery';
 import FullScreenLoader from '../../../common/FullscreenLoader';
 
 
@@ -21,7 +21,8 @@ const UpdateImageGallery = ({ onClose, data }) => {
  const dispatch = useDispatch()
  const { galleryId, title, createdBy, attachments } = data;
 
- const isLoading = useSelector((state) => state.blog.isMediaUploading);
+ const isLoading = useSelector((state) => state.gallery.isMediaUploading);
+
  const [file, setFile] = useState(attachments);
  const [fileName, setFileName] = useState([])
  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
@@ -35,6 +36,7 @@ const UpdateImageGallery = ({ onClose, data }) => {
 
 
  async function onSubmit(data) {
+  dispatch(galleryIsUpdating())
   const resultsArray = [];
   if (fileName && fileName.length > 0) {
    await Promise.all(fileName.map(async (item) => {

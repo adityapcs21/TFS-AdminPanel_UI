@@ -9,12 +9,12 @@ const backdropStyle = {
 const FullScreenLoader = ({ loading }) => {
  return (
   <Backdrop style={backdropStyle} open={loading}>
-   <Box>
+   <Box sx={{display:'flex',justifyContent:'center',alignItems:'center',flexDirection:'column'}}>
     <h1>Please wait...!</h1>
     <CircularProgress color="inherit" />
    </Box>
   </Backdrop>
  );
-};
+};  
 
 export default FullScreenLoader;

@@ -14,6 +14,7 @@ import FullScreenLoader from '../../../common/FullscreenLoader';
 const schema = yup.object().shape({
  title: yup.string().optional(),
  createdBy: yup.string().required(),
+ externalLink: yup.string().optional(),
  type: yup.string().optional(),
  attachments: yup.array().of(yup.mixed().required('Image is required')),
 });
@@ -47,6 +48,7 @@ const AddVideoGallery = ({ onClose }) => {
   let payload = {
    "title": data.title,
    "createdBy": data.createdBy,
+   "externalLink": data.externalLink,
    "attachments": resultsArray,
    "type": "video"
   }
@@ -103,6 +105,17 @@ const AddVideoGallery = ({ onClose }) => {
        control={control}
        render={({ field }) => (
         <TextField fullWidth label="Created By" {...field} error={!!errors.createdBy} helperText={errors.createdBy?.message} />
+       )}
+      />
+      <Box sx={{ minHeight: '16px' }}></Box>
+     </Grid>
+
+     <Grid item xs={12}>
+      <Controller
+       name="externalLink"
+       control={control}
+       render={({ field }) => (
+        <TextField fullWidth label="ExternalLink" {...field} error={!!errors.externalLink} helperText={errors.externalLink?.message} />
        )}
       />
       <Box sx={{ minHeight: '16px' }}></Box>

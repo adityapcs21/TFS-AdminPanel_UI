@@ -2,12 +2,14 @@ import React, { useEffect } from 'react'
 import ReusableTable from '../../components/SharedComponent/ReusableTable';
 import { Button, Grid } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { GetAllSubscribedUser, UnsubscribeUser } from '../../redux/slice/subscribedUser';
+import { GetAllSubscribedUser, SendEmailToEmailSubscribers, UnsubscribeUser, subscribedUserIsLoading } from '../../redux/slice/subscribedUser';
 import Loader from '../../common/loader';
 import Swal from 'sweetalert2';
 import { useState } from 'react';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
-import SendEmailModal from '../../components/students/SendEmailModal';
+import { SendEmailToActiveSubscriptionUsers } from '../../redux/slice/students';
+import SendEmailModal from '../../components/SharedComponent/SendEmailModal';
+import NothingToShow from '../../components/SharedComponent/NothingToShow';
 
 
 
@@ -22,6 +24,8 @@ export default function SubscribedEmail() {
   const dispatch = useDispatch()
   const emailSubscriptionList = useSelector((state) => state.subscribedUser.SubscribedUser?.emailSubscriptionList)
   const isUpdated = useSelector((state) => state.subscribedUser.SubscribedUserUpdated)
+  const isLoading = useSelector((state) => state.subscribedUser.isLoading)
+
   const totalPages = useSelector((state) => state.subscribedUser.SubscribedUser?.size)
 
   const [page, setPage] = useState(0);
@@ -31,6 +35,7 @@ export default function SubscribedEmail() {
 
   useEffect(() => {
     if (isUpdated) {
+      dispatch(subscribedUserIsLoading())
       let payload = {
         "status": "",//ACTIVE or IN-ACTIVE
         "emailId": "",
@@ -50,6 +55,7 @@ export default function SubscribedEmail() {
       "pageNo": page + 1,
       "perPageResults": rowsPerPage
     }
+    dispatch(subscribedUserIsLoading())
     dispatch(GetAllSubscribedUser(payload))
   }, [page, rowsPerPage])
 
@@ -87,13 +93,45 @@ export default function SubscribedEmail() {
     setOpenEmailModal(prevState => !prevState)
   }
 
+  const onSubmit = (data) => {
+    setOpenEmailModal(prevState => !prevState)
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to send email?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2c4c74",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, send it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch(SendEmailToEmailSubscribers(data))
+          .then((response) => {
+            if (response.payload && response.payload.message) {
+              Swal.fire({
+                title: "Not Sent!",
+                text: response.payload.message,
+                icon: "error"
+              });
+            } else {
+              Swal.fire({
+                title: "Email Sent!",
+                text: response.payload.data,
+                icon: "success"
+              });
+            }
+          })
+      }
+    });
+  };
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <Button onClick={() => handleSendEmail()} variant="contained" color="primary">Send Email </Button>
       </Grid>
       <Grid item xs={12}>
-        {emailSubscriptionList && emailSubscriptionList.length > 0 ?
+        {!isLoading && emailSubscriptionList && emailSubscriptionList.length > 0 ?
           <ReusableTable
             disableEdit
             disableView
@@ -106,12 +144,13 @@ export default function SubscribedEmail() {
             rowsPerPage={rowsPerPage}
             count={totalPages}
           />
-          :
-          <Loader />
+          : isLoading ?
+            <Loader />
+            : <NothingToShow />
         }
       </Grid>
-      <ReusbaleDialog maxWidth="md" open={openEmailModal} close={() => setOpenEmailModal(prevState => !prevState)}>
-        <SendEmailModal onClose={() => setOpenEmailModal(prevState => !prevState)} />
+      <ReusbaleDialog maxWidth="md" open={openEmailModal} onClose={() => setOpenEmailModal(prevState => !prevState)}>
+        <SendEmailModal onSubmit={onSubmit} onClose={() => setOpenEmailModal(prevState => !prevState)} />
       </ReusbaleDialog>
     </Grid>
   )

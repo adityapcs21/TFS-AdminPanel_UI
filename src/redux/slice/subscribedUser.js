@@ -30,6 +30,18 @@ export const UnsubscribeUser = createAsyncThunk('subscribedUser/unsubscribe', as
  }
 })
 
+export const SendEmailToEmailSubscribers = createAsyncThunk('managerUser/sendEmailToEmailSubscribers', async (data, { rejectWithValue }) => {
+ try {
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}managerUser/sendEmailToEmailSubscribers`, data, axiosConfig)
+  return response.data
+ } catch (err) {
+  if (!err.response) {
+   throw err
+  }
+  return rejectWithValue(err.response.data)
+ }
+})
+
 
 const initialState = {
  isLoading: false,
