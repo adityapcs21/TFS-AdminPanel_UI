@@ -137,7 +137,7 @@ export default function AboutUs() {
       </Box>
 
      </Grid>
-     <Grid xs={12} sx={{textAlign:'end'}}>
+     <Grid xs={12} sx={{ textAlign: 'end' }}>
       <Button variant='contained'>Update</Button>
      </Grid>
     </Grid>

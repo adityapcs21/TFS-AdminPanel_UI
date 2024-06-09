@@ -17,7 +17,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
 import brandLogo from '../../../assets/images/TFS-logo.png'
-
+import KeyIcon from '@mui/icons-material/Key';
+import ReusbaleDialog from "../../../components/SharedComponent/ReusableDialog"
+import ChangePassword from '../../../components/UserManagement/ChangeAdminPassword';
 
 export default function Header({ isOpen }) {
   const navigate = useNavigate()
@@ -26,7 +28,7 @@ export default function Header({ isOpen }) {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
-
+  const [openChangePassModal, setOpenChangePassModal] = useState(false)
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userDetails"));
     setUserDetails(userInfo)
@@ -55,9 +57,15 @@ export default function Header({ isOpen }) {
     window.location.reload()
   }
   function getInitials(name) {
-    const initials = name.split(' ').map(word => word.charAt(0)).join('');
+    const initials = name && name.split(' ').map(word => word.charAt(0)).join('');
     return initials;
   }
+
+  const handleChangePassword = () => {
+    setOpenChangePassModal(true)
+    handleMenuClose()
+  }
+
   const menuId = 'primary-search-account-menu';
   const renderMenu = (
     <Menu
@@ -110,6 +118,12 @@ export default function Header({ isOpen }) {
         <Box sx={{ display: 'flex', gap: '6px' }}>
           <EmailIcon sx={{ color: "#bdbdbd" }} />
           <Typography >{userDetails.emailId}</Typography>
+        </Box>
+      </MenuItem>
+      <MenuItem onClick={() => handleChangePassword()}>
+        <Box sx={{ display: 'flex', gap: '6px' }}>
+          <KeyIcon sx={{ color: "#bdbdbd" }} />
+          <Typography >Change Password</Typography>
         </Box>
       </MenuItem>
       <Divider />
@@ -240,6 +254,9 @@ export default function Header({ isOpen }) {
       {/* </Toolbar> */}
       {renderMobileMenu}
       {renderMenu}
+      <ReusbaleDialog maxWidth="sm" open={openChangePassModal} close={() => setOpenChangePassModal(prevState => !prevState)}>
+        <ChangePassword onClose={() => setOpenChangePassModal(prevState => !prevState)} />
+      </ReusbaleDialog>
     </Box>
   );
 }

@@ -12,11 +12,11 @@ import { DeleteGalleryById } from '../../../redux/slice/gallery';
 import UpdateVideoGallery from '../UpdateVideo';
 import Swal from 'sweetalert2';
 
-export default function VideoCard({ title, createdBy, updatedDate, media, onDelete, data }) {
+export default function VideoCard({ title, createdBy, updatedDate, media, onDelete, data, externalLink }) {
 
   const dispatch = useDispatch()
   function getInitials(name) {
-    const initials = name.split(' ').map(word => word.charAt(0)).join('');
+    const initials = name && name.split(' ').map(word => word.charAt(0)).join('');
     return initials;
   }
   const [openEditModal, setOpenEditModal] = React.useState(false);
@@ -71,11 +71,11 @@ export default function VideoCard({ title, createdBy, updatedDate, media, onDele
       </Box>
       <Box sx={{ minHeight: '240px', maxHeight: '240px', display: 'flex', alignItems: 'end', border: '1px solid #000000', borderRadius: '2px' }}>
         {
-          media && media.includes("youtube") ?
+          externalLink && externalLink.length > 0 || media && media.includes("youtube") ?
             <iframe
               width="100%"
               height="240px"
-              src={media}
+              src={externalLink ? externalLink : media}
               title={title}
               allowFullScreen>
             </iframe>

@@ -79,7 +79,7 @@ export default function VideoGallery() {
             {!isLoading && AllGallery && AllGallery.length > 0 ? AllGallery.map((item, index) => {
                 return (
                     <Grid key={index} item xs={6} lg={4} xl={3}>
-                        < VideoCard onView={handleViewImage} data={item} title={item.title} createdBy={item.createdBy} date={item.createdDate} media={item.attachments[0]} />
+                        < VideoCard externalLink={item.externalLink} onView={handleViewImage} data={item} title={item.title} createdBy={item.createdBy} date={item.createdDate} media={item.attachments[0]} />
                     </Grid>
                 )
             })

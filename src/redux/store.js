@@ -9,10 +9,11 @@ import bannerReducer from './slice/banner'
 import customerQueryReducer from "./slice/customer-query";
 import studentsReducer from "./slice/students";
 import manageSubscriptionReducer from "./slice/manageSubscription";
-import managePaymentReducer from './slice/managePayment'
-import buddyAssignmentReducer from './slice/buddyAssignment'
-import eventsReducer from './slice/events'
-
+import managePaymentReducer from './slice/managePayment';
+import buddyAssignmentReducer from './slice/buddyAssignment';
+import eventsReducer from './slice/events';
+import batchReducer from './slice/batch';
+import testimonialReducer from "./slice/testimonials";
 
 export const store = configureStore({
  reducer: {
@@ -28,6 +29,8 @@ export const store = configureStore({
   manageSubscription: manageSubscriptionReducer,
   managePayment: managePaymentReducer,
   buddyAssignment: buddyAssignmentReducer,
-  events: eventsReducer
+  events: eventsReducer,
+  batch: batchReducer,
+  testimonial: testimonialReducer
  }
 });

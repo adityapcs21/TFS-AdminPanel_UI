@@ -19,7 +19,10 @@ const routeNames = {
  MYASSIGNEDUSER: '/my-assigned-user',
  CONTACTUS: '/contact-us',
  BANNER: '/banner',
- EVENTS: '/event'
-
+ EVENTS: '/event',
+ BATCH: '/batch',
+ TESTIMONIALS:'/testimonials',
+ EMAILSERVICES:'/email',
+ COMPOSEMAIL:"/email/compose-email"
 }
 export default routeNames;

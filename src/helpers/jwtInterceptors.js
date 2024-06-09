@@ -41,6 +41,7 @@
 
 // jwtInterceptor.js
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const jwtInterceptor = axios.create({
  baseURL: process.env.REACT_APP_API_ENDPOINT,
@@ -100,6 +101,20 @@ jwtInterceptor.interceptors.response.use(
     // Retry the original request with the new token
     return axios(originalRequest);
    } catch (refreshError) {
+    console.log("resfjkdbsflknf", refreshError)
+    if (refreshError) {
+     Swal.fire({
+      title: refreshError.message,
+      // text: "Do you still want to login again in this tab?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2c4c74",
+      cancelButtonColor: "#f36334",
+      confirmButtonText: "Refresh"
+     }).then(() => {
+      window.location.reload();
+     })
+    }
     // Handle refresh token error, e.g., redirect to login page
     console.error('Error refreshing token:', refreshError);
     // You may want to handle this differently based on your requirements

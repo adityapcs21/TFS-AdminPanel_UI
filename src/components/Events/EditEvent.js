@@ -31,17 +31,19 @@ const schema = yup.object().shape({
   registrationLimit: yup.number().required('Registration Limit is required').positive('Registration Limit must be a positive number'),
   eventType: yup.string().required('Event Type is required'),
   registrationFees: yup.string().required('Registration Fees is required'),
+  batch: yup.array().min(1, 'Please select at least one batch option'),
 });
 
 const UpdateEvent = ({ onClose }) => {
   const dispatch = useDispatch()
   const isLoading = useSelector((state) => state.events.mediaUploading)
-  const eventDetails = useSelector(state => state.events.eventDetails)
+  const eventDetails = useSelector(state => state.events.eventDetails);
+  const BatchList = useSelector((state) => state.batch.batchList.batchList);
+
+  let batches = eventDetails.batch?.split(",")
 
   const [file, setFile] = useState(eventDetails.attachments);
   const [fileName, setFileName] = useState([])
-  // const { editorState, onChange } = useEditorState();
-  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")));
 
   const [editorState, setEditorState] = useState(() => {
     const contentBlock = htmlToDraft(eventDetails.description);
@@ -66,7 +68,8 @@ const UpdateEvent = ({ onClose }) => {
       "location": eventDetails.location,
       "registrationLimit": eventDetails.registrationLimit,
       "eventType": eventDetails.eventType,
-      "registrationFees": eventDetails.registrationFees
+      "registrationFees": eventDetails.registrationFees,
+      "batch": batches
     }
   });
 
@@ -78,6 +81,7 @@ const UpdateEvent = ({ onClose }) => {
   }, [editorState]);
 
   async function onSubmit(data) {
+    data.batch = data.batch.toString()
     data.eventId = eventDetails.eventId;
     data.eventDate = moment(data.eventDate, 'YYYY-MM-DDs').format('DD-MM-YYYY')
     data.registrationDeadLineDate = moment(data.registrationDeadLineDate, 'YYYY-MM-DDs').format('DD-MM-YYYY')
@@ -145,7 +149,7 @@ const UpdateEvent = ({ onClose }) => {
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
-        <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>
+        <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '10px 0px' }}>
           <Typography variant='h5'>Update Event</Typography>
           <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
         </Box>
@@ -160,7 +164,6 @@ const UpdateEvent = ({ onClose }) => {
                 defaultValue=""
                 render={({ field }) => (
                   <TextField
-                    size='small'
                     label="Event Name"
                     variant="outlined"
                     fullWidth
@@ -179,7 +182,6 @@ const UpdateEvent = ({ onClose }) => {
                 defaultValue=""
                 render={({ field }) => (
                   <TextField
-                    size='small'
                     label="Location"
                     variant="outlined"
                     fullWidth
@@ -193,83 +195,10 @@ const UpdateEvent = ({ onClose }) => {
 
             <Grid item xs={12} md={4}>
               <Controller
-                name="eventDate"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    size='small'
-                    {...field}
-                    label="Event Start Date"
-                    type="date"
-                    fullWidth
-                    error={!!errors.eventDate}
-                    helperText={errors.eventDate?.message}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12} md={4}>
-              <Controller
-                name="registrationDeadLineDate"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    size='small'
-                    {...field}
-                    label="Registration Deadline Date"
-                    type="date"
-                    fullWidth
-                    error={!!errors.registrationDeadLineDate}
-                    helperText={errors.registrationDeadLineDate?.message}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12} md={4}>
-              <Controller
-                name="eventStartTime"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    size='small'
-                    label="Event Start Time"
-                    variant="outlined"
-                    fullWidth
-                    {...field}
-                    error={!!errors.eventStartTime}
-                    helperText={errors.eventStartTime?.message}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12} md={4}>
-              <Controller
-                name="eventEndTime"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    size='small'
-                    label="Event End Time"
-                    variant="outlined"
-                    fullWidth
-                    {...field}
-                    error={!!errors.eventEndTime}
-                    helperText={errors.eventEndTime?.message}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid item xs={12} md={4}>
-              <Controller
                 name="registrationLimit"
                 control={control}
                 render={({ field }) => (
                   <TextField
-                    size='small'
                     label="Registration Limit"
                     variant="outlined"
                     fullWidth
@@ -287,7 +216,6 @@ const UpdateEvent = ({ onClose }) => {
                 control={control}
                 render={({ field }) => (
                   <TextField
-                    size='small'
                     label="Registration Fees"
                     variant="outlined"
                     fullWidth
@@ -307,7 +235,7 @@ const UpdateEvent = ({ onClose }) => {
                   <FormControl fullWidth>
                     <InputLabel>Event Type</InputLabel>
                     <Select
-                      size='small'
+
                       {...field}
                       error={!!errors.eventType}
                       label="Event Type"
@@ -323,6 +251,98 @@ const UpdateEvent = ({ onClose }) => {
               />
             </Grid>
 
+            <Grid item xs={12} md={4}>
+              <Controller
+                name="batch"
+                control={control}
+                defaultValue={[]}
+                render={({ field }) => (
+                  <FormControl fullWidth error={!!errors.batch}>
+                    <InputLabel>Batch</InputLabel>
+                    <Select
+                      multiple
+                      {...field}
+                      label="Batch"
+                      value={field.value || []}
+                      renderValue={(selected) => selected.join(', ')}
+                    >
+                      {BatchList && BatchList.map((batch, index) => (
+                        <MenuItem key={index} value={batch.id}>{batch.id}</MenuItem>
+                      ))}
+                    </Select>
+                    <FormHelperText>{errors.batch?.message}</FormHelperText>
+                  </FormControl>
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={3}>
+              <Controller
+                name="eventDate"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Event Start Date"
+                    type="date"
+                    fullWidth
+                    error={!!errors.eventDate}
+                    helperText={errors.eventDate?.message}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={3}>
+              <Controller
+                name="registrationDeadLineDate"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label="Registration Deadline Date"
+                    type="date"
+                    fullWidth
+                    error={!!errors.registrationDeadLineDate}
+                    helperText={errors.registrationDeadLineDate?.message}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={3}>
+              <Controller
+                name="eventStartTime"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    label="Event Start Time"
+                    variant="outlined"
+                    fullWidth
+                    {...field}
+                    error={!!errors.eventStartTime}
+                    helperText={errors.eventStartTime?.message}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid item xs={12} md={3}>
+              <Controller
+                name="eventEndTime"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    label="Event End Time"
+                    variant="outlined"
+                    fullWidth
+                    {...field}
+                    error={!!errors.eventEndTime}
+                    helperText={errors.eventEndTime?.message}
+                  />
+                )}
+              />
+            </Grid>
 
             <Grid item xs={12}>
               <Box sx={{ border: '1px solid lightgrey' }}>

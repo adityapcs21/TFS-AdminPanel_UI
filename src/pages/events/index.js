@@ -1,4 +1,4 @@
-import { Box, Button, Grid } from '@mui/material'
+import { Box, Button, Grid, Tooltip } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import ReusableTable from '../../components/SharedComponent/ReusableTable'
 import { useDispatch, useSelector } from 'react-redux'
@@ -9,6 +9,9 @@ import CreateEvent from '../../components/Events/CreateEvents'
 import Swal from 'sweetalert2'
 import ViewEvent from '../../components/Events/ViewEvent'
 import EditEvent from '../../components/Events/EditEvent'
+import { GetAllBatches, batchIsLoading } from '../../redux/slice/batch'
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
+import SendEventCommunication from '../../components/Events/SendEventCommunication'
 
 const columns = [
   { id: 'eventName', label: "Event Name" },
@@ -30,16 +33,22 @@ const columns = [
 export default function Events() {
   const dispatch = useDispatch()
   const EventList = useSelector(state => state.events.allEvents?.eventList)
+  const totalCount = useSelector(state => state.events.allEvents?.size)
+  console.log("total", totalCount)
   const eventIsUpdated = useSelector(state => state.events.newEventAdded)
   // const totalPages = useSelector(state => state.events.paymentDetails?.size);
   // const appliedFilters = useSelector(state => state.events.appliedFilters);
   const isLoading = useSelector(state => state.events.isLoading);
+  const isBatchDataLoading = useSelector((state) => state.batch.isLoading);
+
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(6);
   const [openCreateModal, setOpenCreateModal] = useState(false)
   const [showViewModal, setShowViewModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [openEmailModal, setOpenEmailModal] = useState(false);
+  const [eventId, setEventId] = useState();
 
   useEffect(() => {
     let payload = {
@@ -48,12 +57,13 @@ export default function Events() {
     }
     dispatch(eventIsLoading())
     dispatch(GetAllEvents(payload))
+
   }, [page, rowsPerPage])
 
   useEffect(() => {
     if (eventIsUpdated) {
       dispatch(GetAllEvents({
-        "pageNo": 1,
+        "pageNo": page + 1,
         "perPageResults": rowsPerPage
       }))
     }
@@ -70,14 +80,23 @@ export default function Events() {
 
 
   const handleCreateEvent = () => {
-    setOpenCreateModal(true)
+    dispatch(batchIsLoading())
+    dispatch(GetAllBatches()).then((response) => {
+      if (response) {
+        setOpenCreateModal(true)
+      }
+    })
   }
 
   const handleUpdateEvent = (id) => {
-    dispatch(GetEventDetails(id.eventId))
-      .then(() => {
-        setShowEditModal(prevState => !prevState)
-      })
+    Promise.all([
+      dispatch(batchIsLoading()),
+      dispatch(GetEventDetails(id.eventId)),
+      dispatch(GetAllBatches())
+    ]).then((values) => {
+      setShowEditModal(prevState => !prevState)
+
+    });
   }
 
   const handleDeleteEvent = (id) => {
@@ -118,6 +137,11 @@ export default function Events() {
       })
   }
 
+  const handleSendEmail = (data) => {
+    setEventId(data.eventId)
+    setOpenEmailModal(true)
+  }
+
   return (
     <Grid container spacing={1}>
       <Grid item xs={12}>
@@ -127,7 +151,7 @@ export default function Events() {
       </Grid>
       <Grid item xs={12}>
         {
-          isLoading ?
+          isLoading || isBatchDataLoading ?
             <Loader />
             :
             <ReusableTable
@@ -140,7 +164,13 @@ export default function Events() {
               onRowsPerPageChange={handleChangeRowsPerPage}
               page={page}
               rowsPerPage={rowsPerPage}
-              count={10}
+              count={totalCount}
+              CustomButton={
+                <Tooltip title="Send">
+                  <ForwardToInboxIcon />
+                </Tooltip>
+              }
+              handleCustomButton={handleSendEmail}
             />
         }
       </Grid>
@@ -153,6 +183,9 @@ export default function Events() {
       </ReusbaleDialog>
       <ReusbaleDialog maxWidth="lg" open={showEditModal} onClose={() => setShowEditModal(prevState => !prevState)}>
         <EditEvent onClose={() => setShowEditModal(prevState => !prevState)} />
+      </ReusbaleDialog>
+      <ReusbaleDialog maxWidth="lg" open={openEmailModal} onClose={() => setOpenEmailModal(prevState => !prevState)}>
+        <SendEventCommunication eventId={eventId} onClose={() => setOpenEmailModal(prevState => !prevState)} />
       </ReusbaleDialog>
     </Grid>
   )

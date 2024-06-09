@@ -16,8 +16,8 @@ const validationSchema = yup.object().shape({
  lastName: yup.string().required(),
  emailAddress: yup.string().email().required(),
  mobileNumber: yup.string().matches(phoneRegExp, 'Phone number is not valid'),
- subscriptionStartDate: yup.date("This is not valid date").required("Subscription start date is required."),
- subscriptionEndDate: yup.date().required("Subscription end date is required."),
+ subscriptionStartDate: yup.string("This is not valid date"),
+ subscriptionEndDate: yup.string("This is not valid date"),
  subscriptionType: yup.string().required(),
  batchNo: yup.number().required(),
  status: yup.string().required(),
@@ -46,7 +46,11 @@ const UpdateStudent = ({ onClose, editData }) => {
 
 
  const onSubmit = (data) => {
-  data.subscriptionEndDate = moment(subscriptionEndDate, 'YYYY-MM-DD').format('DD/MM/YYYY')
+  console.log("start", data.subscriptionStartDate)
+  data.subscriptionEndDate = data.subscriptionEndDate ? moment(data.subscriptionEndDate, 'YYYY-MM-DD').format('DD/MM/YYYY') : data.subscriptionEndDate
+  data.subscriptionStartDate = data.subscriptionStartDate ? moment(data.subscriptionStartDate, 'YYYY-MM-DD').format('DD/MM/YYYY') : data.subscriptionStartDate
+  console.log("data", data)
+
   dispatch(UpdateStudentData(data))
   onClose()
  };
@@ -116,7 +120,7 @@ const UpdateStudent = ({ onClose, editData }) => {
       <Controller
        name="subscriptionStartDate"
        control={control}
-       defaultValue={moment(subscriptionStartDate, 'DD/MM/YYYY').format('YYYY-MM-DD')}
+       defaultValue={subscriptionStartDate ? moment(subscriptionStartDate, 'DD/MM/YYYY').format('YYYY-MM-DD') : ""}
        render={({ field }) => (
         <TextField
          {...field}
@@ -134,7 +138,7 @@ const UpdateStudent = ({ onClose, editData }) => {
       <Controller
        name="subscriptionEndDate"
        control={control}
-       defaultValue={moment(subscriptionEndDate, 'DD/MM/YYYY').format('YYYY-MM-DD')}
+       defaultValue={subscriptionEndDate ? moment(subscriptionEndDate, 'DD/MM/YYYY').format('YYYY-MM-DD') : ""}
        render={({ field }) => (
         <TextField
          {...field}

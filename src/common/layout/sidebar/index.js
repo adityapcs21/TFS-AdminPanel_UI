@@ -31,7 +31,9 @@ import InfoIcon from '@mui/icons-material/Info';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import EventIcon from '@mui/icons-material/Event';
-
+import BadgeIcon from '@mui/icons-material/Badge';
+import RateReviewIcon from '@mui/icons-material/RateReview';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 
 const drawerWidth = 270;
 
@@ -55,11 +57,15 @@ export const menuOptions = {
     { label: 'Manage Subscription', url: routeNames.MANAGESUBSCRIPTION, icons: <RequestQuoteIcon color='inherit' />, subCategory: [] },
     { label: 'Manage Payments', url: routeNames.MANAGEPAYMENT, icons: <AccountBalanceIcon color='inherit' />, subCategory: [] },
     { label: 'Blog', url: routeNames.BLOG, icons: <RssFeedIcon color='inherit' />, subCategory: [] },
+    { label: 'Batch', url: routeNames.BATCH, icons: <BadgeIcon color='inherit' />, subCategory: [] },
     { label: 'Gallery', url: routeNames.GALLERY, icons: <CollectionsIcon color='inherit' />, subCategory: [{ label: 'Images', subCatUrl: routeNames.IMAGEGALLERY }, { label: 'Videos', subCatUrl: routeNames.VIDEOGALLERY }] },
     { label: 'About-Us', url: routeNames.ABOUTUS, icons: <InfoIcon color='inherit' />, subCategory: [] },
     // { label: 'Contact-Us', url: routeNames.CONTACTUS, icons: <ContactMailIcon />, subCategory: [] },
     { label: 'Banner', url: routeNames.BANNER, icons: <CollectionsIcon color='inherit' />, subCategory: [] },
     { label: 'Events', url: routeNames.EVENTS, icons: <EventIcon color='inherit' />, subCategory: [] },
+    { label: 'Testimonials', url: routeNames.TESTIMONIALS, icons: <RateReviewIcon color='inherit' />, subCategory: [] },
+    { label: 'Email Services', url: routeNames.EMAILSERVICES, icons: <AlternateEmailIcon color='inherit' />, subCategory: [] }
+
   ],
   "RENEWAL LEAD": [
     {
@@ -247,7 +253,7 @@ export default function MiniDrawer() {
           {!userDetails?.passwordChangeRequired
             && menuOptions[userDetails.role].map((page, index) => {
               return (
-                page.subCategory.length > 0 ?
+                page?.subCategory.length > 0 ?
                   <ListItem key={index}
                     disablePadding
                     sx={{

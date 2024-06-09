@@ -66,6 +66,18 @@ export const EditEvent = createAsyncThunk('event/editEvent', async (data, { reje
  }
 })
 
+export const SendEventEmail = createAsyncThunk('event/sendEventCommunication', async (data, { rejectWithValue }) => {
+ try {
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}event/sendEventCommunication`, data, axiosConfig)
+  return response.data
+ } catch (err) {
+  if (!err.response) {
+   throw err
+  }
+  return rejectWithValue(err.response.data)
+ }
+})
+
 
 const initialState = {
  isLoading: false,

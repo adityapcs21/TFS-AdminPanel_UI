@@ -10,7 +10,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 
 
 
-const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, disableDelete, disableEdit, disableActionButton, onPageChange, onRowsPerPageChange, page, rowsPerPage, count, unlock, handleUnlock }) => {
+const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, disableDelete, disableEdit, disableActionButton, onPageChange, onRowsPerPageChange, page, rowsPerPage, count, unlock, handleUnlock, CustomButton, handleCustomButton }) => {
   const [orderBy, setOrderBy] = useState('');
   const [order, setOrder] = useState('asc');
 
@@ -105,7 +105,11 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, d
                           <LockOpenIcon />
                         </Tooltip>
                       </IconContainer>}
-
+                    {CustomButton &&
+                      <IconContainer onClick={() => handleCustomButton(row)}>
+                        {CustomButton}
+                      </IconContainer>
+                    }
                   </Box>
                 </TableCell>
               }

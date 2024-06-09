@@ -23,6 +23,8 @@ export default function MyAssignedUser() {
   const dispatch = useDispatch();
 
   const assignedUserList = useSelector(state => state.buddyAssignment.AssignedUserList?.userAssignmentList);
+  const totalPages = useSelector(state => state.buddyAssignment.AssignedUserList?.size);
+
   const ListUpdated = useSelector(state => state.buddyAssignment.ListUpdated);
 
   const [showActionOfStudent, setShowActionOfStudent] = useState(false)
@@ -79,7 +81,7 @@ export default function MyAssignedUser() {
           onRowsPerPageChange={handleChangeRowsPerPage}
           page={page}
           rowsPerPage={rowsPerPage}
-          count={10}
+          count={totalPages}
           onView={handleView}
         />
       </Grid>

@@ -33,7 +33,6 @@ function GenerateDate() {
 
 const options = GenerateDate();
 
-console.log(options);
 export default function ApproveStudentModal({ data, onClose }) {
  const { uniqueId, userName, requestStatus, price, subscriptionEndDate } = data;
  const dispatch = useDispatch();

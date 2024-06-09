@@ -9,6 +9,7 @@ import * as yup from "yup";
 import routeNames from '../../router/routeNames';
 import axios from 'axios';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import Swal from 'sweetalert2';
 
 
 const schema = yup.object({
@@ -22,15 +23,45 @@ export default function Login() {
     resolver: yupResolver(schema)
   });
   const [loginError, setLoginError] = useState(false)
-  const [isClicked, setIsClicked] = useState(false);
+  const [isLoading, setIsloading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
 
   const handleTogglePassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
+  const forceCalling = async (payload) => {
+    try {
+
+      const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}auth/admin/login`, payload);
+      if (response && response.status === 200) {
+        console.log("res==", response)
+        setIsloading(false)
+        if (response.data && response.data.accessToken) {
+          localStorage.setItem("userDetails", JSON.stringify(response.data));
+          localStorage.setItem("token", response.data.accessToken);
+          setLoginError("")
+          navigate(routeNames.DASHBOARD)
+          window.location.reload()
+        }
+        else if (response.data.passwordChangeRequired) {
+          navigate(routeNames.CHNAGEPASSWORD)
+        }
+        else if (response.data.data) {
+          setLoginError(response.data.data)
+        }
+      }
+    } catch (error) {
+      console.error('Force login error:', error);
+      alert('An error occurred during force login.');
+      setIsloading(false)
+
+    }
+  }
+
   const onSubmit = async (loginDetails) => {
-    setIsClicked(true)
+    setIsloading(true)
     let payload = {
       "emailId": loginDetails.emailId,
       "password": loginDetails.password,
@@ -38,21 +69,52 @@ export default function Login() {
     }
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}auth/admin/login`, payload);
-      if (response.data) {
-        if (response.data.passwordChangeRequired) {
-          navigate(routeNames.CHNAGEPASSWORD)
-        } else {
+      if (response && response.status === 200) {
+        console.log("res==", response)
+        setIsloading(false)
+        if (response.data && response.data.accessToken) {
           localStorage.setItem("userDetails", JSON.stringify(response.data));
           localStorage.setItem("token", response.data.accessToken);
-          setLoginError(false)
+          setLoginError("")
+          setIsloading(false)
           navigate(routeNames.DASHBOARD)
           window.location.reload()
         }
+        else if (response.data.passwordChangeRequired) {
+          navigate(routeNames.CHNAGEPASSWORD)
+          setIsloading(false)
+        }
+        else if (response.data.data) {
+          setLoginError(response.data.data)
+        }
       }
-    } catch (error) {
-      setLoginError(true)
-      console.error(error);
-      setIsClicked(false)
+    } catch (errorResponse) {
+      console.log("3456789", errorResponse.response)
+      setIsloading(false)
+      if (errorResponse && errorResponse.response && errorResponse.response.status === 440) {
+        Swal.fire({
+          title: errorResponse.response?.data?.data,
+          text: "Do you still want to login again in this tab?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#2c4c74",
+          cancelButtonColor: "#f36334",
+          confirmButtonText: "Yes, Login!"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            let newPayload = {
+              emailId: payload.emailId,
+              password: payload.password,
+              grantType: "token-force"
+            }
+            console.log("payloaddnew", newPayload)
+            forceCalling(newPayload)
+          }
+        });
+      }
+      setLoginError(errorResponse.response?.data?.data)
+      console.error("errr--", errorResponse.response.data);
+      setIsloading(false)
     }
   }
 
@@ -112,11 +174,11 @@ export default function Login() {
                     />
                   )}
                 />
-                {loginError && <Typography sx={{ color: 'red' }}>Please enter correct email and password!</Typography>}
+                {loginError && <Typography sx={{ color: 'red' }}>{loginError}</Typography>}
               </Grid>
             </Grid>
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
-            <SubmitButton startIcon={<CircularProgress size="18px" color="inherit" sx={{ display: isClicked ? "block" : 'none' }} />} disabled={isClicked} type="submit" fullWidth variant="contained" color="primary">Sign In</SubmitButton>
+            <SubmitButton startIcon={<CircularProgress size="18px" color="inherit" sx={{ display: isLoading ? "block" : 'none' }} />} disabled={isLoading} type="submit" fullWidth variant="contained" color="primary">Sign In</SubmitButton>
             {/* <Grid container>
               <Grid item xs={12}>
                 <Box>Don't remember </Box>

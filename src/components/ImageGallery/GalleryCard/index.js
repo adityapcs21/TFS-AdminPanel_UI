@@ -23,7 +23,7 @@ export default function BlogCard({ title, createdBy, updatedDate, media, onDelet
 
  const dispatch = useDispatch()
  function getInitials(name) {
-  const initials = name.split(' ').map(word => word.charAt(0)).join('');
+  const initials = name && name.split(' ').map(word => word.charAt(0)).join('');
   return initials;
  }
  const [openEditModal, setOpenEditModal] = React.useState(false);

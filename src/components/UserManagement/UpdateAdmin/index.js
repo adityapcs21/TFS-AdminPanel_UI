@@ -247,9 +247,7 @@ const UpdateAdmin = ({ onClose, editData }) => {
          </Grid>
         </form>
        </TabPanel>
-       <TabPanel value={value} index={1} >
-        <ChangePassword onClose={onClose} />
-       </TabPanel>
+
       </Box>
       <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
      </Box>
