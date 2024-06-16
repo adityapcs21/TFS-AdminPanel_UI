@@ -25,7 +25,7 @@ const UpdateImageGallery = ({ onClose, data }) => {
 
  const [file, setFile] = useState(attachments);
  const [fileName, setFileName] = useState([])
- const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
+ const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")))
  const { control, setValue, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });

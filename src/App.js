@@ -12,7 +12,7 @@ function App() {
     console.log = function () { }
   }
   const dispatch = useDispatch()
-  const [token, setToken] = useState(JSON.parse(localStorage.getItem("userDetails")))
+  const [token, setToken] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")))
 
   useEffect(() => {
     if (token) {

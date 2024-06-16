@@ -22,12 +22,12 @@ import moment from 'moment';
 const schema = yup.object().shape({
   eventName: yup.string().required('Event Name is required'),
   batch: yup.array().min(1, 'Please select at least one batch option'),
-  eventDate: yup.string().required('Event Date is required'),
   eventStartTime: yup.string().required('Event Start Time is required'),
   eventEndTime: yup.string().required('Event End Time is required'),
-  registrationDeadLineDate: yup.string().required('Registration Deadline Date is required')
-    .test('registrationDeadLineDate', 'Registration Deadline Date must be later than Event Date', (value, context) => {
-      return moment(value, 'YYYY-MM-DD').isAfter(moment(context.parent.eventDate, 'YYYY-MM-DD'));
+  registrationDeadLineDate: yup.string().required('Registration Deadline Date is required'),
+  eventDate: yup.string().required('Event Date is required')
+    .test('registrationDeadLineDate', 'Event Date must be later than Event Date', (value, context) => {
+      return moment(value, 'YYYY-MM-DD').isAfter(moment(context.parent.registrationDeadLineDate, 'YYYY-MM-DD'));
     }),
   description: yup.string().required('Description is required'),
   location: yup.string().required('Location is required'),

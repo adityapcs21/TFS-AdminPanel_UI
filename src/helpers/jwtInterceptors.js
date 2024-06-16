@@ -8,7 +8,7 @@
 //  },
 //  async (error) => {
 //   if (error.response.status === 401) {
-//    let userDetails = JSON.parse(localStorage.getItem("userDetails"));
+//    let userDetails = JSON.parse(localStorage.getItem("tfsUserDetails"));
 //    let payload = {
 //     "emailId": userDetails.emailId,
 //     "grantType": "refresh",
@@ -17,13 +17,13 @@
 //    await axios.post(`${process.env.REACT_APP_API_ENDPOINT}blog/auth/admin/login`, payload)
 //     .then((res) => {
 //      localStorage.clear()
-//      localStorage.setItem("token", res.data.accessToken);
-//      localStorage.setItem("userDetails", JSON.stringify(res.data));
+//      localStorage.setItem("tfstoken", res.data.accessToken);
+//      localStorage.setItem("tfsUserDetails", JSON.stringify(res.data));
 //      window.location.reload()
 //     })
 //     .catch((refreshTokenAPIError) => {
-//      localStorage.removeItem("userDetails");
-//      localStorage.removeItem("token");
+//      localStorage.removeItem("tfsUserDetails");
+//      localStorage.removeItem("tfstoken");
 //      return Promise.reject(refreshTokenAPIError)
 //     })
 //    return axios(error.config)
@@ -52,7 +52,7 @@ const jwtInterceptor = axios.create({
 const refreshToken = async () => {
  // Make a request to your backend to refresh the token
  // Implement your refresh token logic here and return the new access token
- let userDetails = JSON.parse(localStorage.getItem("userDetails"));
+ let userDetails = JSON.parse(localStorage.getItem("tfsUserDetails"));
  let payload = {
   "emailId": userDetails.emailId,
   "grantType": "refresh",
@@ -62,8 +62,8 @@ const refreshToken = async () => {
 
  const newAccessToken = response.data.accessToken;
  // Save the new access token to your storage or state
- localStorage.setItem("token", response.data.accessToken);
- localStorage.setItem("userDetails", JSON.stringify(response.data));
+ localStorage.setItem("tfstoken", response.data.accessToken);
+ localStorage.setItem("tfsUserDetails", JSON.stringify(response.data));
  return newAccessToken;
 };
 

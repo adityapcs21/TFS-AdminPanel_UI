@@ -33,8 +33,7 @@ const columns = [
 export default function Events() {
   const dispatch = useDispatch()
   const EventList = useSelector(state => state.events.allEvents?.eventList)
-  const totalCount = useSelector(state => state.events.allEvents?.size)
-  console.log("total", totalCount)
+  const totalCount = useSelector(state => state.events.allEvents?.size);
   const eventIsUpdated = useSelector(state => state.events.newEventAdded)
   // const totalPages = useSelector(state => state.events.paymentDetails?.size);
   // const appliedFilters = useSelector(state => state.events.appliedFilters);
@@ -93,7 +92,7 @@ export default function Events() {
       dispatch(batchIsLoading()),
       dispatch(GetEventDetails(id.eventId)),
       dispatch(GetAllBatches())
-    ]).then((values) => {
+    ]).then(() => {
       setShowEditModal(prevState => !prevState)
 
     });

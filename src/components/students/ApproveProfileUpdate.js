@@ -17,7 +17,7 @@ export default function ApproveProfileUpdate({ data, onClose }) {
  const { uniqueId } = data;
 
  const dispatch = useDispatch();
- const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")));
+ const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")));
 
 
  const { handleSubmit, formState: { errors } } = useForm({

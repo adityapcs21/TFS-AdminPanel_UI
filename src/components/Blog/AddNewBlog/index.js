@@ -30,7 +30,7 @@ const AddNewBlog = ({ onClose }) => {
 
  const [file, setFile] = useState([]);
  const [fileName, setFileName] = useState([])
- const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
+ const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")))
  const { control, setValue, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });
@@ -66,7 +66,7 @@ const AddNewBlog = ({ onClose }) => {
    }
    dispatch(SaveBlog(payload))
   }
-  else{
+  else {
    let payload = {
     "title": data.title,
     "description": data.description,

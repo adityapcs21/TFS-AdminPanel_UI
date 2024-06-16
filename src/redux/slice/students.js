@@ -3,7 +3,7 @@ import jwtInterceptor from "../../helpers/jwtInterceptors";
 
 let axiosConfig = {
  headers: {
-  "Authorization": localStorage.getItem("token")
+  "Authorization": localStorage.getItem("tfstoken")
  }
 };
 export const GetAllStudentsList = createAsyncThunk('students/getAllStudents', async (data, { rejectWithValue }) => {

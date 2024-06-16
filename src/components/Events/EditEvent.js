@@ -39,7 +39,7 @@ const UpdateEvent = ({ onClose }) => {
   const isLoading = useSelector((state) => state.events.mediaUploading)
   const eventDetails = useSelector(state => state.events.eventDetails);
   const BatchList = useSelector((state) => state.batch.batchList.batchList);
-
+  console.log("batchaa", eventDetails.batch?.split(","))
   let batches = eventDetails.batch?.split(",")
 
   const [file, setFile] = useState(eventDetails.attachments);
@@ -69,7 +69,7 @@ const UpdateEvent = ({ onClose }) => {
       "registrationLimit": eventDetails.registrationLimit,
       "eventType": eventDetails.eventType,
       "registrationFees": eventDetails.registrationFees,
-      "batch": batches
+      "batch": eventDetails.batch?.split(",")?.map(Number)
     }
   });
 
@@ -132,7 +132,7 @@ const UpdateEvent = ({ onClose }) => {
 
   const handleRemoveImages = (img) => {
     let filtered = file.filter((item) => item != img)
-    let filtered1 = file.filter((item) => item.Name != img.Name)
+    let filtered1 = fileName.filter((item) => item.Name != img)
 
     setFile(filtered)
     setFileName(filtered1)
@@ -255,7 +255,7 @@ const UpdateEvent = ({ onClose }) => {
               <Controller
                 name="batch"
                 control={control}
-                defaultValue={[]}
+                // defaultValue={[]}
                 render={({ field }) => (
                   <FormControl fullWidth error={!!errors.batch}>
                     <InputLabel>Batch</InputLabel>

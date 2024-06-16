@@ -7,8 +7,6 @@ import AddSubscriptionPlan from '../../components/manageSubscription/addSubscrip
 import UpdateSubscriptionPlan from '../../components/manageSubscription/updateSubscriptionPlan'
 import Swal from 'sweetalert2'
 import Loader from '../../common/loader'
-import { GetPaymentList } from '../../redux/slice/managePayment'
-
 
 
 export default function ManageSubscription() {

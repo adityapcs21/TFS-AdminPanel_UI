@@ -3,7 +3,7 @@ import jwtInterceptor from "../../helpers/jwtInterceptors";
 
 let axiosConfig = {
  headers: {
-  "Authorization": localStorage.getItem("token")
+  "Authorization": localStorage.getItem("tfstoken")
  }
 };
 export const AddEvent = createAsyncThunk('event/addEvent', async (data, { rejectWithValue }) => {
@@ -78,6 +78,18 @@ export const SendEventEmail = createAsyncThunk('event/sendEventCommunication', a
  }
 })
 
+export const SendTextEmail = createAsyncThunk('email/SendTextEmail', async (data, { rejectWithValue }) => {
+ try {
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}sendEmail`, data, axiosConfig)
+  return response.data
+ } catch (err) {
+  if (!err.response) {
+   throw err
+  }
+  return rejectWithValue(err.response.data)
+ }
+})
+
 
 const initialState = {
  isLoading: false,
@@ -136,11 +148,12 @@ const manageEvent = createSlice({
    state.isLoading = false;
    state.allEvents = action.payload
    state.newEventAdded = false;
-
+   state.mediaUploading = false;
   });
   builder.addCase(GetAllEvents.rejected, (state, action) => {
    console.log("Error", action.payload);
    state.isError = true
+   state.mediaUploading = false;
   });
 
 

@@ -23,6 +23,8 @@ const routeNames = {
  BATCH: '/batch',
  TESTIMONIALS:'/testimonials',
  EMAILSERVICES:'/email',
- COMPOSEMAIL:"/email/compose-email"
+ COMPOSEMAIL:"/email/compose-email",
+ DRAFTEMAIL:"/email/draft-email"
+
 }
 export default routeNames;

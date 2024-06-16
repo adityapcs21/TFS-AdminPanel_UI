@@ -3,7 +3,7 @@ import Layout from '../common/layout';
 import routeNames from './routeNames';
 
 const ProtectedRoute = () => {
- const isAuthenticated = localStorage.getItem('token');
+ const isAuthenticated = localStorage.getItem('tfstoken');
 
  return isAuthenticated ? (
   <Layout>

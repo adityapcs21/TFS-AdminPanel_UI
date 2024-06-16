@@ -39,8 +39,8 @@ export default function Login() {
         console.log("res==", response)
         setIsloading(false)
         if (response.data && response.data.accessToken) {
-          localStorage.setItem("userDetails", JSON.stringify(response.data));
-          localStorage.setItem("token", response.data.accessToken);
+          localStorage.setItem("tfsUserDetails", JSON.stringify(response.data));
+          localStorage.setItem("tfstoken", response.data.accessToken);
           setLoginError("")
           navigate(routeNames.DASHBOARD)
           window.location.reload()
@@ -73,8 +73,8 @@ export default function Login() {
         console.log("res==", response)
         setIsloading(false)
         if (response.data && response.data.accessToken) {
-          localStorage.setItem("userDetails", JSON.stringify(response.data));
-          localStorage.setItem("token", response.data.accessToken);
+          localStorage.setItem("tfsUserDetails", JSON.stringify(response.data));
+          localStorage.setItem("tfstoken", response.data.accessToken);
           setLoginError("")
           setIsloading(false)
           navigate(routeNames.DASHBOARD)

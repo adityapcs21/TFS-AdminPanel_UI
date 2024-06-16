@@ -43,8 +43,8 @@ export default function ChangePassword() {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}auth/admin/login`, data);
       if (response.data) {
-        localStorage.setItem("userDetails", JSON.stringify(response.data));
-        localStorage.setItem("token", response.data.accessToken);
+        localStorage.setItem("tfsUserDetails", JSON.stringify(response.data));
+        localStorage.setItem("tfstoken", response.data.accessToken);
         setLoginError(false)
         navigate(routeNames.DASHBOARD)
         window.location.reload()

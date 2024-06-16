@@ -36,7 +36,7 @@ export default function Students() {
   const isLoading = useSelector((state) => state.students.isLoading);
   const appliedFilters = useSelector((state) => state.students.AppliedFilters);
 
-  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")));
+  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")));
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [openEditModal, setOpenEditModal] = useState(false);

@@ -64,7 +64,7 @@ export const menuOptions = {
     { label: 'Banner', url: routeNames.BANNER, icons: <CollectionsIcon color='inherit' />, subCategory: [] },
     { label: 'Events', url: routeNames.EVENTS, icons: <EventIcon color='inherit' />, subCategory: [] },
     { label: 'Testimonials', url: routeNames.TESTIMONIALS, icons: <RateReviewIcon color='inherit' />, subCategory: [] },
-    { label: 'Email Services', url: routeNames.EMAILSERVICES, icons: <AlternateEmailIcon color='inherit' />, subCategory: [] }
+    { label: 'Email Services', url: routeNames.EMAILSERVICES, icons: <AlternateEmailIcon color='inherit' />, subCategory: [{ label: 'Compose Email', subCatUrl: routeNames.COMPOSEMAIL }, { label: 'Draft Email', subCatUrl: routeNames.DRAFTEMAIL }] }
 
   ],
   "RENEWAL LEAD": [
@@ -172,7 +172,7 @@ export default function MiniDrawer() {
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(true);
   const [openPages, setOpenPages] = React.useState(false);
-  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")));
+  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")));
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeSubIndex, setActiveSubIndex] = useState();
 
@@ -236,8 +236,8 @@ export default function MiniDrawer() {
               />
               {open &&
                 <>
-                  <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>{userDetails.name}</Typography>
-                  <Typography sx={{ fontSize: '14px', fontWeight: 500 }}>{userDetails.role}</Typography>
+                  <Typography sx={{ fontSize: '16px', fontWeight: 500 }}>{userDetails?.name}</Typography>
+                  <Typography sx={{ fontSize: '14px', fontWeight: 500 }}>{userDetails?.role}</Typography>
                 </>
               }
 
@@ -250,8 +250,8 @@ export default function MiniDrawer() {
             width: '1px'
           }
         }}>
-          {!userDetails?.passwordChangeRequired
-            && menuOptions[userDetails.role].map((page, index) => {
+          {userDetails && !userDetails?.passwordChangeRequired
+            && menuOptions[userDetails?.role].map((page, index) => {
               return (
                 page?.subCategory.length > 0 ?
                   <ListItem key={index}

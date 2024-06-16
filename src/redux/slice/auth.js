@@ -5,8 +5,8 @@ import axios from "axios";
 export const login = createAsyncThunk('auth/login', async (data) => {
  try {
   const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}auth/admin/login`, data);
-  localStorage.setItem("token", response.data.accessToken);
-  localStorage.setItem("userDetails", JSON.stringify(response.data));
+  localStorage.setItem("tfstoken", response.data.accessToken);
+  localStorage.setItem("tfsUserDetails", JSON.stringify(response.data));
   return response.data;
  } catch (error) {
   console.error(error);
@@ -18,7 +18,7 @@ const initialState = {
  isLoading: false,
  data: null,
  isError: false,
- token: localStorage.getItem("token")
+ token: localStorage.getItem("tfstoken")
 }
 
 const authSlice = createSlice({
@@ -37,11 +37,11 @@ const authSlice = createSlice({
    if (action.payload?.passwordChangeRequired) {
     state.isLoading = false;
     state.data = action.payload
-    // localStorage.setItem("token", action.payload?.accessToken);
-    localStorage.setItem("userDetails", JSON.stringify(action.payload));
+    // localStorage.setItem("tfstoken", action.payload?.accessToken);
+    localStorage.setItem("tfsUserDetails", JSON.stringify(action.payload));
     window.location.reload()
    } else {
-    localStorage.setItem("userDetails", JSON.stringify(action.payload));
+    localStorage.setItem("tfsUserDetails", JSON.stringify(action.payload));
     // window.location.reload()
    }
 

@@ -19,8 +19,8 @@ import MyAssignedUser from "../pages/my-assigned-user/index.js";
 import Events from "../pages/events/index.js";
 import Batch from "../pages/batch/index.js";
 import Testimonial from "../pages/testimonials/index.js";
-import Email from "../pages/manage-email/index.js";
-import MailCompose from "../components/mailServices/mailcompose/mailcompose.js";
+import DraftEmail from "../pages/manage-email/draft-email/index.js";
+import MailCompose from "../pages/manage-email/compose-email/index.js";
 // import CustomerQuery from "../pages/customer-query/index.js";
 
 
@@ -62,9 +62,8 @@ const Router = () => {
           <Route path={routeNames.EVENTS} element={<Events />} />
           <Route path={routeNames.BATCH} element={<Batch />} />
           <Route path={routeNames.TESTIMONIALS} element={<Testimonial />} />
-          <Route path={routeNames.EMAILSERVICES} element={<Email />} />
           <Route path={routeNames.COMPOSEMAIL} element={<MailCompose />} />
-
+          <Route path={routeNames.DRAFTEMAIL} element={<DraftEmail />} />
         </Route>
         {/* <Route path={routeNames.ERROR} element={<ErrorPage />} /> */}
       </Routes>

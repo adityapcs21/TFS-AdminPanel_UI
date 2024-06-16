@@ -22,7 +22,7 @@ const AddBannerModal = ({ onClose }) => {
 
   const [file, setFile] = useState([]);
   const [fileName, setFileName] = useState([])
-  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
+  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")))
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });

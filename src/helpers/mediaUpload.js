@@ -2,7 +2,7 @@ import jwtInterceptor from "./jwtInterceptors";
 
 let axiosConfig = {
  headers: {
-  "Authorization": localStorage.getItem("token")
+  "Authorization": localStorage.getItem("tfstoken")
  }
 };
 

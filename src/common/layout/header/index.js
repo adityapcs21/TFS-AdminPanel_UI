@@ -22,15 +22,16 @@ import ReusbaleDialog from "../../../components/SharedComponent/ReusableDialog"
 import ChangePassword from '../../../components/UserManagement/ChangeAdminPassword';
 
 export default function Header({ isOpen }) {
-  const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("userDetails")))
+  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")))
   const [openChangePassModal, setOpenChangePassModal] = useState(false)
+
+
   useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userDetails"));
+    const userInfo = JSON.parse(localStorage.getItem("tfsUserDetails"));
     setUserDetails(userInfo)
   }, [])
 
@@ -111,13 +112,13 @@ export default function Header({ isOpen }) {
       <MenuItem onClick={handleMenuClose} >
         <Box sx={{ display: 'flex', gap: '6px' }}>
           <PersonIcon sx={{ color: "#bdbdbd" }} />
-          <Typography >{userDetails.name}</Typography>
+          <Typography >{userDetails?.name}</Typography>
         </Box>
       </MenuItem>
       <MenuItem onClick={handleMenuClose}>
         <Box sx={{ display: 'flex', gap: '6px' }}>
           <EmailIcon sx={{ color: "#bdbdbd" }} />
-          <Typography >{userDetails.emailId}</Typography>
+          <Typography >{userDetails?.emailId}</Typography>
         </Box>
       </MenuItem>
       <MenuItem onClick={() => handleChangePassword()}>
@@ -188,6 +189,7 @@ export default function Header({ isOpen }) {
     </Menu>
   );
 
+
   return (
     <Box sx={{ minHeight: 'inherit', display: "flex", alignItems: 'center', flexGrow: 1 }}>
       {/* <Toolbar> */}
@@ -226,7 +228,7 @@ export default function Header({ isOpen }) {
           color="inherit"
         >
           {
-            userDetails.profileImg ?
+            userDetails?.profileImg ?
               <Avatar
                 alt="Remy Sharp"
                 src="https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
@@ -234,7 +236,7 @@ export default function Header({ isOpen }) {
               />
               :
               <InitialImg>
-                <Typography>{getInitials(userDetails.name)}</Typography>
+                <Typography>{getInitials(userDetails?.name)}</Typography>
               </InitialImg>
           }
         </IconButton>
