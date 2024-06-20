@@ -14,6 +14,7 @@ import buddyAssignmentReducer from './slice/buddyAssignment';
 import eventsReducer from './slice/events';
 import batchReducer from './slice/batch';
 import testimonialReducer from "./slice/testimonials";
+import kycReducer from './slice/kyc';
 
 export const store = configureStore({
  reducer: {
@@ -31,6 +32,7 @@ export const store = configureStore({
   buddyAssignment: buddyAssignmentReducer,
   events: eventsReducer,
   batch: batchReducer,
-  testimonial: testimonialReducer
+  testimonial: testimonialReducer,
+  kyc: kycReducer
  }
 });

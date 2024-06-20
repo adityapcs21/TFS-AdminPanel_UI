@@ -12,171 +12,188 @@ import { ReactMultiEmail, isEmail } from 'react-multi-email';
 import 'react-multi-email/dist/style.css';
 import { useDispatch } from 'react-redux';
 import { SendTextEmail } from '../../../redux/slice/events';
+import Swal from 'sweetalert2';
 
 const validationSchema = Yup.object().shape({
- receivers: Yup.array()
-  .of(Yup.string().email('Invalid email address'))
-  .min(1, 'At least one email address is required')
-  .required('To field is required'),
- subject: Yup.string().required('Subject field is required'),
- message: Yup.string().required('Message field is required'),
- attachments: Yup.array().of(
-  Yup.mixed()
-   .test('fileSize', 'File size is too large', (value) => {
-    return value && value.size <= 5 * 1024 * 1024; // 5MB
-   })
-   .test('fileType', 'Unsupported file type', (value) => {
-    return value && ['image/jpeg', 'image/png', 'application/pdf'].includes(value.type);
-   })
- ),
+  receivers: Yup.array()
+    .of(Yup.string().email('Invalid email address'))
+    .min(1, 'At least one email address is required')
+    .required('To field is required'),
+  subject: Yup.string().required('Subject field is required'),
+  message: Yup.string().required('Message field is required'),
+  attachments: Yup.array().of(
+    Yup.mixed()
+      .test('fileSize', 'File size is too large', (value) => {
+        return value && value.size <= 5 * 1024 * 1024; // 5MB
+      })
+      .test('fileType', 'Unsupported file type', (value) => {
+        return value && ['image/jpeg', 'image/png', 'application/pdf'].includes(value.type);
+      })
+  ),
 });
 
 const EmailCompose = () => {
- const dispatch = useDispatch()
- const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")))
- const { control, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm({
-  resolver: yupResolver(validationSchema)
- });
-
- const [editorState, setEditorState] = useState(EditorState.createEmpty());
- const [emails, setEmails] = useState([]);
- const [focused, setFocused] = useState(false);
-
- const tfsDraftMessage = watch();
- useEffect(() => {
-  localStorage.setItem('tfsDraftMessage', JSON.stringify(tfsDraftMessage));
- }, [tfsDraftMessage]);
-
- useEffect(() => {
-  setValue("message", draftToHtml(convertToRaw(editorState.getCurrentContent())));
- }, [editorState, setValue]);
-
- const onSubmit = (data) => {
-  delete data["attachments"]
-  data.sender = userDetails.emailId;
-  console.log("data", { ...data, receivers: emails });
-  localStorage.removeItem("tfsDraftMessage");
-  reset({
-   receivers: undefined,
-   subject: undefined,
-   message: undefined,
-   attachments: undefined,
+  const dispatch = useDispatch()
+  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")))
+  const { control, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm({
+    resolver: yupResolver(validationSchema)
   });
-  setEditorState(EditorState.createEmpty());
-  setEmails([]);
-  dispatch(SendTextEmail(data))
- };
 
- const onEditorStateChange = (newEditorState) => {
-  setEditorState(newEditorState);
- };
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [emails, setEmails] = useState([]);
+  const [focused, setFocused] = useState(false);
 
- return (
-  <Box width={"100%"}>
-   <Grid container spacing={3} justifyContent="space-between" flexWrap={"nowrap"}>
-    <Grid item xs={12}>
-     <Card sx={{ padding: '15px 20px' }}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-       <Grid container spacing={3}>
+  const tfsDraftMessage = watch();
+  console.log(tfsDraftMessage)
+  
+  useEffect(() => {
+    if (userDetails) {
+      let haveValue = Object.keys(userDetails).some(key => userDetails[key] !== "<p></p>\n" && userDetails[key].length > 1);
+      console.log("haveValue", haveValue)
+    }
+  }, [userDetails])
+
+  const handleUnload = () => {
+    localStorage.setItem('tfsDraftMessage', JSON.stringify(tfsDraftMessage));
+  };
+
+  useEffect(() => {
+
+    window.addEventListener('beforeunload', handleUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, []);
+
+
+
+
+  const onSubmit = (data) => {
+    delete data["attachments"]
+    data.sender = userDetails.emailId;
+    console.log("data", { ...data, receivers: emails });
+    localStorage.removeItem("tfsDraftMessage");
+    reset({
+      receivers: undefined,
+      subject: undefined,
+      message: undefined,
+      attachments: undefined,
+    });
+    setEditorState(EditorState.createEmpty());
+    setEmails([]);
+    dispatch(SendTextEmail(data))
+  };
+
+  const onEditorStateChange = (newEditorState) => {
+    setEditorState(newEditorState);
+  };
+
+  return (
+    <Box width={"100%"}>
+      <Grid container spacing={3} justifyContent="space-between" flexWrap={"nowrap"}>
         <Grid item xs={12}>
-         <Typography component="h3">Compose Email Message</Typography>
+          <Card sx={{ padding: '15px 20px' }}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Grid container spacing={3}>
+                <Grid item xs={12}>
+                  <Typography component="h3">Compose Email Message</Typography>
+                </Grid>
+                <Grid item xs={12}>
+                  <Controller
+                    name="receivers"
+                    control={control}
+                    defaultValue={[]}
+                    render={({ field }) => (
+                      <ReactMultiEmail
+                        placeholder='Input your email'
+                        emails={emails}
+                        onChange={(_emails) => {
+                          setEmails(_emails);
+                          field.onChange(_emails);
+                        }}
+                        autoFocus={true}
+                        onFocus={() => setFocused(true)}
+                        onBlur={() => setFocused(false)}
+                        getLabel={(email, index, removeEmail) => {
+                          return (
+                            <div data-tag key={index}>
+                              <div data-tag-item>{email}</div>
+                              <span data-tag-handle onClick={() => removeEmail(index)}>
+                                ×
+                              </span>
+                            </div>
+                          );
+                        }}
+                        error={!!errors.receivers}
+                        helperText={errors.receivers?.message}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Controller
+                    name="subject"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        label="Subject"
+                        variant="outlined"
+                        fullWidth
+                        error={!!errors.subject}
+                        helperText={errors.subject?.message}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Editor
+                    editorState={editorState}
+                    editorClassName="richtext-editor-textarea"
+                    onEditorStateChange={onEditorStateChange}
+                    toolbar={{
+                      options: ['inline', 'fontSize', 'fontFamily', 'list'],
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Controller
+                    name="attachments"
+                    control={control}
+                    defaultValue={[]}
+                    render={({ field }) => (
+                      <TextField
+                        {...field}
+                        type="file"
+                        variant="outlined"
+                        fullWidth
+                        multiple
+                        error={!!errors.attachments}
+                        helperText={errors.attachments?.message}
+                      />
+                    )}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={2} justifyContent="flex-end" sx={{ marginTop: '10px' }}>
+                <Grid item>
+                  <Button variant="contained" color="primary">
+                    Save
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button variant="contained" color="error" type="submit">
+                    Send
+                  </Button>
+                </Grid>
+              </Grid>
+            </form>
+          </Card>
         </Grid>
-        <Grid item xs={12}>
-         <Controller
-          name="receivers"
-          control={control}
-          defaultValue={[]}
-          render={({ field }) => (
-           <ReactMultiEmail
-            placeholder='Input your email'
-            emails={emails}
-            onChange={(_emails) => {
-             setEmails(_emails);
-             field.onChange(_emails);
-            }}
-            autoFocus={true}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            getLabel={(email, index, removeEmail) => {
-             return (
-              <div data-tag key={index}>
-               <div data-tag-item>{email}</div>
-               <span data-tag-handle onClick={() => removeEmail(index)}>
-                ×
-               </span>
-              </div>
-             );
-            }}
-            error={!!errors.receivers}
-            helperText={errors.receivers?.message}
-           />
-          )}
-         />
-        </Grid>
-        <Grid item xs={12}>
-         <Controller
-          name="subject"
-          control={control}
-          defaultValue=""
-          render={({ field }) => (
-           <TextField
-            {...field}
-            label="Subject"
-            variant="outlined"
-            fullWidth
-            error={!!errors.subject}
-            helperText={errors.subject?.message}
-           />
-          )}
-         />
-        </Grid>
-        <Grid item xs={12}>
-         <Editor
-          editorState={editorState}
-          editorClassName="richtext-editor-textarea"
-          onEditorStateChange={onEditorStateChange}
-          toolbar={{
-           options: ['inline', 'fontSize', 'fontFamily', 'list'],
-          }}
-         />
-        </Grid>
-        <Grid item xs={12}>
-         <Controller
-          name="attachments"
-          control={control}
-          defaultValue={[]}
-          render={({ field }) => (
-           <TextField
-            {...field}
-            type="file"
-            variant="outlined"
-            fullWidth
-            multiple
-            error={!!errors.attachments}
-            helperText={errors.attachments?.message}
-           />
-          )}
-         />
-        </Grid>
-       </Grid>
-       <Grid container spacing={2} justifyContent="flex-end" sx={{ marginTop: '10px' }}>
-        <Grid item>
-         <Button variant="contained" color="primary">
-          Save
-         </Button>
-        </Grid>
-        <Grid item>
-         <Button variant="contained" color="error" type="submit">
-          Send
-         </Button>
-        </Grid>
-       </Grid>
-      </form>
-     </Card>
-    </Grid>
-   </Grid>
-  </Box>
- );
+      </Grid>
+    </Box>
+  );
 };
 
 export default EmailCompose;

@@ -21,10 +21,11 @@ const routeNames = {
  BANNER: '/banner',
  EVENTS: '/event',
  BATCH: '/batch',
- TESTIMONIALS:'/testimonials',
- EMAILSERVICES:'/email',
- COMPOSEMAIL:"/email/compose-email",
- DRAFTEMAIL:"/email/draft-email"
-
+ TESTIMONIALS: '/testimonials',
+ EMAILSERVICES: '/email',
+ COMPOSEMAIL: "/email/compose-email",
+ DRAFTEMAIL: "/email/draft-email",
+ KYC: '/kyc',
+ KYCPENDING: '/kyc/pending/:id'
 }
 export default routeNames;

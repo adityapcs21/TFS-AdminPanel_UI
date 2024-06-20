@@ -21,6 +21,8 @@ import Batch from "../pages/batch/index.js";
 import Testimonial from "../pages/testimonials/index.js";
 import DraftEmail from "../pages/manage-email/draft-email/index.js";
 import MailCompose from "../pages/manage-email/compose-email/index.js";
+import KYCApproval from "../pages/kyc/index.js";
+import KYCApprovalPending from "../pages/kyc/KYCApprovalPending.js";
 // import CustomerQuery from "../pages/customer-query/index.js";
 
 
@@ -64,6 +66,8 @@ const Router = () => {
           <Route path={routeNames.TESTIMONIALS} element={<Testimonial />} />
           <Route path={routeNames.COMPOSEMAIL} element={<MailCompose />} />
           <Route path={routeNames.DRAFTEMAIL} element={<DraftEmail />} />
+          <Route path={routeNames.KYC} element={<KYCApproval />} />
+          <Route path={routeNames.KYCPENDING} element={<KYCApprovalPending />} />
         </Route>
         {/* <Route path={routeNames.ERROR} element={<ErrorPage />} /> */}
       </Routes>
