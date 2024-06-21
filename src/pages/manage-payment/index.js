@@ -66,7 +66,6 @@ export default function ManagePayment() {
 
     }
     if (Object.keys(data).length > 0) {
-      console.log("data", data)
       setPage(0);
       setRowsPerPage(5)
       dispatch(ManagePaymentIsLoading())

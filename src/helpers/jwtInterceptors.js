@@ -86,7 +86,13 @@ jwtInterceptor.interceptors.response.use(
  },
  async (error) => {
   const originalRequest = error.config;
-
+  if (error.response.status === 400) {
+   Swal.fire({
+    icon: "error",
+    title: "Oops...",
+    text: error.response.data.data,
+   });
+  }
   // Check if the error is due to an expired token
   if (error.response.status === 401 && !originalRequest._retry) {
    originalRequest._retry = true;
@@ -101,7 +107,6 @@ jwtInterceptor.interceptors.response.use(
     // Retry the original request with the new token
     return axios(originalRequest);
    } catch (refreshError) {
-    console.log("resfjkdbsflknf", refreshError)
     if (refreshError) {
      Swal.fire({
       title: refreshError.message,

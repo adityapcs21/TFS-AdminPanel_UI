@@ -12,6 +12,7 @@ import EditEvent from '../../components/Events/EditEvent'
 import { GetAllBatches, batchIsLoading } from '../../redux/slice/batch'
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import SendEventCommunication from '../../components/Events/SendEventCommunication'
+import NoDataFound from '../../components/SharedComponent/NoDataFound'
 
 const columns = [
   { id: 'eventName', label: "Event Name" },
@@ -32,11 +33,9 @@ const columns = [
 
 export default function Events() {
   const dispatch = useDispatch()
-  const EventList = useSelector(state => state.events.allEvents?.eventList)
+  const EventList = useSelector(state => state.events.allEvents?.eventList || []);
   const totalCount = useSelector(state => state.events.allEvents?.size);
   const eventIsUpdated = useSelector(state => state.events.newEventAdded)
-  // const totalPages = useSelector(state => state.events.paymentDetails?.size);
-  // const appliedFilters = useSelector(state => state.events.appliedFilters);
   const isLoading = useSelector(state => state.events.isLoading);
   const isBatchDataLoading = useSelector((state) => state.batch.isLoading);
 
@@ -152,25 +151,28 @@ export default function Events() {
         {
           isLoading || isBatchDataLoading ?
             <Loader />
-            :
-            <ReusableTable
-              columns={columns}
-              data={EventList}
-              onView={handleViewEvent}
-              onDelete={handleDeleteEvent}
-              onEdit={handleUpdateEvent}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={totalCount}
-              CustomButton={
-                <Tooltip title="Send">
-                  <ForwardToInboxIcon />
-                </Tooltip>
-              }
-              handleCustomButton={handleSendEmail}
-            />
+            : EventList && EventList.length > 0
+              ?
+              <ReusableTable
+                columns={columns}
+                data={EventList}
+                onView={handleViewEvent}
+                onDelete={handleDeleteEvent}
+                onEdit={handleUpdateEvent}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                count={totalCount}
+                CustomButton={
+                  <Tooltip title="Send">
+                    <ForwardToInboxIcon />
+                  </Tooltip>
+                }
+                handleCustomButton={handleSendEmail}
+              />
+              :
+              <NoDataFound />
         }
       </Grid>
 

@@ -33,7 +33,6 @@ const SendEmailUpdate = ({ onClose }) => {
    message: data.message,
    subject: data.subject
   }
-  console.log("payloaddd", payload)
   dispatch(SendBatchEmail(payload));
   onClose();
  };

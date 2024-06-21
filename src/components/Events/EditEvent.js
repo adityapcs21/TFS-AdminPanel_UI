@@ -39,11 +39,11 @@ const UpdateEvent = ({ onClose }) => {
   const isLoading = useSelector((state) => state.events.mediaUploading)
   const eventDetails = useSelector(state => state.events.eventDetails);
   const BatchList = useSelector((state) => state.batch.batchList.batchList);
-  console.log("batchaa", eventDetails.batch?.split(","))
-  let batches = eventDetails.batch?.split(",")
+
 
   const [file, setFile] = useState(eventDetails.attachments);
-  const [fileName, setFileName] = useState([])
+  const [fileName, setFileName] = useState([]);
+  const [previosImages, setPreviousImages] = useState(eventDetails.attachments);
 
   const [editorState, setEditorState] = useState(() => {
     const contentBlock = htmlToDraft(eventDetails.description);
@@ -87,7 +87,7 @@ const UpdateEvent = ({ onClose }) => {
     data.registrationDeadLineDate = moment(data.registrationDeadLineDate, 'YYYY-MM-DDs').format('DD-MM-YYYY')
     if (fileName && fileName.length > 0) {
       dispatch(mediaIsLoading())
-      const resultsArray = [];
+      const resultsArray = [...previosImages];
       let uid;
       await Promise.all(fileName.map(async (item) => {
         let payload1 = {
@@ -104,7 +104,7 @@ const UpdateEvent = ({ onClose }) => {
       dispatch(EditEvent(data))
     }
     else {
-      data.attachments = eventDetails.attachments
+      data.attachments = file && file.length > 0 ? file : eventDetails.attachments
       dispatch(EditEvent(data))
     }
     onClose()
@@ -125,7 +125,7 @@ const UpdateEvent = ({ onClose }) => {
     });
 
     Promise.all(urls).then((results) => {
-      setFile(results);
+      setFile(prevState => [...prevState, ...results]);
     });
 
   };
@@ -133,7 +133,8 @@ const UpdateEvent = ({ onClose }) => {
   const handleRemoveImages = (img) => {
     let filtered = file.filter((item) => item != img)
     let filtered1 = fileName.filter((item) => item.Name != img)
-
+    let filtered2 = previosImages.filter((item) => item != img);
+    setPreviousImages(filtered2)
     setFile(filtered)
     setFileName(filtered1)
   }

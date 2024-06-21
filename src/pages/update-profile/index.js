@@ -69,7 +69,6 @@ export default function UpdateProfile() {
   };
 
   const handleUpdate = (rows) => {
-    console.log("rows", rows)
     setApprovedData(rows)
     setOpenApproveModal(prevState => !prevState)
   }

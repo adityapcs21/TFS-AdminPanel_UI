@@ -15,6 +15,7 @@ const columns = [
   { id: 'id', label: 'Batch No.' },
   { id: "startDate", label: "Start Date" },
   { id: "endDate", label: "End Date" },
+  { id: "telegramLink", label: "Telegram Link" },
 ];
 
 export default function Batch() {
@@ -30,7 +31,6 @@ export default function Batch() {
   const [openUpdateModal, setOPenUpdateModal] = useState(false)
   const [batchData, setBatchData] = useState({})
   const [openEmailModal, setOpenEmailModal] = useState(false)
-  const [batchId, setBatchId] = useState();
 
   useEffect(() => {
     let payload = {

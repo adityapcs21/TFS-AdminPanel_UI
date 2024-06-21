@@ -18,7 +18,6 @@ const schema = yup.object().shape({
 });
 
 const SendQueryResponse = ({ onClose, queryId }) => {
- console.log("queryId", queryId)
  const dispatch = useDispatch();
  const { editorState, onChange } = useEditorState();
  const [message, setMessage] = useState("")
@@ -26,7 +25,6 @@ const SendQueryResponse = ({ onClose, queryId }) => {
  const { control, setValue, formState: { errors } } = useForm();
 
  useEffect(() => {
-  setValue("queryId", queryId)
   setMessage(draftToHtml(convertToRaw(editorState.getCurrentContent())))
  }, [editorState])
 
@@ -36,7 +34,6 @@ const SendQueryResponse = ({ onClose, queryId }) => {
    message: message
   }
   dispatch(SendResponse(payload))
-  console.log("data", payload)
   onClose();
  };
 

@@ -36,7 +36,6 @@ export default function Login() {
 
       const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}auth/admin/login`, payload);
       if (response && response.status === 200) {
-        console.log("res==", response)
         setIsloading(false)
         if (response.data && response.data.accessToken) {
           localStorage.setItem("tfsUserDetails", JSON.stringify(response.data));
@@ -53,7 +52,6 @@ export default function Login() {
         }
       }
     } catch (error) {
-      console.error('Force login error:', error);
       alert('An error occurred during force login.');
       setIsloading(false)
 
@@ -70,7 +68,6 @@ export default function Login() {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_ENDPOINT}auth/admin/login`, payload);
       if (response && response.status === 200) {
-        console.log("res==", response)
         setIsloading(false)
         if (response.data && response.data.accessToken) {
           localStorage.setItem("tfsUserDetails", JSON.stringify(response.data));
@@ -89,7 +86,6 @@ export default function Login() {
         }
       }
     } catch (errorResponse) {
-      console.log("3456789", errorResponse.response)
       setIsloading(false)
       if (errorResponse && errorResponse.response && errorResponse.response.status === 440) {
         Swal.fire({
@@ -107,7 +103,6 @@ export default function Login() {
               password: payload.password,
               grantType: "token-force"
             }
-            console.log("payloaddnew", newPayload)
             forceCalling(newPayload)
           }
         });

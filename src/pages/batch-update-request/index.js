@@ -67,7 +67,6 @@ export default function BatchUpdateRequest() {
   };
 
   const handleUpdate = (rows) => {
-    console.log("rows", rows)
     setApprovedData(rows)
     setOpenApproveModal(prevState => !prevState)
   }

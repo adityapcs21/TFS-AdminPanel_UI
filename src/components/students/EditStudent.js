@@ -46,10 +46,8 @@ const UpdateStudent = ({ onClose, editData }) => {
 
 
  const onSubmit = (data) => {
-  console.log("start", data.subscriptionStartDate)
   data.subscriptionEndDate = data.subscriptionEndDate ? moment(data.subscriptionEndDate, 'YYYY-MM-DD').format('DD/MM/YYYY') : data.subscriptionEndDate
   data.subscriptionStartDate = data.subscriptionStartDate ? moment(data.subscriptionStartDate, 'YYYY-MM-DD').format('DD/MM/YYYY') : data.subscriptionStartDate
-  console.log("data", data)
 
   dispatch(UpdateStudentData(data))
   onClose()

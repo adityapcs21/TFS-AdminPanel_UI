@@ -61,7 +61,7 @@ export default function VideoGallery() {
     }, [isGalleryUpdated])
 
     const handleViewImage = (item) => {
-        console.log(item)
+        // console.log(item)
     };
 
     const handleCloseAddModal = (event, reason) => {

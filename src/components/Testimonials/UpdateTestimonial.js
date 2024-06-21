@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { TextField, Button, Grid, Box, Typography, IconButton, FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, RadioGroup, FormControlLabel, Radio, Switch, FormGroup } from '@mui/material';
+import { TextField, Button, Grid, Box, Typography, IconButton, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, Switch, FormGroup } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from 'react-redux';
 import { TestimonialAction } from '../../redux/slice/testimonials';
@@ -10,8 +8,8 @@ import { TestimonialAction } from '../../redux/slice/testimonials';
 const UpdateTestimonials = ({ onClose, data }) => {
 
  const dispatch = useDispatch();
- const [value, setValue] = React.useState('');
- const [showTestimonial, setShowTestimonial] = useState(false)
+ const [value, setValue] = React.useState(String(data.testimonialStatus === "ACCEPTED"));
+ const [showTestimonial, setShowTestimonial] = useState(data.available)
 
  const { control, handleSubmit, formState: { errors } } = useForm({
   defaultValues: {
@@ -25,35 +23,26 @@ const UpdateTestimonials = ({ onClose, data }) => {
    userName: data.userName
   },
  });
- console.log("err", errors)
 
- const onSubmit = (formData) => {
-  console.log("dattaaa", data)
-  if (value) {
-   if (value === "REJECT") {
-    let payload = {
-     testimonialId: data.testimonialId,
-     actionName: 'REJECT',
-     action: false
-    }
-    dispatch(TestimonialAction(payload));
-    
-   }
-   else {
-    let payload = {
-     testimonialId: data.testimonialId,
-     actionName: value,
-     action: showTestimonial
-    }
-    dispatch(TestimonialAction(payload));
-   }
+ const handleShowTestimonial = (Value) => {
+  setShowTestimonial(Value)
+  let payload = {
+   testimonialId: data.testimonialId,
+   actionName: "AVAILABLE",
+   action: Value
   }
-  onClose();
- };
+  dispatch(TestimonialAction(payload))
+ }
 
 
  const handleChange = (event) => {
   setValue(event.target.value);
+  let payload = {
+   testimonialId: data.testimonialId,
+   actionName: "ACCEPT",
+   action: event.target.value
+  }
+  dispatch(TestimonialAction(payload))
  };
 
  return (
@@ -69,7 +58,6 @@ const UpdateTestimonials = ({ onClose, data }) => {
    <Grid item xs={12}>
     <form onSubmit={handleSubmit((payload) => {
      payload.testimonialId = data.testimonialId;
-     onSubmit(payload);
     })}>
      <Grid container spacing={2}>
       <Grid item xs={6}>
@@ -179,15 +167,15 @@ const UpdateTestimonials = ({ onClose, data }) => {
          row
          aria-labelledby="demo-controlled-radio-buttons-group"
          name="controlled-radio-buttons-group"
-         value={value}
+         defaultValue={value}
          onChange={handleChange}
         >
-         <FormControlLabel value="ACCEPT" control={<Radio />} label="Accept" />
-         <FormControlLabel value="REJECT" control={<Radio />} label="Reject" />
+         <FormControlLabel value={true} control={<Radio />} label="Accept" />
+         <FormControlLabel value={false} control={<Radio />} label="Reject" />
         </RadioGroup>
        </FormControl>
       </Grid>
-      {(value === "ACCEPT" || value === 'ACCEPTED') &&
+      {value === "true" &&
        <Grid item xs={12}>
         <FormControl>
          <FormLabel id="show-testimonial-group">Do you want to show this testimonial?</FormLabel>
@@ -196,7 +184,7 @@ const UpdateTestimonials = ({ onClose, data }) => {
            control={
             <Switch
              checked={showTestimonial}
-             onChange={(event) => setShowTestimonial(event.target.checked)}
+             onChange={(event) => handleShowTestimonial(event.target.checked)}
              name="show-testimonial"
             />
            }
@@ -211,9 +199,6 @@ const UpdateTestimonials = ({ onClose, data }) => {
        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
         <Button variant="contained" color="warning" onClick={onClose}>
          Cancel
-        </Button>
-        <Button type="submit" variant="contained" color="primary">
-         Update Testimonial
         </Button>
        </Box>
       </Grid>

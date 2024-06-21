@@ -16,7 +16,7 @@ export default function ContactUs() {
 
 
  const onSubmit = (data) => {
-  console.log("data", data)
+  // console.log("data", data)
  };
 
  return (

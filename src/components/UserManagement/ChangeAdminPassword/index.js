@@ -44,7 +44,6 @@ const ChangePassword = ({ onClose }) => {
 
   const onSubmit = (data) => {
     onClose()
-    console.log(data);
     Swal.fire({
       title: "Are you sure?",
       text: "You want to Update Password?",

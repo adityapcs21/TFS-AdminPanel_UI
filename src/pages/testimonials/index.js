@@ -7,6 +7,7 @@ import Loader from '../../common/loader';
 import Swal from 'sweetalert2';
 import { GetAllTestimonials, testimonialIsLoading } from '../../redux/slice/testimonials';
 import UpdateTestimonials from '../../components/Testimonials/UpdateTestimonial';
+import NoDataFound from '../../components/SharedComponent/NoDataFound';
 
 const columns = [
   { id: 'testimonialId', label: 'Testimonial Id' },
@@ -14,12 +15,12 @@ const columns = [
   { id: "userId", label: "User Id" },
   { id: "message", label: "Message" },
   { id: "testimonialStatus", label: "Status" },
-  { id: "available", label: "Available" },
+  // { id: "available", label: "Available" },
 ];
 
 export default function Testimonial() {
   const dispatch = useDispatch();
-  const TestimonialList = useSelector((state) => state.testimonial.allTestimonials?.testimonialsList);
+  const TestimonialList = useSelector((state) => state.testimonial.allTestimonials?.testimonialsList || []);
   const isLoading = useSelector((state) => state.testimonial.isLoading);
   const ListSize = useSelector((state) => state.testimonial.allTestimonials?.size)
   const BatchUpdated = useSelector((state) => state.testimonial.testimonialUpdated)
@@ -81,19 +82,22 @@ export default function Testimonial() {
         {
           isLoading ?
             <Loader />
-            :
-            <ReusableTable
-              columns={columns}
-              data={TestimonialList}
-              onEdit={handleUpdate}
-              disableView
-              disableDelete
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={ListSize}
-            />
+            : TestimonialList.length > 0
+              ?
+              <ReusableTable
+                columns={columns}
+                data={TestimonialList}
+                onEdit={handleUpdate}
+                disableView
+                disableDelete
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                count={ListSize}
+              />
+              :
+              <NoDataFound />
         }
 
       </Grid>

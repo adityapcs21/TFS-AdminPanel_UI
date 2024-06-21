@@ -10,6 +10,7 @@ import moment from 'moment';
 
 const schema = yup.object().shape({
   id: yup.number().required('Batch No is required'),
+  telegramLink: yup.string().required('Telegram Link is required'),
   startDate: yup.date().required('Batch Start Date is required'),
   endDate: yup.date()
     .required('Batch End Date is required')
@@ -55,6 +56,22 @@ const CreateBatchModal = ({ onClose }) => {
                     {...field}
                     error={!!errors.id}
                     helperText={errors.id?.message}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                name="telegramLink"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    label="Telegram Link"
+                    variant="outlined"
+                    fullWidth
+                    {...field}
+                    error={!!errors.telegramLink}
+                    helperText={errors.telegramLink?.message}
                   />
                 )}
               />

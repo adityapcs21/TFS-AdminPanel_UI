@@ -25,18 +25,15 @@ const KYCApprovalPending = () => {
       ]).then((res) => {
         setProfilePhotoLink(res[0].payload.data)
         setIdProofLink(res[1].payload.data)
-        console.log("res", res)
       });
     }
   }, [userData])
-  console.log("asghsd", profilePhotoLink)
 
   const [action, setAction] = React.useState('');
   const [reasons, setReasons] = useState("")
 
   const handleChange = (event) => {
     setAction(event.target.value);
-    console.log("event", event.target.value)
     if (event.target.value === "ACCEPT") {
       let payload = {
         "uniqueId": UniqueId,

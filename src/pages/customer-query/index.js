@@ -21,7 +21,6 @@ export default function CustomerQuery() {
   const dispatch = useDispatch()
   const customerQueryData = useSelector((state) => state.customerQuery.data?.queryList);
   const totalPages = useSelector((state) => state.customerQuery.data?.size);
-  console.log("totalPages", totalPages)
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -41,7 +40,6 @@ export default function CustomerQuery() {
   };
 
   const handleSendResponse = (data) => {
-    console.log(",datata", data)
     setQueryId(data.queryId)
     setOpenModal(!openModal)
   }

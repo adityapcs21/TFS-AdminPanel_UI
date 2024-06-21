@@ -24,7 +24,6 @@ const AddImageInGallery = ({ onClose }) => {
  const [file, setFile] = useState([]);
  const [fileName, setFileName] = useState([])
  const isLoading = useSelector((state) => state.gallery.isMediaUploading);
- console.log("isLoading", isLoading)
  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")))
  const { control, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),

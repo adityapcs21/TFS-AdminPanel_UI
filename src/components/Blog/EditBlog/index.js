@@ -29,7 +29,7 @@ const EditBlog = ({ data, onClose }) => {
  const isLoading = useSelector((state) => state.blog.isMediaUploading)
  const [file, setFile] = useState(attachments);
  const [fileName, setFileName] = useState([]);
- const [prevImages, setPrevImages] = useState(attachments)
+ const [previosImages, setPreviousImages] = useState(attachments)
  const { control, setValue, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });
@@ -54,7 +54,7 @@ const EditBlog = ({ data, onClose }) => {
  async function onSubmit(data) {
   if (fileName && fileName.length > 0) {
    dispatch(mediaIsUploading())
-   const resultsArray = [];
+   const resultsArray = [...previosImages];
    await Promise.all(fileName.map(async (item) => {
     let payload1 = {
      mediaType: "blogAttachments",
@@ -70,12 +70,13 @@ const EditBlog = ({ data, onClose }) => {
     "title": data.title,
     "description": data.description,
     "createdBy": data.createdBy,
-    "attachments": [...resultsArray, ...prevImages]
+    "attachments": resultsArray
    }
    dispatch(UpdateBlog(payload))
    onClose()
   }
   else {
+   data.attachments = file && file.length > 0 ? file : data.attachments
    dispatch(UpdateBlog(data))
    onClose()
   }
@@ -96,17 +97,17 @@ const EditBlog = ({ data, onClose }) => {
   });
 
   Promise.all(urls).then((results) => {
-   setFile(prevState => [...prevState, results[0]]);
+   setFile(prevState => [...prevState, ...results]);
   });
  };
 
  const handleRemoveImages = (img) => {
   let filtered = file.filter((item) => item != img)
   let Filtered2 = fileName.filter(item2 => item2.Name != img.Name)
-  let filtered3 = prevImages.filter((item3) => item3 != img)
+  let filtered3 = previosImages.filter((item3) => item3 != img)
   setFileName(Filtered2)
   setFile(filtered)
-  setPrevImages(filtered3)
+  setPreviousImages(filtered3)
  }
 
  return (
