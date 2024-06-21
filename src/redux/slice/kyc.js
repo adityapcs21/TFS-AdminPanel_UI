@@ -32,6 +32,19 @@ export const KycAction = createAsyncThunk('managerUser/student/kycAction', async
 })
 
 
+export const GetS3Image = createAsyncThunk('managerUser/student/getS3SignedURL', async (imageUrl, { rejectWithValue }) => {
+ try {
+  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}getSignedUrl?mediaType=getDoc&fileName=${imageUrl}`, axiosConfig)
+  return response.data
+ } catch (err) {
+  if (!err.response) {
+   throw err
+  }
+  return rejectWithValue(err.response.data)
+ }
+})
+
+
 
 const initialState = {
  isLoading: false,
