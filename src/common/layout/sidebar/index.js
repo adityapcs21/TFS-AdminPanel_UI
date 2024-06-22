@@ -65,7 +65,7 @@ export const menuOptions = {
     { label: 'Banner', url: routeNames.BANNER, icons: <CollectionsIcon color='inherit' />, subCategory: [] },
     { label: 'Events', url: routeNames.EVENTS, icons: <EventIcon color='inherit' />, subCategory: [] },
     { label: 'Testimonials', url: routeNames.TESTIMONIALS, icons: <RateReviewIcon color='inherit' />, subCategory: [] },
-    // { label: 'Email Services', url: routeNames.EMAILSERVICES, icons: <AlternateEmailIcon color='inherit' />, subCategory: [{ label: 'Compose Email', subCatUrl: routeNames.COMPOSEMAIL }, { label: 'Draft Email', subCatUrl: routeNames.DRAFTEMAIL }] },
+    { label: 'Email Services', url: routeNames.EMAILSERVICES, icons: <AlternateEmailIcon color='inherit' />, subCategory: [{ label: 'Compose Email', subCatUrl: routeNames.COMPOSEMAIL }, { label: 'Draft Email', subCatUrl: routeNames.DRAFTEMAIL }] },
     { label: 'KYC', url: routeNames.KYC, icons: <DocumentScannerIcon color='inherit' />, subCategory: [] }
 
   ],

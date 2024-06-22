@@ -1,45 +1,4 @@
-// import axios from "axios";
 
-// const jwtInterceptor = axios.create({});
-
-// jwtInterceptor.interceptors.response.use(
-//  (response) => {
-//   return response;
-//  },
-//  async (error) => {
-//   if (error.response.status === 401) {
-//    let userDetails = JSON.parse(localStorage.getItem("tfsUserDetails"));
-//    let payload = {
-//     "emailId": userDetails.emailId,
-//     "grantType": "refresh",
-//     "refreshToken": userDetails.refreshToken
-//    }
-//    await axios.post(`${process.env.REACT_APP_API_ENDPOINT}blog/auth/admin/login`, payload)
-//     .then((res) => {
-//      localStorage.clear()
-//      localStorage.setItem("tfstoken", res.data.accessToken);
-//      localStorage.setItem("tfsUserDetails", JSON.stringify(res.data));
-//      window.location.reload()
-//     })
-//     .catch((refreshTokenAPIError) => {
-//      localStorage.removeItem("tfsUserDetails");
-//      localStorage.removeItem("tfstoken");
-//      return Promise.reject(refreshTokenAPIError)
-//     })
-//    return axios(error.config)
-//   }
-//   // else if (error.response.status === 500) {
-//   //  return error
-//   // }
-//   // console.log("errorree", error)
-//   Promise.reject(error)
-//   // return error
-//  }
-// );
-// export default jwtInterceptor
-
-
-// jwtInterceptor.js
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
@@ -86,7 +45,7 @@ jwtInterceptor.interceptors.response.use(
  },
  async (error) => {
   const originalRequest = error.config;
-  if (error.response.status === 400) {
+  if ((error.response.status === 400) || (error.response.status === 500)) {
    Swal.fire({
     icon: "error",
     title: "Oops...",
@@ -116,8 +75,10 @@ jwtInterceptor.interceptors.response.use(
       confirmButtonColor: "#2c4c74",
       cancelButtonColor: "#f36334",
       confirmButtonText: "Refresh"
-     }).then(() => {
-      window.location.reload();
+     }).then((result) => {
+      if (result.isConfirmed) {
+       window.location.reload();
+      }
      })
     }
     // Handle refresh token error, e.g., redirect to login page

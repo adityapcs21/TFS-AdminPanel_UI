@@ -96,7 +96,7 @@ export default function Login() {
           confirmButtonColor: "#2c4c74",
           cancelButtonColor: "#f36334",
           confirmButtonText: "Yes, Login!"
-        }).then((result) => {
+        }).then((result) => { 
           if (result.isConfirmed) {
             let newPayload = {
               emailId: payload.emailId,

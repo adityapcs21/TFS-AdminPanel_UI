@@ -75,7 +75,7 @@ const manageKycApproval = createSlice({
 
   builder.addCase(GetAllPendingKYCList.fulfilled, (state, action) => {
    state.isLoading = false;
-   // state.allKycList = action.payload
+   state.allKycList = action.payload
    state.kycUpdated = false;
   });
   builder.addCase(GetAllPendingKYCList.rejected, (state, action) => {

@@ -28,7 +28,10 @@ const columns = [
 export default function KYCApproval() {
   const dispatch = useDispatch();
   const navigate = useNavigate()
-  const KYCList = useSelector(state => state.kyc.allKycList?.userList || []);
+  const KYCList = useSelector(state => state.kyc.allKycList?.userList);
+  const KYCList1 = useSelector(state => state.kyc);
+
+  console.log("KYCList", KYCList1)
   const isLoading = useSelector((state) => state.kyc.isLoading);
   const ListSize = useSelector((state) => state.kyc.allKycList?.size)
   const KYCIsUpdated = useSelector((state) => state.kyc.kycUpdated)
@@ -89,7 +92,7 @@ export default function KYCApproval() {
         {
           isLoading ?
             <Loader />
-            : KYCList.length > 0
+            : !isLoading && KYCList?.length > 0
               ?
               <ReusableTable
                 columns={columns}

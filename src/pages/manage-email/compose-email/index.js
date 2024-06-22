@@ -21,20 +21,21 @@ const validationSchema = Yup.object().shape({
     .required('To field is required'),
   subject: Yup.string().required('Subject field is required'),
   message: Yup.string().required('Message field is required'),
-  attachments: Yup.array().of(
-    Yup.mixed()
-      .test('fileSize', 'File size is too large', (value) => {
-        return value && value.size <= 5 * 1024 * 1024; // 5MB
-      })
-      .test('fileType', 'Unsupported file type', (value) => {
-        return value && ['image/jpeg', 'image/png', 'application/pdf'].includes(value.type);
-      })
-  ),
+  // attachments: Yup.array().of(
+  //   Yup.mixed()
+  //     .test('fileSize', 'File size is too large', (value) => {
+  //       return value && value.size <= 5 * 1024 * 1024; // 5MB
+  //     })
+  //     .test('fileType', 'Unsupported file type', (value) => {
+  //       return value && ['image/jpeg', 'image/png', 'application/pdf'].includes(value.type);
+  //     })
+  // ),
 });
 
 const EmailCompose = () => {
   const dispatch = useDispatch()
-  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")))
+  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")));
+  const [sender, setSender] = useState(JSON.parse(localStorage.getItem('tfsUserDetails')))
   const { control, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm({
     resolver: yupResolver(validationSchema)
   });
@@ -45,7 +46,11 @@ const EmailCompose = () => {
 
   const tfsDraftMessage = watch();
   console.log(tfsDraftMessage)
-  
+
+  useEffect(() => {
+    setValue("message", draftToHtml(convertToRaw(editorState.getCurrentContent())));
+  }, [editorState, setValue]);
+
   useEffect(() => {
     if (userDetails) {
       let haveValue = Object.keys(userDetails).some(key => userDetails[key] !== "<p></p>\n" && userDetails[key].length > 1);
@@ -53,25 +58,10 @@ const EmailCompose = () => {
     }
   }, [userDetails])
 
-  const handleUnload = () => {
-    localStorage.setItem('tfsDraftMessage', JSON.stringify(tfsDraftMessage));
-  };
-
-  useEffect(() => {
-
-    window.addEventListener('beforeunload', handleUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload);
-    };
-  }, []);
-
-
-
 
   const onSubmit = (data) => {
-    delete data["attachments"]
-    data.sender = userDetails.emailId;
-    console.log("data", { ...data, receivers: emails });
+    data.sender = "alerts@welcometotfs.com";
+    dispatch(SendTextEmail(data))
     localStorage.removeItem("tfsDraftMessage");
     reset({
       receivers: undefined,
@@ -81,12 +71,15 @@ const EmailCompose = () => {
     });
     setEditorState(EditorState.createEmpty());
     setEmails([]);
-    dispatch(SendTextEmail(data))
   };
 
   const onEditorStateChange = (newEditorState) => {
     setEditorState(newEditorState);
   };
+
+  const saveToDraft = () => {
+    localStorage.setItem('tfsDraftMessage', JSON.stringify(tfsDraftMessage));
+  }
 
   return (
     <Box width={"100%"}>
@@ -157,7 +150,7 @@ const EmailCompose = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                   <Controller
                     name="attachments"
                     control={control}
@@ -174,11 +167,11 @@ const EmailCompose = () => {
                       />
                     )}
                   />
-                </Grid>
+                </Grid> */}
               </Grid>
               <Grid container spacing={2} justifyContent="flex-end" sx={{ marginTop: '10px' }}>
                 <Grid item>
-                  <Button variant="contained" color="primary">
+                  <Button onClick={() => saveToDraft()} variant="contained" color="primary">
                     Save
                   </Button>
                 </Grid>
