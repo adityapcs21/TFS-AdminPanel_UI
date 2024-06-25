@@ -56,7 +56,6 @@ const ChangePassword = ({ onClose }) => {
       if (result.isConfirmed) {
         dispatch(ChangeAdminPassword(data))
           .then((response) => {
-            console.log("response", response.payload.data)
             Swal.fire({
               title: "Updated!",
               text: response?.payload?.data,

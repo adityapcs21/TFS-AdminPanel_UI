@@ -45,19 +45,10 @@ const EmailCompose = () => {
   const [focused, setFocused] = useState(false);
 
   const tfsDraftMessage = watch();
-  console.log(tfsDraftMessage)
 
   useEffect(() => {
     setValue("message", draftToHtml(convertToRaw(editorState.getCurrentContent())));
   }, [editorState, setValue]);
-
-  useEffect(() => {
-    if (userDetails) {
-      let haveValue = Object.keys(userDetails).some(key => userDetails[key] !== "<p></p>\n" && userDetails[key].length > 1);
-      console.log("haveValue", haveValue)
-    }
-  }, [userDetails])
-
 
   const onSubmit = (data) => {
     data.sender = "alerts@welcometotfs.com";

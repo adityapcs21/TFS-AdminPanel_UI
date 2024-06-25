@@ -79,7 +79,6 @@ const DraftEmail = () => {
 
   const onSubmit = (data) => {
     data.sender = "alerts@welcometotfs.com";
-    console.log("data", data);
     dispatch(SendTextEmail(data))
     localStorage.removeItem("tfsDraftMessage");
     reset({
