@@ -8,13 +8,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { AddBuddyAction } from '../../redux/slice/buddyAssignment';
 import ReusableTable from '../SharedComponent/ReusableTable';
+import { Height } from '@mui/icons-material';
 
 const columns = [
  { id: 'buddyId', label: "Buddy Id" },
  { id: 'studentId', label: "Student Id" },
  { id: 'actionById', label: 'Action By' },
- { id: 'action', label: 'Action' },
- { id: 'comment', label: "Comment" },
+ { id: 'actionName', label: 'Action' },
+ { id: 'commentName', label: "Comment" },
 ]
 
 
@@ -204,19 +205,19 @@ export default function ActionOfStudents({ onClose }) {
         <Grid container sx={{ width: "100%" }}>
          <Grid item xs={12}>
           {/* <Typography variant='h6'>History</Typography> */}
-          <Box sx={{ width: '100%' }}>
+          <Box className="BuddyList__table" sx={{ width: '100%', maxHeight: '350px', overflow: 'auto' }}>
            {BuddyActionList && BuddyActionList.length > 0 ?
             <ReusableTable
              columns={columns}
              data={BuddyActionList}
-             // disableActionButton
+             disableActionButton
              disableDelete
              disableEdit
              onPageChange={handleChangePage}
              onRowsPerPageChange={handleChangeRowsPerPage}
-             page={page}
-             rowsPerPage={rowsPerPage}
-             count={totalHistory}
+             page={0}
+             rowsPerPage={totalHistory || 0}
+             count={totalHistory || 0}
             />
             :
             <Typography>No registration details found</Typography>
@@ -225,12 +226,6 @@ export default function ActionOfStudents({ onClose }) {
          </Grid>
         </Grid>
        </TabPanel>
-
-
-
-
-
-
       </Box>
       <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
      </Box>
@@ -240,14 +235,3 @@ export default function ActionOfStudents({ onClose }) {
   </Container>
  )
 }
-
-const HeadingCell = styled(TableCell)({
- padding: "4px",
- fontWeight: 600
-})
-
-const ValueCell = styled(TableCell)({
- padding: "4px",
- fontWeight: 400,
- // color: 'lightgray'
-})

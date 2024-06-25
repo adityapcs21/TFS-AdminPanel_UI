@@ -34,7 +34,7 @@ export default function ManagePayment() {
 
   useEffect(() => {
     let payload = {
-      // "userId": "10011",
+      "userId": appliedFilters.userId,
       "paymentStatus": appliedFilters.paymentStatus,
       "actionName": appliedFilters.actionName,
       "fromDate": appliedFilters.fromDate,
@@ -55,17 +55,17 @@ export default function ManagePayment() {
     setPage(0);
   };
 
-  const handleFilter = (data) => {
-
+  const handleFilter = (payload) => {
+    let data = { ...payload }
     if (data.toDate === null || data.fromDate === null) {
       delete data["fromDate"];
       delete data["toDate"];
     } else {
       data.fromDate = moment(data.fromDate).format('DD-MM-YYYY');
       data.toDate = moment(data.toDate).format('DD-MM-YYYY');
-
     }
     if (Object.keys(data).length > 0) {
+      console.log("datata", data)
       setPage(0);
       setRowsPerPage(5)
       dispatch(ManagePaymentIsLoading())

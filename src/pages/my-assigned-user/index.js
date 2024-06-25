@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { GetBuddyActionsList, GetMyAssignedUsers } from '../../redux/slice/buddyAssignment'
-import { Box, Button, Grid, IconButton } from '@mui/material'
+import { Grid } from '@mui/material'
 import ReusableTable from '../../components/SharedComponent/ReusableTable'
 import { useState } from 'react'
-import AddNewBuddy from '../../components/assign-buddy/AddNewBuddy'
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog'
-import { CloseOutlined } from '@mui/icons-material'
 import ActionOfStudents from '../../components/my-asignedUser/actionOfStudents'
-import { GetAllStudentsList, GetStudentDetails } from '../../redux/slice/students'
+import { GetStudentDetails } from '../../redux/slice/students'
 
 const columns = [
   { id: 'studentId', label: "Student Id" },
@@ -81,7 +79,7 @@ export default function MyAssignedUser() {
           onRowsPerPageChange={handleChangeRowsPerPage}
           page={page}
           rowsPerPage={rowsPerPage}
-          count={totalPages}
+          count={totalPages || 0}
           onView={handleView}
         />
       </Grid>
