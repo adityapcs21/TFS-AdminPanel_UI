@@ -15,6 +15,7 @@ import eventsReducer from './slice/events';
 import batchReducer from './slice/batch';
 import testimonialReducer from "./slice/testimonials";
 import kycReducer from './slice/kyc';
+import aboutReducer from './slice/about'
 
 export const store = configureStore({
  reducer: {
@@ -33,6 +34,7 @@ export const store = configureStore({
   events: eventsReducer,
   batch: batchReducer,
   testimonial: testimonialReducer,
-  kyc: kycReducer
+  kyc: kycReducer,
+  about: aboutReducer
  }
 });
