@@ -25,7 +25,7 @@ const ViewAbout = ({ onClose, data }) => {
  const { attachments, deleted, heading, sequence, subHeading, text } = data;
 
  const dispatch = useDispatch()
- const isLoading = useSelector((state) => state.blog.isMediaUploading)
+ const isLoading = useSelector((state) => state.about.isMediaUploading);
 
  const [file, setFile] = useState([]);
  const [fileName, setFileName] = useState([])

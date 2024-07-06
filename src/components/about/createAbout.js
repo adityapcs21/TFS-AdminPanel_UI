@@ -14,7 +14,7 @@ import styled from '@emotion/styled';
 import FullScreenLoader from '../../common/FullscreenLoader';
 import useEditorState from '../../helpers/textEditorHandler';
 import { getS3SignedUrl } from '../../helpers/mediaUpload';
-import { CreateAbout } from '../../redux/slice/about';
+import { CreateAbout, setMediaIsLoading } from '../../redux/slice/about';
 
 
 const schema = yup.object().shape({
@@ -27,8 +27,8 @@ const schema = yup.object().shape({
 
 const AddNewAbout = ({ onClose }) => {
  const dispatch = useDispatch()
- const isLoading = useSelector((state) => state.blog.isMediaUploading)
-
+ const mediaIsLoading = useSelector((state) => state.about.mediaIsLoading)
+ console.log("mediaIsLoading", mediaIsLoading)
  const [file, setFile] = useState([]);
  const [fileName, setFileName] = useState([])
  const { control, handleSubmit, formState: { errors } } = useForm({
@@ -38,18 +38,18 @@ const AddNewAbout = ({ onClose }) => {
 
  async function onSubmit(data) {
   if (fileName && fileName.length > 0) {
-   // dispatch(mediaIsUploading())
+   dispatch(setMediaIsLoading())
    const resultsArray = [];
-   let uid;
+   let contentId;
    await Promise.all(fileName.map(async (item) => {
     let payload1 = {
-     mediaType: "blogAttachments",
+     mediaType: "aboutUsAttachments",
      fileName: item.Name,
      file: item.File
     }
     let response = await getS3SignedUrl(payload1);
     resultsArray.push(response.url);
-    uid = response.uid
+    contentId = response.contentId
    }));
 
    let payload = {
@@ -203,7 +203,7 @@ const AddNewAbout = ({ onClose }) => {
      </Grid>
     </Grid>
    </form>
-   <FullScreenLoader loading={isLoading} />
+   <FullScreenLoader loading={mediaIsLoading} />
 
   </Container>
  );

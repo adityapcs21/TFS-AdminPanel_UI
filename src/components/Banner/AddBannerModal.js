@@ -33,7 +33,7 @@ const AddBannerModal = ({ onClose }) => {
     dispatch(bannerIsUpdating())
     await Promise.all(fileName.map(async (item) => {
       let payload1 = {
-        mediaType: "galleryAttachments/videos",
+        mediaType: "bannerAttachment",
         fileName: item.Name,
         file: item.File
       }

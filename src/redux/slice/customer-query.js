@@ -6,9 +6,9 @@ let axiosConfig = {
   "Authorization": localStorage.getItem("tfstoken")
  }
 };
-export const GetCustomerQuery = createAsyncThunk('customerQuery/getCustomerQuery', async () => {
+export const GetCustomerQuery = createAsyncThunk('customerQuery/getCustomerQuery', async (data) => {
  try {
-  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}contact-us/getAllQuery`, axiosConfig)
+  const response = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}contact-us/getAllQuery`, data, axiosConfig)
   return response.data;
 
  } catch (error) {
@@ -29,20 +29,31 @@ export const SendResponse = createAsyncThunk('contact-us/sendResponse', async (p
 const initialState = {
  isLoading: false,
  data: null,
- isError: false
+ isError: false,
+ appliedFilters: {}
 }
 
 const customerQuerySlice = createSlice({
  name: "customerQuery",
  initialState,
+ reducers: {
+  ApplyFilters: (state, action) => {
+   state.appliedFilters = action.payload
+  },
+  queryIsLoading: (state, action) => {
+   state.isLoading = true
+  }
+ },
  extraReducers: (builder) => {
   builder.addCase(GetCustomerQuery.fulfilled, (state, action) => {
    state.isLoading = false;
    state.data = action.payload;
+   state.isLoading = false
   });
   builder.addCase(GetCustomerQuery.rejected, (state, action) => {
    console.log("Error", action.payload);
    state.isError = true
+   state.isLoading = false
   });
 
   builder.addCase(SendResponse.fulfilled, (state, action) => {
@@ -54,12 +65,6 @@ const customerQuerySlice = createSlice({
   })
 
  }
-
-
-
-
-
-
 })
-// export const { setUserDetails } = customerQuerySlice.actions;
+export const { ApplyFilters,queryIsLoading } = customerQuerySlice.actions;
 export default customerQuerySlice.reducer;

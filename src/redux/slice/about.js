@@ -57,12 +57,12 @@ export const DeleteAbout = createAsyncThunk('aboutUs/delete', async (id, { rejec
 });
 
 
-
 const initialState = {
  isLoading: false,
  isError: false,
  allAbout: [],
  allAboutUpdated: false,
+ mediaIsLoading: false
 }
 
 const manageAbout = createSlice({
@@ -75,6 +75,9 @@ const manageAbout = createSlice({
   aboutUpdating: (state, action) => {
    state.allAboutUpdated = true
   },
+  setMediaIsLoading: (state, action) => {
+   state.mediaIsLoading = true
+  }
  },
  extraReducers: (builder) => {
 
@@ -82,11 +85,13 @@ const manageAbout = createSlice({
    state.isLoading = false;
    state.allAbout = action.payload
    state.allAboutUpdated = false;
+   state.mediaIsLoading = false;
   });
   builder.addCase(GetAllAbout.rejected, (state, action) => {
    console.log("Error", action.payload);
    state.isError = true
    state.allAboutUpdated = false;
+   state.mediaIsLoading = false;
   });
 
   builder.addCase(CreateAbout.fulfilled, (state, action) => {
@@ -117,6 +122,6 @@ const manageAbout = createSlice({
   });
  },
 })
-export const { allAboutIsLoading, aboutUpdating } = manageAbout.actions;
+export const { allAboutIsLoading, aboutUpdating, setMediaIsLoading } = manageAbout.actions;
 
 export default manageAbout.reducer;

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios";
+import jwtInterceptor from "../../helpers/jwtInterceptors";
 
 let axiosConfig = {
  headers: {
@@ -21,7 +22,7 @@ export const login = createAsyncThunk('auth/login', async (data) => {
 //Action
 export const DashBoardInfo = createAsyncThunk('auth/dashboardInnfo', async () => {
  try {
-  const response = await axios.get(`${process.env.REACT_APP_API_ENDPOINT}dashboard/cards`, axiosConfig);
+  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}dashboard/cards`, axiosConfig);
   return response.data;
  } catch (error) {
   console.error(error);
@@ -46,6 +47,9 @@ const authSlice = createSlice({
   },
   setUserToken: (state, action) => {
    state.token = action.payload
+  },
+  setIsLoading: (state, action) => {
+   state.token = true
   }
  },
  extraReducers: (builder) => {
@@ -69,9 +73,9 @@ const authSlice = createSlice({
    state.isLoading = false
   });
   builder.addCase(DashBoardInfo.rejected, (state, action) => {
-   state.isError = true
+   state.isError = false
   })
  }
 })
-export const { setUserDetails, setUserToken } = authSlice.actions;
+export const { setUserDetails, setUserToken, setIsLoading } = authSlice.actions;
 export default authSlice.reducer;

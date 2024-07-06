@@ -54,6 +54,7 @@ jwtInterceptor.interceptors.response.use(
   }
   // Check if the error is due to an expired token
   if (error.response.status === 401 && !originalRequest._retry) {
+   console.log("called")
    originalRequest._retry = true;
 
    try {
@@ -67,6 +68,7 @@ jwtInterceptor.interceptors.response.use(
     return axios(originalRequest);
    } catch (refreshError) {
     if (refreshError) {
+     console.log("refreshError", refreshError)
      Swal.fire({
       title: refreshError.message,
       // text: "Do you still want to login again in this tab?",

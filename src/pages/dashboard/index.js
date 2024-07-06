@@ -1,7 +1,8 @@
 import { Card, Grid, Typography } from '@mui/material'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { DashBoardInfo } from '../../redux/slice/auth'
+import { DashBoardInfo, setIsLoading } from '../../redux/slice/auth'
+import Loader from '../../common/loader'
 
 export default function Dashboard() {
  const dispatch = useDispatch()
@@ -13,8 +14,11 @@ export default function Dashboard() {
   5: "linear-gradient(to left, #efa65f, #f76a2d)"
  }
  const dashboardData = useSelector(state => state.auth.dashboardInfo)
+ const isLoading = useSelector(state => state.auth.isLoading)
+
 
  useEffect(() => {
+  dispatch(setIsLoading())
   dispatch(DashBoardInfo())
  }, [])
 
@@ -23,27 +27,28 @@ export default function Dashboard() {
    <Grid item xs={12}>
     <Typography variant='h5'>Dashboard Information</Typography>
    </Grid>
-   {dashboardData && dashboardData.length > 0 && dashboardData.map((item, index) => {
-    let currentno = index + 1
-    let randomNumber;
-    if (currentno > 5) {
-     randomNumber = currentno % 5;
-    } else {
-     randomNumber = currentno;
-    }
-    return (
-     <Grid key={index} item xs={4}>
-      <Card sx={{
-       backgroundImage: color[randomNumber], width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '25px 15px'
-      }}>
-       <Typography component='div' variant='h2' sx={{ color: "#FFFFFF" }}>{item.value}</Typography>
-       <Typography omponent='div' variant='body1' sx={{ color: "#FFFFFF" }}>{item.cardName}</Typography>
-      </Card>
-     </Grid>
-    )
-   })}
-
-
+   {isLoading ?
+    <Loader />
+    :
+    dashboardData && dashboardData.length > 0 && dashboardData.map((item, index) => {
+     let currentno = index + 1
+     let randomNumber;
+     if (currentno > 5) {
+      randomNumber = currentno % 5;
+     } else {
+      randomNumber = currentno;
+     }
+     return (
+      <Grid key={index} item xs={4}>
+       <Card sx={{
+        backgroundImage: color[randomNumber], width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '25px 15px'
+       }}>
+        <Typography component='div' variant='h2' sx={{ color: "#FFFFFF" }}>{item.value}</Typography>
+        <Typography omponent='div' variant='body1' sx={{ color: "#FFFFFF" }}>{item.cardName}</Typography>
+       </Card>
+      </Grid>
+     )
+    })}
   </Grid>
  )
 }

@@ -10,7 +10,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import styled from '@emotion/styled';
 import { getS3SignedUrl } from '../../helpers/mediaUpload';
 import FullScreenLoader from '../../common/FullscreenLoader';
-import { UpdateAboutUs } from '../../redux/slice/about';
+import { UpdateAboutUs, setMediaIsLoading } from '../../redux/slice/about';
 
 const schema = yup.object().shape({
  heading: yup.string().required(),
@@ -23,9 +23,8 @@ const schema = yup.object().shape({
 const UpdateAbout = ({ data, onClose }) => {
  const dispatch = useDispatch()
  const { contentId, attachments, heading, sequence, subHeading, text } = data;
+ const mediaIsLoading = useSelector((state) => state.about.mediaIsLoading)
 
-
- const isLoading = useSelector((state) => state.blog.isMediaUploading)
  const [file, setFile] = useState(attachments);
  const [fileName, setFileName] = useState([]);
  const [previosImages, setPreviousImages] = useState(attachments)
@@ -41,7 +40,7 @@ const UpdateAbout = ({ data, onClose }) => {
 
  async function onSubmit(data) {
   if (fileName && fileName.length > 0) {
-   // dispatch(mediaIsUploading())
+   dispatch(setMediaIsLoading())
    const resultsArray = [...previosImages];
    await Promise.all(fileName.map(async (item) => {
     let payload1 = {
@@ -199,7 +198,7 @@ const UpdateAbout = ({ data, onClose }) => {
      </Grid>
     </Grid>
    </form>
-   <FullScreenLoader loading={isLoading} />
+   <FullScreenLoader loading={mediaIsLoading} />
   </Container >
  );
 };

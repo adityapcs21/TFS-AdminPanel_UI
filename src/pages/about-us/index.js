@@ -60,7 +60,9 @@ export default function AboutUs() {
   }, [])
 
   useEffect(() => {
-    dispatch(GetAllAbout())
+    if (isUpdated) {
+      dispatch(GetAllAbout())
+    }
   }, [isUpdated])
 
 
@@ -107,12 +109,12 @@ export default function AboutUs() {
         :
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Button onClick={() => handleAddAbout()} variant="contained" color="primary">Add Blog</Button>
+            <Button onClick={() => handleAddAbout()} variant="contained" color="primary">Add About Us</Button>
           </Grid>
           {
             allData && allData.map((item, index) => {
               return (
-                <Grid item xs={4} key={index}>
+                <Grid item xs={12} md={6} lg={4} key={index}>
                   <AboutCard
                     handleView={handleView}
                     data={item}

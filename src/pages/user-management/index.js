@@ -30,11 +30,11 @@ export default function UserManagement() {
   const appliedFilters = useSelector((state) => state.manageUser.ApplyFilters);
 
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [openFilterModal, setOpenFilterModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editData, setEditData] = useState(false)
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(6);
-  const [openFilterModal, setOpenFilterModal] = useState(false)
 
 
 
@@ -112,7 +112,6 @@ export default function UserManagement() {
       setRowsPerPage(5)
 
     }
-
   };
 
   const handleClearFilter = () => {
