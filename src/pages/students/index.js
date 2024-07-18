@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../../common/loader';
 import Swal from 'sweetalert2';
 import { useState } from 'react';
-import students, { GetAllStudentsList, GetStudentDetails, SendEmailToActiveSubscriptionUsers, StudentDataIsLoading, applyStudentFilter, clearStudentFilter, deleteStudent } from '../../redux/slice/students';
+import  { GetAllStudentsList, GetStudentDetails, SendEmailToActiveSubscriptionUsers, StudentDataIsLoading, applyStudentFilter, clearStudentFilter, deleteStudent } from '../../redux/slice/students';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import UpdateStudent from '../../components/students/EditStudent';
 import ViewStudent from '../../components/students/ViewStudent';

@@ -13,6 +13,7 @@ import 'react-multi-email/dist/style.css';
 import { useDispatch } from 'react-redux';
 import { SendTextEmail } from '../../../redux/slice/events';
 import Swal from 'sweetalert2';
+import Loader from '../../../common/loader';
 
 const validationSchema = Yup.object().shape({
   receivers: Yup.array()
@@ -43,6 +44,7 @@ const EmailCompose = () => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [emails, setEmails] = useState([]);
   const [focused, setFocused] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const tfsDraftMessage = watch();
 
@@ -51,8 +53,20 @@ const EmailCompose = () => {
   }, [editorState, setValue]);
 
   const onSubmit = (data) => {
+    setIsLoading(true);
     data.sender = "alerts@welcometotfs.com";
     dispatch(SendTextEmail(data))
+      .then((response) => {
+        console.log("responsee", response)
+        setIsLoading(false);
+        Swal.fire({
+          position: 'center',
+          icon: 'success',
+          title: response.payload?.data,
+          showConfirmButton: false,
+          timer: 1500
+        })
+      })
     localStorage.removeItem("tfsDraftMessage");
     reset({
       receivers: undefined,
@@ -74,74 +88,77 @@ const EmailCompose = () => {
 
   return (
     <Box width={"100%"}>
-      <Grid container spacing={3} justifyContent="space-between" flexWrap={"nowrap"}>
-        <Grid item xs={12}>
-          <Card sx={{ padding: '15px 20px' }}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Typography component="h3">Compose Email Message</Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="receivers"
-                    control={control}
-                    defaultValue={[]}
-                    render={({ field }) => (
-                      <ReactMultiEmail
-                        placeholder='Input your email'
-                        emails={emails}
-                        onChange={(_emails) => {
-                          setEmails(_emails);
-                          field.onChange(_emails);
-                        }}
-                        autoFocus={true}
-                        onFocus={() => setFocused(true)}
-                        onBlur={() => setFocused(false)}
-                        getLabel={(email, index, removeEmail) => {
-                          return (
-                            <div data-tag key={index}>
-                              <div data-tag-item>{email}</div>
-                              <span data-tag-handle onClick={() => removeEmail(index)}>
-                                ×
-                              </span>
-                            </div>
-                          );
-                        }}
-                        error={!!errors.receivers}
-                        helperText={errors.receivers?.message}
+      {
+        isLoading ? <Loader />
+          :
+          <Grid container spacing={3} justifyContent="space-between" flexWrap={"nowrap"}>
+            <Grid item xs={12}>
+              <Card sx={{ padding: '15px 20px' }}>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <Typography component="h3">Compose Email Message</Typography>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Controller
+                        name="receivers"
+                        control={control}
+                        defaultValue={[]}
+                        render={({ field }) => (
+                          <ReactMultiEmail
+                            placeholder='Input your email'
+                            emails={emails}
+                            onChange={(_emails) => {
+                              setEmails(_emails);
+                              field.onChange(_emails);
+                            }}
+                            autoFocus={true}
+                            onFocus={() => setFocused(true)}
+                            onBlur={() => setFocused(false)}
+                            getLabel={(email, index, removeEmail) => {
+                              return (
+                                <div data-tag key={index}>
+                                  <div data-tag-item>{email}</div>
+                                  <span data-tag-handle onClick={() => removeEmail(index)}>
+                                    ×
+                                  </span>
+                                </div>
+                              );
+                            }}
+                            error={!!errors.receivers}
+                            helperText={errors.receivers?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Controller
-                    name="subject"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        label="Subject"
-                        variant="outlined"
-                        fullWidth
-                        error={!!errors.subject}
-                        helperText={errors.subject?.message}
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Controller
+                        name="subject"
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Subject"
+                            variant="outlined"
+                            fullWidth
+                            error={!!errors.subject}
+                            helperText={errors.subject?.message}
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Editor
-                    editorState={editorState}
-                    editorClassName="richtext-editor-textarea"
-                    onEditorStateChange={onEditorStateChange}
-                    toolbar={{
-                      options: ['inline', 'fontSize', 'fontFamily', 'list'],
-                    }}
-                  />
-                </Grid>
-                {/* <Grid item xs={12}>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Editor
+                        editorState={editorState}
+                        editorClassName="richtext-editor-textarea"
+                        onEditorStateChange={onEditorStateChange}
+                        toolbar={{
+                          options: ['inline', 'fontSize', 'fontFamily', 'list'],
+                        }}
+                      />
+                    </Grid>
+                    {/* <Grid item xs={12}>
                   <Controller
                     name="attachments"
                     control={control}
@@ -159,23 +176,23 @@ const EmailCompose = () => {
                     )}
                   />
                 </Grid> */}
-              </Grid>
-              <Grid container spacing={2} justifyContent="flex-end" sx={{ marginTop: '10px' }}>
-                <Grid item>
-                  <Button onClick={() => saveToDraft()} variant="contained" color="primary">
-                    Save
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button variant="contained" color="error" type="submit">
-                    Send
-                  </Button>
-                </Grid>
-              </Grid>
-            </form>
-          </Card>
-        </Grid>
-      </Grid>
+                  </Grid>
+                  <Grid container spacing={2} justifyContent="flex-end" sx={{ marginTop: '10px' }}>
+                    <Grid item>
+                      <Button onClick={() => saveToDraft()} variant="contained" color="primary">
+                        Save
+                      </Button>
+                    </Grid>
+                    <Grid item>
+                      <Button variant="contained" color="error" type="submit">
+                        Send
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </form>
+              </Card>
+            </Grid>
+          </Grid>}
     </Box>
   );
 };

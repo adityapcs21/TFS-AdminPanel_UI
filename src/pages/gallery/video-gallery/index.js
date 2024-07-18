@@ -7,6 +7,7 @@ import ReusbaleDialog from '../../../components/SharedComponent/ReusableDialog';
 import AddVideoGallery from '../../../components/VideoGallery/AddVideoGallery';
 import { GetAllVideoGallery, galleryLoading } from '../../../redux/slice/gallery';
 import Loader from '../../../common/loader';
+import NoDataFound from '../../../components/SharedComponent/NoDataFound';
 
 export default function VideoGallery() {
     const dispatch = useDispatch();
@@ -84,9 +85,13 @@ export default function VideoGallery() {
                 )
             })
                 :
-                <Grid item xs={12}>
-                    <Loader />
-                </Grid>
+                !isLoading && AllGallery && AllGallery.length === 0
+                    ?
+                    <NoDataFound />
+                    :
+                    <Grid item xs={12}>
+                        <Loader />
+                    </Grid>
             }
 
             <Grid item xs={12} marginTop={3}>

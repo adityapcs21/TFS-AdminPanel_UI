@@ -7,7 +7,6 @@ import Loader from '../../common/loader';
 import Swal from 'sweetalert2';
 import { useState } from 'react';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
-import { SendEmailToActiveSubscriptionUsers } from '../../redux/slice/students';
 import SendEmailModal from '../../components/SharedComponent/SendEmailModal';
 import NothingToShow from '../../components/SharedComponent/NothingToShow';
 

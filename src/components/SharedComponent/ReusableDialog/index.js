@@ -5,7 +5,7 @@ const ReusbaleDialog = (props) => {
   const { open, onClose, children } = props
   return (
     <Dialog  {...props} open={open} onClose={onClose} fullWidth>
-      <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', overflow: 'auto' }}>
+      <DialogContent style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', overflowY: 'unset' }}>
         {children}
       </DialogContent>
     </Dialog>

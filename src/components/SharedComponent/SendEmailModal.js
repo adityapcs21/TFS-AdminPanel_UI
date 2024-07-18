@@ -17,8 +17,6 @@ const SendEmailModal = ({ onClose,onSubmit }) => {
     resolver: yupResolver(schema),
   });
 
-
-
   return (
     <Container maxWidth="md">
       <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>

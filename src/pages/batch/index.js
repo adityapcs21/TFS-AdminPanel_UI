@@ -38,11 +38,7 @@ export default function Batch() {
       "perPageResults": rowsPerPage
     }
     dispatch(batchIsLoading());
-    dispatch(GetAllBatches(payload)).then((response) => {
-      if (response && response.error && response.error.mesage === "Rejected") {
-        Swal.fire("SweetAlert2 is working!");
-      }
-    })
+    dispatch(GetAllBatches(payload))
 
   }, [page, rowsPerPage])
 
@@ -103,7 +99,7 @@ export default function Batch() {
             <Loader />
             :
             <ReusableTable
-              columns={columns}
+              columns={columns} 
               data={BatchList}
               onEdit={handleUpdate}
               disableView

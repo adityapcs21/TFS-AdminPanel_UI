@@ -83,6 +83,9 @@ const manageBatch = createSlice({
   batchIsLoading: (state, action) => {
    state.isLoading = true
   },
+  batchDataIsUpdated: (state, action) => {
+   state.batchIsUpdated = true
+  }
  },
  extraReducers: (builder) => {
   builder.addCase(GetAllBatches.fulfilled, (state, action) => {
@@ -131,6 +134,6 @@ const manageBatch = createSlice({
 
  },
 })
-export const { batchIsLoading } = manageBatch.actions;
+export const { batchIsLoading, batchDataIsUpdated } = manageBatch.actions;
 
 export default manageBatch.reducer;

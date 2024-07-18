@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { TextField, Button, Grid, Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from 'react-redux';
-import { CreateBatch } from '../../redux/slice/batch';
+import { batchDataIsUpdated, batchIsLoading, CreateBatch } from '../../redux/slice/batch';
 import moment from 'moment';
 
 const schema = yup.object().shape({
@@ -26,7 +26,9 @@ const CreateBatchModal = ({ onClose }) => {
   const onSubmit = (data) => {
     data.startDate = moment(data.startDate).format('DD-MM-YYYY');
     data.endDate = moment(data.endDate).format('DD-MM-YYYY');
+    dispatch(batchIsLoading())
     dispatch(CreateBatch(data));
+    // dispatch(batchDataIsUpdated());
     onClose();
   };
 
