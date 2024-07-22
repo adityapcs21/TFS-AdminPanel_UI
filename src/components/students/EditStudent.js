@@ -46,8 +46,9 @@ const UpdateStudent = ({ onClose, editData }) => {
 
 
  const onSubmit = (data) => {
-  data.subscriptionEndDate = data.subscriptionEndDate ? moment(data.subscriptionEndDate, 'YYYY-MM-DD').format('DD/MM/YYYY') : data.subscriptionEndDate
-  data.subscriptionStartDate = data.subscriptionStartDate ? moment(data.subscriptionStartDate, 'YYYY-MM-DD').format('DD/MM/YYYY') : data.subscriptionStartDate
+  data.batchNo = batchNo?.toString();
+  data.subscriptionEndDate = data.subscriptionEndDate ? moment(data.subscriptionEndDate, 'YYYY-MM-DD').format('DD-MM-YYYY') : data.subscriptionEndDate
+  data.subscriptionStartDate = data.subscriptionStartDate ? moment(data.subscriptionStartDate, 'YYYY-MM-DD').format('DD-MM-YYYY') : data.subscriptionStartDate
 
   dispatch(UpdateStudentData(data))
   onClose()

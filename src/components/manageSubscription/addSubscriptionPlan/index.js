@@ -21,6 +21,7 @@ const AddSubscriptionPlan = ({ onClose }) => {
 
  const onSubmit = (data) => {
   dispatch(CreateSubscriptionPlan(data))
+  onClose()
  };
 
  return (

@@ -110,6 +110,17 @@ const EditBlog = ({ data, onClose }) => {
   setPreviousImages(filtered3)
  }
 
+ const imageUploadCallback = (file) => {
+  return new Promise((resolve, reject) => {
+   // Simulate an upload
+   const reader = new FileReader();
+   reader.onloadend = () => {
+    resolve({ data: { link: reader.result } }); // Return the image link
+   };
+   reader.readAsDataURL(file);
+  });
+ }
+
  return (
   <Container >
    <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>
@@ -149,6 +160,18 @@ const EditBlog = ({ data, onClose }) => {
         editorState={editorState}
         onEditorStateChange={onEditorStateChange}
         editorClassName="richtext-editor-textarea"
+        toolbar={{
+         options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'textAlign', 'image'],
+         inline: {
+          inDropdown: false,
+          options: ['bold', 'italic', 'underline', 'strikethrough'], // Removed superscript
+         },
+         image: {
+          uploadCallback: imageUploadCallback,
+          alt: { present: true, mandatory: false },
+          previewImage: true,
+         },
+        }}
        />
       </Box>
      </Grid>

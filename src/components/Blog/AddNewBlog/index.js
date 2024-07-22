@@ -12,7 +12,7 @@ import { getS3SignedUrl } from '../../../helpers/mediaUpload';
 import useEditorState from '../../../helpers/textEditorHandler';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
-import { convertToRaw } from 'draft-js';
+import { convertToRaw, EditorState } from 'draft-js';
 import FullScreenLoader from '../../../common/FullscreenLoader';
 import styled from '@emotion/styled';
 
@@ -107,10 +107,44 @@ const AddNewBlog = ({ onClose }) => {
   setFileName(filtered1)
  }
 
+ const imageUploadCallback = (file) => {
+  return new Promise((resolve, reject) => {
+   // Simulate an upload
+   const reader = new FileReader();
+   reader.onloadend = () => {
+    resolve({ data: { link: reader.result } }); // Return the image link
+   };
+   reader.readAsDataURL(file);
+  });
+ }
+
+
+ const handlePastedImage = (image) => {
+  // Convert the image to a base64 string or upload it to a server
+  const reader = new FileReader();
+  reader.onloadend = () => {
+   const base64Image = reader.result;
+   // Insert the base64 image into the editor
+   const contentState = editorState.getCurrentContent();
+   const contentWithImage = contentState.createEntity('IMAGE', 'IMMUTABLE', { src: base64Image });
+   const entityKey = contentWithImage.getLastCreatedEntityKey();
+   const newEditorState = EditorState.set(editorState, { currentContent: contentWithImage });
+   onChange(newEditorState);
+  };
+  reader.readAsDataURL(image);
+ };
+
+ const handleDroppedFiles = (files) => {
+  const file = files[0];
+  if (file && file.type.startsWith('image/')) {
+   handlePastedImage(file);
+  }
+ };
+
 
  return (
   <Container >
-   <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>
+   <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '5px 0px 20px 0px' }}>
     <Typography variant='h5'>Add New Blog</Typography>
     <CloseIcon onClick={onClose} sx={{ cursor: "pointer" }} />
    </Box>
@@ -124,7 +158,6 @@ const AddNewBlog = ({ onClose }) => {
         <TextField fullWidth label="Title" {...field} error={!!errors.title} helperText={errors.title?.message} />
        )}
       />
-      <Box sx={{ minHeight: '16px' }}></Box>
      </Grid>
      <Grid sx={{ display: "none" }} item xs={5}>
       <Controller
@@ -132,18 +165,32 @@ const AddNewBlog = ({ onClose }) => {
        defaultValue={userDetails?.emailId}
        control={control}
        render={({ field }) => (
-        <TextField fullWidth label="Created By" {...field} error={!!errors.createdBy} helperText={errors.createdBy?.message} />
+        <TextField size='medium' fullWidth label="Created By" {...field} error={!!errors.createdBy} helperText={errors.createdBy?.message} />
        )}
       />
       <Box sx={{ minHeight: '16px' }}></Box>
      </Grid>
 
      <Grid item xs={12}>
-      <Box sx={{ border: '1px solid lightgrey' }}>
+      <Box sx={{ border: '1px solid lightgrey', display: 'flex', width: '100%' }}>
        <Editor
+        handlePastedImage={handlePastedImage}
+        handleDroppedFiles={handleDroppedFiles}
         editorState={editorState}
-        editorClassName="richtext-editor-textarea"
+        editorClassName="richtext-editor-textarea-blog"
         onEditorStateChange={onChange}
+        toolbar={{
+         options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'textAlign', 'image'],
+         inline: {
+          inDropdown: false,
+          options: ['bold', 'italic', 'underline', 'strikethrough'], // Removed superscript
+         },
+         image: {
+          uploadCallback: imageUploadCallback,
+          alt: { present: true, mandatory: false },
+          previewImage: true,
+         },
+        }}
        />
       </Box>
      </Grid>

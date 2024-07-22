@@ -14,7 +14,7 @@ const columns = [
   { id: 'title', label: 'Title' },
   { id: "createdBy", label: "Created By" },
   { id: 'createdDate', label: 'Published On' },
-  { id: 'description', label: 'Description' },
+  // { id: 'description', label: 'Description' },
   { id: 'attachments', label: 'Thumbnails' },
 ];
 
@@ -149,7 +149,7 @@ export default function Blog() {
           <Loader />
         }
       </Grid>
-      <ReusbaleDialog maxWidth="md" open={openAddModal} onClose={handleCloseAddModal}>
+      <ReusbaleDialog maxWidth="lg" open={openAddModal} onClose={handleCloseAddModal}>
         <AddNewBlog onClose={() => setOpenAddModal(prevState => !prevState)} />
       </ReusbaleDialog>
 

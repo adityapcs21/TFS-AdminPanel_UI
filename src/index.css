@@ -30,6 +30,14 @@ code {
   max-height: 150px;
   padding: 0px 10px;
 }
+.richtext-editor-textarea-blog{
+  min-height: 240px;
+  max-height: 150px;
+  padding: 0px 10px;
+}
+.rdw-editor-wrapper{
+  width: 100%;
+}
 .richtext-editor-textarea .public-DraftStyleDefault-block{
   margin: 0 !important;
 }

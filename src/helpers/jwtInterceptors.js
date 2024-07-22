@@ -54,7 +54,6 @@ jwtInterceptor.interceptors.response.use(
   }
   // Check if the error is due to an expired token
   if (error.response.status === 401 && !originalRequest._retry) {
-   console.log("called")
    originalRequest._retry = true;
 
    try {

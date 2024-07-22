@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { TextField, Button, Grid, Container, Box, Typography, Stack } from '@mui/material';
+import { TextField, Button, Grid, Container, Box, Typography, Stack, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AvatarWithLetters from '../../SharedComponent/ReusableAvatar';
 import moment from 'moment';
@@ -67,7 +67,7 @@ const ViewBlog = ({ data, onClose }) => {
      </Grid> */}
 
      <Grid item xs={12}>
-      <Controller
+      {/* <Controller
        disabled
        name="description"
        defaultValue={description}
@@ -76,7 +76,7 @@ const ViewBlog = ({ data, onClose }) => {
         <TextField id="outlined-multiline-static"
          size='small'
          multiline
-         rows={3}
+         rows={6}
          fullWidth
          label="Description"
          {...field}
@@ -84,19 +84,22 @@ const ViewBlog = ({ data, onClose }) => {
          helperText={errors.description?.message}
         />
        )}
-      />
+      /> */}
+      <div dangerouslySetInnerHTML={{ __html: description }} />
      </Grid>
 
-     <Grid item xs={12}>
-      <Typography variant='h6'>Attachments</Typography>
-      <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-       {attachments && attachments.map((media) => (
-        <Box>
-         <img src={media} alt="Preview" style={{ maxWidth: '100%', maxHeight: '80px', borderRadius: '5px' }} />
-        </Box>
-       ))}
-      </Box>
-     </Grid>
+     {attachments && attachments.length > 0 &&
+      <Grid item xs={12}>
+       <Divider sx={{ margin: '10px 0px' }} />
+       <Typography variant='h6'>Attachments</Typography>
+       <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        {attachments && attachments.map((media) => (
+         <Box>
+          <img src={media} alt="Preview" style={{ maxWidth: '100%', maxHeight: '80px', borderRadius: '5px' }} />
+         </Box>
+        ))}
+       </Box>
+      </Grid>}
 
      <Grid item xs={12}>
       <Typography variant='h6'>Comments</Typography>
