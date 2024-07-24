@@ -179,7 +179,7 @@ export default function Events() {
       <ReusbaleDialog maxWidth="lg" open={openCreateModal} onClose={() => setOpenCreateModal(prevState => !prevState)}>
         <CreateEvent onClose={() => setOpenCreateModal(prevState => !prevState)} />
       </ReusbaleDialog>
-      <ReusbaleDialog maxWidth="md" open={showViewModal} onClose={() => setShowViewModal(prevState => !prevState)}>
+      <ReusbaleDialog maxWidth="lg" open={showViewModal} onClose={() => setShowViewModal(prevState => !prevState)}>
         <ViewEvent onClose={() => setShowViewModal(prevState => !prevState)} />
       </ReusbaleDialog>
       <ReusbaleDialog maxWidth="lg" open={showEditModal} onClose={() => setShowEditModal(prevState => !prevState)}>

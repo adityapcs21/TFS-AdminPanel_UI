@@ -20,8 +20,11 @@ import brandLogo from '../../../assets/images/TFS-logo.png'
 import KeyIcon from '@mui/icons-material/Key';
 import ReusbaleDialog from "../../../components/SharedComponent/ReusableDialog"
 import ChangePassword from '../../../components/UserManagement/ChangeAdminPassword';
+import { useDispatch } from 'react-redux';
+import { logoutAdmin } from '../../../redux/slice/auth';
 
 export default function Header({ isOpen }) {
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -53,9 +56,13 @@ export default function Header({ isOpen }) {
   };
 
   const handleLogout = () => {
-    localStorage.clear()
-    handleMenuClose();
-    window.location.reload()
+    dispatch(logoutAdmin())
+      .then((res) => {
+        console.log("res", res.payload)
+        localStorage.clear()
+        handleMenuClose();
+        window.location.reload()
+      })
   }
   function getInitials(name) {
     const initials = name && name.split(' ').map(word => word.charAt(0)).join('');

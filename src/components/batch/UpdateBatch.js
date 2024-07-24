@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { TextField, Button, Grid, Box, Typography, IconButton } from '@mui/material';
+import { TextField, Button, Grid, Box, Typography, IconButton, FormControlLabel, Switch } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
@@ -15,6 +15,8 @@ const schema = yup.object().shape({
   endDate: yup.date()
     .required('Batch End Date is required')
     .min(yup.ref('startDate'), 'End date must be greater than start date'),
+  isActive: yup.boolean(),
+  registrationsActive: yup.boolean()
 });
 
 const UpdateBatchModal = ({ onClose, data }) => {
@@ -25,7 +27,9 @@ const UpdateBatchModal = ({ onClose, data }) => {
       id: data.id,
       startDate: moment(data.startDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
       endDate: moment(data.endDate, 'DD-MM-YYYY').format('YYYY-MM-DD'),
-      telegramLink: data.telegramLink
+      telegramLink: data.telegramLink,
+      registrationsActive: data.registrationsActive,
+      active: data.active
     },
   });
 
@@ -122,7 +126,44 @@ const UpdateBatchModal = ({ onClose, data }) => {
                   />
                 )}
               />
-            </Grid><Grid item xs={12}>
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                name="active"
+                control={control}
+                defaultValue={false} // Set default value for the switch
+                render={({ field: { onChange, value } }) => (
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={value}
+                        onChange={(e) => onChange(e.target.checked)} // Update value on change
+                      />
+                    }
+                    label="is this batch active?"
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                name="registrationsActive"
+                control={control}
+                defaultValue={false} // Set default value for the switch
+                render={({ field: { onChange, value } }) => (
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={value}
+                        onChange={(e) => onChange(e.target.checked)} // Update value on change
+                      />
+                    }
+                    label="is registration active?"
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                 <Button variant="contained" color="warning" onClick={onClose}>
                   Cancel

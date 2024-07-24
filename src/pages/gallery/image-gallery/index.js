@@ -88,7 +88,7 @@ export default function ImageGallery() {
 
             <Grid item xs={12} marginTop={3}>
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                    {AllGallery.length > 0 && <Pagination color="primary" count={totalPages} page={page} onChange={handleChange} />}
+                    {AllGallery && AllGallery.length > 0 && <Pagination color="primary" count={totalPages} page={page} onChange={handleChange} />}
                 </Box>
             </Grid>
 

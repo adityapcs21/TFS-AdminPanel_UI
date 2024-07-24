@@ -125,7 +125,7 @@ const manageBatch = createSlice({
 
   builder.addCase(UpdateBatch.fulfilled, (state, action) => {
    state.isLoading = false;
-   state.batchIsUpdated = false
+   state.batchIsUpdated = true
   });
   builder.addCase(UpdateBatch.rejected, (state, action) => {
    console.log("Error", action.payload);

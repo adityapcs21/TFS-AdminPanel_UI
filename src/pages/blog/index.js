@@ -153,7 +153,7 @@ export default function Blog() {
         <AddNewBlog onClose={() => setOpenAddModal(prevState => !prevState)} />
       </ReusbaleDialog>
 
-      <ReusbaleDialog maxWidth="md" open={openEditModal} onClose={handleCloseEditModal}>
+      <ReusbaleDialog maxWidth="lg" open={openEditModal} onClose={handleCloseEditModal}>
         <EditBlog data={editRowsData} onClose={() => setOpenEditModal(prevState => !prevState)} />
       </ReusbaleDialog>
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { TextField, Button, Grid, Box, Typography, IconButton } from '@mui/material';
+import { TextField, Button, Grid, Box, Typography, IconButton, Switch, FormControlLabel } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from 'react-redux';
 import { batchDataIsUpdated, batchIsLoading, CreateBatch } from '../../redux/slice/batch';
@@ -15,6 +15,7 @@ const schema = yup.object().shape({
   endDate: yup.date()
     .required('Batch End Date is required')
     .min(yup.ref('startDate'), 'End date must be greater than start date'),
+  isActive: yup.boolean()
 });
 
 const CreateBatchModal = ({ onClose }) => {
@@ -112,6 +113,24 @@ const CreateBatchModal = ({ onClose }) => {
                     InputLabelProps={{
                       shrink: true,
                     }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Controller
+                name="active"
+                control={control}
+                defaultValue={false} // Set default value for the switch
+                render={({ field: { onChange, value } }) => (
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={value}
+                        onChange={(e) => onChange(e.target.checked)} // Update value on change
+                      />
+                    }
+                    label="is this batch active?"
                   />
                 )}
               />

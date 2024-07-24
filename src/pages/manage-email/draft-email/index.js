@@ -113,6 +113,17 @@ const DraftEmail = () => {
     setEditorState(newEditorState);
   };
 
+  const imageUploadCallback = (file) => {
+    return new Promise((resolve, reject) => {
+      // Simulate an upload
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve({ data: { link: reader.result } }); // Return the image link
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
   return (
     <Box width={"100%"}>
       {
@@ -177,14 +188,27 @@ const DraftEmail = () => {
                         />
                       </Grid>
                       <Grid item xs={12}>
-                        <Editor
-                          editorState={editorState}
-                          editorClassName="richtext-editor-textarea"
-                          onEditorStateChange={onEditorStateChange}
-                          toolbar={{
-                            options: ['inline', 'fontSize', 'fontFamily', 'list'],
-                          }}
-                        />
+                        <Box sx={{ border: '1px solid lightgrey', display: 'flex', width: '100%' }}>
+                          <Editor
+                            // handlePastedImage={handlePastedImage}
+                            // handleDroppedFiles={handleDroppedFiles}
+                            editorState={editorState}
+                            editorClassName="richtext-editor-textarea-blog"
+                            onEditorStateChange={setEditorState}
+                            toolbar={{
+                              options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'textAlign', 'image'],
+                              inline: {
+                                inDropdown: false,
+                                options: ['bold', 'italic', 'underline', 'strikethrough'], // Removed superscript
+                              },
+                              image: {
+                                uploadCallback: imageUploadCallback,
+                                alt: { present: true, mandatory: false },
+                                previewImage: true,
+                              },
+                            }}
+                          />
+                        </Box>
                       </Grid>
                       {/* <Grid item xs={12}>
                     <Controller

@@ -23,17 +23,18 @@ const schema = yup.object().shape({
 });
 
 const EditBlog = ({ data, onClose }) => {
- const dispatch = useDispatch()
+ const dispatch = useDispatch();
  const { blogId, title, createdBy, description, attachments } = data;
 
- const isLoading = useSelector((state) => state.blog.isMediaUploading)
+ const isLoading = useSelector((state) => state.blog.isMediaUploading);
  const [file, setFile] = useState(attachments);
  const [fileName, setFileName] = useState([]);
- const [previosImages, setPreviousImages] = useState(attachments)
+ const [previosImages, setPreviousImages] = useState(attachments);
  const { control, setValue, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });
 
+ // Convert HTML to content state
  const contentBlocks = convertFromHTML(description);
  const initialContentState = ContentState.createFromBlockArray(contentBlocks);
  const [editorState, setEditorState] = useState(EditorState.createWithContent(initialContentState));
@@ -44,23 +45,22 @@ const EditBlog = ({ data, onClose }) => {
 
  useEffect(() => {
   setValue('attachments', attachments);
- }, [])
-
+ }, [attachments, setValue]);
 
  useEffect(() => {
-  setValue("description", draftToHtml(convertToRaw(editorState.getCurrentContent())))
- }, [editorState])
+  setValue("description", draftToHtml(convertToRaw(editorState.getCurrentContent())));
+ }, [editorState, setValue]);
 
  async function onSubmit(data) {
   if (fileName && fileName.length > 0) {
-   dispatch(mediaIsUploading())
+   dispatch(mediaIsUploading());
    const resultsArray = [...previosImages];
    await Promise.all(fileName.map(async (item) => {
     let payload1 = {
      mediaType: "blogAttachments",
      fileName: item.Name,
      file: item.File
-    }
+    };
     let response = await getS3SignedUrl(payload1);
     resultsArray.push(response.url);
    }));
@@ -71,22 +71,21 @@ const EditBlog = ({ data, onClose }) => {
     "description": data.description,
     "createdBy": data.createdBy,
     "attachments": resultsArray
-   }
-   dispatch(UpdateBlog(payload))
-   onClose()
-  }
-  else {
-   data.attachments = file && file.length > 0 ? file : data.attachments
-   dispatch(UpdateBlog(data))
-   onClose()
+   };
+   dispatch(UpdateBlog(payload));
+   onClose();
+  } else {
+   data.attachments = file && file.length > 0 ? file : data.attachments;
+   dispatch(UpdateBlog(data));
+   onClose();
   }
  };
 
  const handleFileChange = (e) => {
   const files = e.target.files;
   const urls = Array.from(files).map((file) => {
-   let name = file.name
-   setFileName(prevState => [...prevState, { Name: name, "File": file, isNew: true }])
+   let name = file.name;
+   setFileName(prevState => [...prevState, { Name: name, "File": file, isNew: true }]);
    const reader = new FileReader();
    return new Promise((resolve) => {
     reader.onloadend = () => {
@@ -102,27 +101,29 @@ const EditBlog = ({ data, onClose }) => {
  };
 
  const handleRemoveImages = (img) => {
-  let filtered = file.filter((item) => item != img)
-  let Filtered2 = fileName.filter(item2 => item2.Name != img.Name)
-  let filtered3 = previosImages.filter((item3) => item3 != img)
-  setFileName(Filtered2)
-  setFile(filtered)
-  setPreviousImages(filtered3)
- }
+  let filtered = file.filter((item) => item !== img);
+  let Filtered2 = fileName.filter(item2 => item2.Name !== img.Name);
+  let filtered3 = previosImages.filter((item3) => item3 !== img);
+  setFileName(Filtered2);
+  setFile(filtered);
+  setPreviousImages(filtered3);
+ };
 
  const imageUploadCallback = (file) => {
   return new Promise((resolve, reject) => {
-   // Simulate an upload
    const reader = new FileReader();
    reader.onloadend = () => {
     resolve({ data: { link: reader.result } }); // Return the image link
    };
+   reader.onerror = () => {
+    reject('Error uploading image');
+   };
    reader.readAsDataURL(file);
   });
- }
+ };
 
  return (
-  <Container >
+  <Container>
    <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>
     <Typography variant='h5'>Edit Blog</Typography>
     <CloseIcon onClick={onClose} />
@@ -158,14 +159,10 @@ const EditBlog = ({ data, onClose }) => {
       <Box sx={{ border: '1px solid lightgrey' }}>
        <Editor
         editorState={editorState}
+        editorClassName="richtext-editor-textarea-blog"
         onEditorStateChange={onEditorStateChange}
-        editorClassName="richtext-editor-textarea"
         toolbar={{
          options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'textAlign', 'image'],
-         inline: {
-          inDropdown: false,
-          options: ['bold', 'italic', 'underline', 'strikethrough'], // Removed superscript
-         },
          image: {
           uploadCallback: imageUploadCallback,
           alt: { present: true, mandatory: false },
@@ -200,18 +197,16 @@ const EditBlog = ({ data, onClose }) => {
        Upload
       </Button>
       <Grid container spacing={2}>
-       {file && file.map((media, index) => {
-        return (
-         <Grid item>
-          <ImageWrapper key={index}>
-           <DisplayAttachment src={media.file || media} />
-           <CloseIconCont>
-            <CancelIcon onClick={() => handleRemoveImages(media)} />
-           </CloseIconCont>
-          </ImageWrapper>
-         </Grid>
-        )
-       })}
+       {file && file.map((media, index) => (
+        <Grid item key={index}>
+         <ImageWrapper>
+          <DisplayAttachment src={media.file || media} />
+          <CloseIconCont>
+           <CancelIcon onClick={() => handleRemoveImages(media)} />
+          </CloseIconCont>
+         </ImageWrapper>
+        </Grid>
+       ))}
       </Grid>
      </Grid>
      <Grid item xs={12}>
@@ -223,7 +218,7 @@ const EditBlog = ({ data, onClose }) => {
     </Grid>
    </form>
    <FullScreenLoader loading={isLoading} />
-  </Container >
+  </Container>
  );
 };
 
@@ -233,7 +228,8 @@ const ImageWrapper = styled(Box)({
  height: '100%',
  width: "100%",
  position: "relative"
-})
+});
+
 const DisplayAttachment = styled('img')({
  objectFit: "cover",
  color: "#152766",
@@ -243,11 +239,10 @@ const DisplayAttachment = styled('img')({
  borderRadius: "3px",
  marginRight: "10px",
  border: "1px solid lightgray",
- '&.hover': {
-  backgroundColor: "rgba(0, 0, 0)",
-  opacity: 0.5,
+ '&:hover': {
+  backgroundColor: "rgba(0, 0, 0, 0.1)",
  }
-})
+});
 
 const CloseIconCont = styled(Box)({
  borderRadius: '50%',
@@ -256,7 +251,7 @@ const CloseIconCont = styled(Box)({
  right: '5px',
  height: '24px',
  background: 'white',
- "&.hover": {
+ "&:hover": {
   fontSize: "18px",
  }
-})
+});

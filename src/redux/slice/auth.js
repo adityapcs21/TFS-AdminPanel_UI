@@ -29,6 +29,15 @@ export const DashBoardInfo = createAsyncThunk('auth/dashboardInnfo', async () =>
  }
 })
 
+export const logoutAdmin = createAsyncThunk('}managerUser/admin/logout', async () => {
+ try {
+  const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}managerUser/admin/logout`, axiosConfig);
+  return response.data;
+ } catch (error) {
+  console.error(error);
+ }
+})
+
 
 const initialState = {
  isLoading: false,
