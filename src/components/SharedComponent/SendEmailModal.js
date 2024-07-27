@@ -4,6 +4,7 @@ import { TextField, Button, Container, Grid, Box, Typography } from '@mui/materi
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import CloseIcon from '@mui/icons-material/Close';
+import ReactQuill from 'react-quill';
 
 
 const schema = yup.object().shape({
@@ -11,8 +12,8 @@ const schema = yup.object().shape({
   message: yup.string().required('message is required'),
 });
 
-const SendEmailModal = ({ onClose,onSubmit }) => {
-
+const SendEmailModal = ({ onClose, onSubmit }) => {
+  let quillRef = null;
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
@@ -42,22 +43,30 @@ const SendEmailModal = ({ onClose,onSubmit }) => {
             />
           </Grid>
           <Grid item xs={12}>
-            <Controller
-              name="message"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  multiline
-                  minRows={4}
-                  {...field}
-                  label="Message"
-                  variant="outlined"
-                  fullWidth
-                  error={!!errors.message}
-                  helperText={errors.message?.message}
-                />
-              )}
-            />
+            <Box className="rich-text-editor">
+              <Controller
+                name="message"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <ReactQuill
+                    placeholder='Write something here...'
+                    className={`quill-editor ${errors.message ? 'show__error' : ''}`}
+                    ref={quillRef}
+                    value={value}
+                    onChange={onChange}
+                    modules={{
+                      toolbar: [
+                        [{ 'header': [1, 2, false] }],
+                        ['bold', 'italic', 'underline'],
+                        ['image', 'code-block'],
+                        ['clean'], // remove formatting button
+                      ],
+                    }}
+                  />
+                )}
+              />
+              {errors.message && <div className='show__error_text'>{errors.message.message}</div>}
+            </Box>
           </Grid>
           <Grid item xs={12}>
             <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>

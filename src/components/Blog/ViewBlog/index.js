@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { TextField, Button, Grid, Container, Box, Typography, Stack, Divider } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AvatarWithLetters from '../../SharedComponent/ReusableAvatar';
-import moment from 'moment';
 
 
 const schema = yup.object().shape({
@@ -16,16 +15,11 @@ const schema = yup.object().shape({
 });
 
 const ViewBlog = ({ data, onClose }) => {
- const { title, createdBy, createdDate, updatedDate, description, attachments, comments } = data
+ const { title, createdBy, description, attachments, comments } = data
 
- const { control, handleSubmit, formState: { errors } } = useForm({
+ const { control, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });
-
- const onSubmit = (data) => {
-  // console.log(data);
- };
-
 
 
 
@@ -35,7 +29,7 @@ const ViewBlog = ({ data, onClose }) => {
     <Typography variant='h5'>View Blog Details</Typography>
     <CloseIcon sx={{ cursor: 'pointer' }} onClick={onClose} />
    </Box>
-   <form onSubmit={handleSubmit(onSubmit)}>
+   <form >
     <Grid container spacing={1}>
      <Grid item xs={6}>
       <Controller
@@ -66,7 +60,7 @@ const ViewBlog = ({ data, onClose }) => {
       <TextField fullWidth label="Updated On" disabled value={updatedDate} />
      </Grid> */}
 
-     <Grid item xs={12}>
+     <Grid item xs={12} className='rich-text-editor'>
       {/* <Controller
        disabled
        name="description"
@@ -85,7 +79,7 @@ const ViewBlog = ({ data, onClose }) => {
         />
        )}
       /> */}
-      <div dangerouslySetInnerHTML={{ __html: description }} />
+      <div className='ql-editor' dangerouslySetInnerHTML={{ __html: description }} />
      </Grid>
 
      {attachments && attachments.length > 0 &&
@@ -95,7 +89,7 @@ const ViewBlog = ({ data, onClose }) => {
        <Box sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
         {attachments && attachments.map((media) => (
          <Box>
-          <img src={media} alt="Preview" style={{ maxWidth: '100%', maxHeight: '80px', borderRadius: '5px' }} />
+          <img src={media} alt="Preview" style={{ maxWidth: '100%', maxHeight: '50px', borderRadius: '5px' }} />
          </Box>
         ))}
        </Box>

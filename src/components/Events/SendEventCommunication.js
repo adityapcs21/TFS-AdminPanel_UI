@@ -5,11 +5,9 @@ import * as yup from 'yup';
 import { TextField, Button, Grid, Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from 'react-redux';
-import { Editor } from 'react-draft-wysiwyg';
 import useEditorState from '../../helpers/textEditorHandler';
-import draftToHtml from 'draftjs-to-html';
-import { convertToRaw } from 'draft-js';
 import { SendEventEmail } from '../../redux/slice/events';
+import ReactQuill from 'react-quill';
 
 const schema = yup.object().shape({
  message: yup.string().required('Please add some message'),
@@ -17,6 +15,7 @@ const schema = yup.object().shape({
 });
 
 const SendEventCommunication = ({ onClose, eventId }) => {
+ let quillRef = null;
  const dispatch = useDispatch();
  const { editorState, onChange } = useEditorState();
  const { control, setValue, handleSubmit, formState: { errors } } = useForm({
@@ -25,10 +24,6 @@ const SendEventCommunication = ({ onClose, eventId }) => {
    eventId: eventId,
   },
  });
-
- useEffect(() => {
-  setValue('message', draftToHtml(convertToRaw(editorState.getCurrentContent())));
- }, [eventId, editorState, setValue]);
 
  const onSubmit = (data) => {
   data.eventId = eventId
@@ -86,15 +81,30 @@ const SendEventCommunication = ({ onClose, eventId }) => {
        />
       </Grid>
       <Grid item xs={12}>
-       <Box sx={{ border: '1px solid lightgrey' }}>
-        <Editor
-         editorState={editorState}
-         editorClassName="event-text-editor"
-         onEditorStateChange={onChange}
-         toolbar={{
-          options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign'],
-         }}
+       <Box className="rich-text-editor">
+        <Controller
+         name="message"
+         control={control}
+         render={({ field: { onChange, value } }) => (
+          <ReactQuill
+           className={`quill-editor ${errors.message ? 'show__error' : ''}`}
+           ref={quillRef}
+           value={value}
+           onChange={onChange}
+           modules={{
+            toolbar: [
+             [{ 'header': [1, 2, false] }],
+             ['bold', 'italic', 'underline'],
+             ['image', 'code-block'],
+             ['clean'], [{ 'font': [] }],
+             [{ 'align': [] }],
+            ],
+
+           }}
+          />
+         )}
         />
+        {errors.message && <div className='show__error_text'>{errors.message.message}</div>}
        </Box>
       </Grid>
       <Grid item xs={12}>

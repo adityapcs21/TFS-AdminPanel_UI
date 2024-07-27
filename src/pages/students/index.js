@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../../common/loader';
 import Swal from 'sweetalert2';
 import { useState } from 'react';
-import  { GetAllStudentsList, GetStudentDetails, SendEmailToActiveSubscriptionUsers, StudentDataIsLoading, applyStudentFilter, clearStudentFilter, deleteStudent } from '../../redux/slice/students';
+import { GetAllStudentsList, GetStudentDetails, SendEmailToActiveSubscriptionUsers, StudentDataIsLoading, applyStudentFilter, clearStudentFilter, deleteStudent } from '../../redux/slice/students';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import UpdateStudent from '../../components/students/EditStudent';
 import ViewStudent from '../../components/students/ViewStudent';
@@ -194,7 +194,7 @@ export default function Students() {
     <Grid container spacing={2}>
       <Grid item xs={12}>
         <Box sx={{ display: 'flex', gap: '20px' }}>
-          <Button variant="contained" color="primary">Send Email</Button>
+          <Button variant="contained" color="primary" onClick={() => setOpenEmailModal(prevState => !prevState)}>Send Email</Button>
           <Badge badgeContent={Object.keys(appliedFilters).length} color="secondary">
             <Button onClick={() => setOpenFilterModal(prevState => !prevState)} variant="contained" color="primary">Filter </Button>
           </Badge>

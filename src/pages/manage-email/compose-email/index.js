@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Box, Button, Card, Grid, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +13,7 @@ import { useDispatch } from 'react-redux';
 import { SendTextEmail } from '../../../redux/slice/events';
 import Swal from 'sweetalert2';
 import Loader from '../../../common/loader';
+import ReactQuill from 'react-quill';
 
 const validationSchema = Yup.object().shape({
   receivers: Yup.array()
@@ -34,6 +34,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const EmailCompose = () => {
+  let quillRef = null;
   const dispatch = useDispatch()
   const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")));
   const [sender, setSender] = useState(JSON.parse(localStorage.getItem('tfsUserDetails')))
@@ -41,16 +42,11 @@ const EmailCompose = () => {
     resolver: yupResolver(validationSchema)
   });
 
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [emails, setEmails] = useState([]);
   const [focused, setFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const tfsDraftMessage = watch();
-
-  useEffect(() => {
-    setValue("message", draftToHtml(convertToRaw(editorState.getCurrentContent())));
-  }, [editorState, setValue]);
 
   const onSubmit = (data) => {
     setIsLoading(true);
@@ -74,13 +70,10 @@ const EmailCompose = () => {
       message: undefined,
       attachments: undefined,
     });
-    setEditorState(EditorState.createEmpty());
+
     setEmails([]);
   };
 
-  const onEditorStateChange = (newEditorState) => {
-    setEditorState(newEditorState);
-  };
 
   const saveToDraft = () => {
     localStorage.setItem('tfsDraftMessage', JSON.stringify(tfsDraftMessage));
@@ -160,26 +153,30 @@ const EmailCompose = () => {
                       />
                     </Grid>
                     <Grid item xs={12}>
-                      <Box sx={{ border: '1px solid lightgrey', display: 'flex', width: '100%' }}>
-                        <Editor
-                          // handlePastedImage={handlePastedImage}
-                          // handleDroppedFiles={handleDroppedFiles}
-                          editorState={editorState}
-                          editorClassName="richtext-editor-textarea-blog"
-                          onEditorStateChange={setEditorState}
-                          toolbar={{
-                            options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'textAlign', 'image'],
-                            inline: {
-                              inDropdown: false,
-                              options: ['bold', 'italic', 'underline', 'strikethrough'], // Removed superscript
-                            },
-                            image: {
-                              uploadCallback: imageUploadCallback,
-                              alt: { present: true, mandatory: false },
-                              previewImage: true,
-                            },
-                          }}
+                      <Box className="rich-text-editor">
+                        <Controller
+                          name="message"
+                          control={control}
+                          render={({ field: { onChange, value } }) => (
+                            <ReactQuill
+                              className={`quill-editor ${errors.message ? 'show__error' : ''}`}
+                              ref={quillRef}
+                              value={value}
+                              onChange={onChange}
+                              modules={{
+                                toolbar: [
+                                  [{ 'header': [1, 2, false] }],
+                                  ['bold', 'italic', 'underline'],
+                                  ['image', 'code-block'],
+                                  ['clean'], [{ 'font': [] }],
+                                  [{ 'align': [] }],
+                                ],
+
+                              }}
+                            />
+                          )}
                         />
+                        {errors.message && <div className='show__error_text'>{errors.message.message}</div>}
                       </Box>
                     </Grid>
                     {/* <Grid item xs={12}>

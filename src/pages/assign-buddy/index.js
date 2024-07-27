@@ -23,6 +23,7 @@ export default function AssignBuddy() {
   const assignedUserList = useSelector(state => state.buddyAssignment?.AssignmentList.userAssignmentList);
   const totalSize = useSelector(state => state.buddyAssignment?.AssignmentList.size);
   const isLoading = useSelector(state => state.buddyAssignment.isLoading);
+  const isUpdated = useSelector(state => state.buddyAssignment.ListUpdated);
 
   const [addNewBuddy, setAddNewBuddy] = useState(false)
   const [page, setPage] = useState(0);
@@ -38,6 +39,17 @@ export default function AssignBuddy() {
     }
     dispatch(GetAllAssignments(payload))
   }, [page, rowsPerPage])
+
+  useEffect(() => {
+    if (isUpdated) {
+      dispatch(buddyAssignmentIsLoading())
+      let payload = {
+        "perPageResults": rowsPerPage,
+        "pageNo": page + 1,
+      }
+      dispatch(GetAllAssignments(payload))
+    }
+  }, [isUpdated])
 
   const handleChangePage = (_, newPage) => {
     setPage(newPage);
@@ -74,7 +86,7 @@ export default function AssignBuddy() {
       </Grid>
 
       <ReusbaleDialog maxWidth="sm" open={addNewBuddy} onClose={() => setAddNewBuddy(prevState => !prevState)}>
-        <AddNewBuddy onClose={() => setAddNewBuddy(prevState => !prevState)} />
+        <AddNewBuddy onClose={() => setAddNewBuddy(false)} />
       </ReusbaleDialog>
     </Grid>
   )

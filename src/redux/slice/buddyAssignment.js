@@ -83,6 +83,9 @@ const buddyAssignment = createSlice({
  reducers: {
   buddyAssignmentIsLoading: (state, action) => {
    state.isLoading = true
+  },
+  buddyIsUpdated: (state, action) => {
+   state.ListUpdated = true
   }
  },
  extraReducers: (builder) => {
@@ -132,5 +135,5 @@ const buddyAssignment = createSlice({
 
  },
 })
-export const { buddyAssignmentIsLoading } = buddyAssignment.actions;
+export const { buddyAssignmentIsLoading, buddyIsUpdated } = buddyAssignment.actions;
 export default buddyAssignment.reducer;

@@ -10,14 +10,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getS3SignedUrl } from '../../helpers/mediaUpload';
 import styled from '@emotion/styled';
 import FullScreenLoader from '../../common/FullscreenLoader';
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { Editor } from 'react-draft-wysiwyg';
-import useEditorState from '../../helpers/textEditorHandler';
-import draftToHtml from 'draftjs-to-html';
-import { ContentState, EditorState, convertToRaw } from 'draft-js';
 import { AddEvent, EditEvent, mediaIsLoading } from '../../redux/slice/events';
 import moment from 'moment';
-import htmlToDraft from 'html-to-draftjs';
+import ReactQuill from 'react-quill';
 
 const schema = yup.object().shape({
   eventName: yup.string().required('Event Name is required'),
@@ -35,6 +30,7 @@ const schema = yup.object().shape({
 });
 
 const UpdateEvent = ({ onClose }) => {
+  let quillRef = null;
   const dispatch = useDispatch()
   const isLoading = useSelector((state) => state.events.mediaUploading)
   const eventDetails = useSelector(state => state.events.eventDetails);
@@ -44,17 +40,6 @@ const UpdateEvent = ({ onClose }) => {
   const [file, setFile] = useState(eventDetails.attachments);
   const [fileName, setFileName] = useState([]);
   const [previosImages, setPreviousImages] = useState(eventDetails.attachments);
-
-  const [editorState, setEditorState] = useState(() => {
-    const contentBlock = htmlToDraft(eventDetails.description);
-    if (contentBlock) {
-      const contentState = ContentState.createFromBlockArray(
-        contentBlock.contentBlocks,
-      );
-      return EditorState.createWithContent(contentState);
-    }
-    return EditorState.createEmpty();
-  });
 
   const { control, setValue, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
@@ -73,12 +58,6 @@ const UpdateEvent = ({ onClose }) => {
     }
   });
 
-  useEffect(() => {
-    const contentAsHtml = draftToHtml(
-      convertToRaw(editorState.getCurrentContent()),
-    );
-    setValue("description", contentAsHtml)
-  }, [editorState]);
 
   async function onSubmit(data) {
     data.batch = data.batch.toString()
@@ -138,13 +117,6 @@ const UpdateEvent = ({ onClose }) => {
     setFile(filtered)
     setFileName(filtered1)
   }
-
-
-  const onEditorStateChange = (newEditorState) => {
-    setEditorState(newEditorState);
-    setValue("description", newEditorState)
-  };
-
 
 
   return (
@@ -346,16 +318,31 @@ const UpdateEvent = ({ onClose }) => {
             </Grid>
 
             <Grid item xs={12}>
-              <Box sx={{ border: '1px solid lightgrey' }}>
-                <Editor
-                  editorState={editorState}
-                  onEditorStateChange={onEditorStateChange}
-                  editorClassName="event-text-editor"
-                  toolbar={
-                    {
-                      options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'remove'],
-                    }}
+              <Box className="rich-text-editor">
+                <Controller
+                  name="description"
+                  control={control}
+                  defaultValue={eventDetails?.description}
+                  render={({ field: { onChange, value } }) => (
+                    <ReactQuill
+                      className={`quill-editor ${errors.description ? 'show__error' : ''}`}
+                      ref={quillRef}
+                      value={value}
+                      onChange={onChange}
+                      modules={{
+                        toolbar: [
+                          [{ 'header': [1, 2, false] }],
+                          ['bold', 'italic', 'underline'],
+                          ['image', 'code-block'],
+                          ['clean'], [{ 'font': [] }],
+                          [{ 'align': [] }],
+                        ],
+
+                      }}
+                    />
+                  )}
                 />
+                {errors.description && <div className='show__error_text'>{errors.description.message}</div>}
               </Box>
             </Grid>
 

@@ -9,6 +9,7 @@ import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import SendQueryResponse from '../../components/customer-query/SendQueryResponse';
 import FilterCustomerQuery from '../../components/customer-query/FilterCustomerQuery';
+import NothingToShow from '../../components/SharedComponent/NothingToShow';
 
 const columns = [
   { id: 'name', label: 'Name' },
@@ -20,9 +21,10 @@ const columns = [
 ];
 export default function CustomerQuery() {
   const dispatch = useDispatch()
+  const isLoading = useSelector((state) => state.customerQuery.isLoading);
   const customerQueryData = useSelector((state) => state.customerQuery.data?.queryList);
   const totalPages = useSelector((state) => state.customerQuery.data?.size);
-  const appliedFilters = useSelector((state) => state.customerQuery.appliedFilters);
+  const appliedFilters = useSelector((state) => state.customerQuery.appliedFilters || {});
 
 
   const [page, setPage] = useState(0);
@@ -72,7 +74,7 @@ export default function CustomerQuery() {
   };
 
   const handleClearFilter = () => {
-    // dispatch(GetCustomerQuery())
+    dispatch(GetCustomerQuery())
   }
 
   return (
@@ -81,9 +83,9 @@ export default function CustomerQuery() {
         <Stack justifyContent="space-between" direction="row">
           <Box sx={{ display: 'flex', gap: '20px' }}>
             <Badge badgeContent={appliedFilters && Object.keys(appliedFilters).length} color="secondary">
-              <Button onClick={() => setOpenFilterModal(prevState => !prevState)} variant="contained" color="primary">Filter </Button>
+              <Button disabled={customerQueryData && customerQueryData.length === 0} onClick={() => setOpenFilterModal(prevState => !prevState)} variant="contained" color="primary">Filter </Button>
             </Badge>
-            <Button onClick={() => handleClearFilter()} variant="contained" color="primary">Clear Filter </Button>
+            <Button disabled={appliedFilters && Object.entries(appliedFilters).length === 0} onClick={() => handleClearFilter()} variant="contained" color="primary">Clear Filter </Button>
 
             <Stack direction="row" spacing={1} alignItems="center">
               {
@@ -99,7 +101,8 @@ export default function CustomerQuery() {
         </Stack>
       </Grid>
       {
-        customerQueryData && customerQueryData.length > 0 ?
+
+        !isLoading && customerQueryData && customerQueryData.length > 0 ?
           <Grid item xs={12}>
             <ReusableTable
               columns={columns}
@@ -122,11 +125,14 @@ export default function CustomerQuery() {
             />
           </Grid>
           :
-          <Grid xs={12}>
-            <Loader />
-          </Grid>
+          !isLoading && customerQueryData && customerQueryData.length === 0 ?
+            <NothingToShow />
+            :
+            <Grid xs={12}>
+              <Loader />
+            </Grid>
       }
-      <ReusbaleDialog maxWidth="md" open={openModal} onClose={() => setOpenModal(prevState => !prevState)}>
+      <ReusbaleDialog maxWidth="lg" open={openModal} onClose={() => setOpenModal(prevState => !prevState)}>
         <SendQueryResponse queryId={queryId} onClose={() => setOpenModal(prevState => !prevState)} />
       </ReusbaleDialog>
 

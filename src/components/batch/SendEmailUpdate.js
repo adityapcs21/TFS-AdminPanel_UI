@@ -1,15 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { TextField, Button, Grid, Box, Typography, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from 'react-redux';
-import { Editor } from 'react-draft-wysiwyg';
-import useEditorState from '../../helpers/textEditorHandler';
-import draftToHtml from 'draftjs-to-html';
-import { convertToRaw } from 'draft-js';
 import { SendBatchEmail } from '../../redux/slice/batch';
+import ReactQuill from 'react-quill';
 
 
 const schema = yup.object().shape({
@@ -18,15 +15,11 @@ const schema = yup.object().shape({
 });
 
 const SendEmailUpdate = ({ onClose }) => {
+ let quillRef = null;
  const dispatch = useDispatch();
- const { editorState, onChange } = useEditorState();
- const { control, setValue, handleSubmit, formState: { errors } } = useForm({
+ const { control, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema)
  });
-
- useEffect(() => {
-  setValue('message', draftToHtml(convertToRaw(editorState.getCurrentContent())));
- }, [editorState, setValue]);
 
  const onSubmit = (data) => {
   let payload = {
@@ -67,15 +60,29 @@ const SendEmailUpdate = ({ onClose }) => {
        />
       </Grid>
       <Grid item xs={12}>
-       <Box sx={{ border: '1px solid lightgrey' }}>
-        <Editor
-         editorState={editorState}
-         editorClassName="event-text-editor"
-         onEditorStateChange={onChange}
-         toolbar={{
-          options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign'],
-         }}
+       <Box className="rich-text-editor">
+        <Controller
+         name="message"
+         control={control}
+         render={({ field: { onChange, value } }) => (
+          <ReactQuill
+           placeholder='Write something here...'
+           className={`quill-editor ${errors.message ? 'show__error' : ''}`}
+           ref={quillRef}
+           value={value}
+           onChange={onChange}
+           modules={{
+            toolbar: [
+             [{ 'header': [1, 2, false] }],
+             ['bold', 'italic', 'underline'],
+             ['image', 'code-block'],
+             ['clean'],
+            ],
+           }}
+          />
+         )}
         />
+        {errors.message && <div className='show__error_text'>{errors.message.message}</div>}
        </Box>
       </Grid>
       <Grid item xs={12}>

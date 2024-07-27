@@ -7,12 +7,8 @@ import { TextField, Button, Grid, Container, Box, Typography, IconButton } from 
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useDispatch, useSelector } from 'react-redux';
-import { Editor } from 'react-draft-wysiwyg';
-import draftToHtml from 'draftjs-to-html';
-import { convertToRaw } from 'draft-js';
 import styled from '@emotion/styled';
 import FullScreenLoader from '../../common/FullscreenLoader';
-import useEditorState from '../../helpers/textEditorHandler';
 import { getS3SignedUrl } from '../../helpers/mediaUpload';
 import { CreateAbout, setMediaIsLoading } from '../../redux/slice/about';
 

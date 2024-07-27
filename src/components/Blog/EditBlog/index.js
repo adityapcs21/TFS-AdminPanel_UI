@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -10,11 +10,9 @@ import { UpdateBlog, mediaIsUploading } from '../../../redux/slice/blog';
 import { getS3SignedUrl } from '../../../helpers/mediaUpload';
 import CancelIcon from '@mui/icons-material/Cancel';
 import styled from '@emotion/styled';
-import { EditorState, convertFromHTML, ContentState, convertToRaw } from 'draft-js';
-import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import draftToHtml from 'draftjs-to-html';
 import FullScreenLoader from '../../../common/FullscreenLoader';
+import ReactQuill from 'react-quill';
 
 const schema = yup.object().shape({
  title: yup.string().required(),
@@ -30,26 +28,12 @@ const EditBlog = ({ data, onClose }) => {
  const [file, setFile] = useState(attachments);
  const [fileName, setFileName] = useState([]);
  const [previosImages, setPreviousImages] = useState(attachments);
- const { control, setValue, handleSubmit, formState: { errors } } = useForm({
+ const { control, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });
+ let quillRef = null;
 
- // Convert HTML to content state
- const contentBlocks = convertFromHTML(description);
- const initialContentState = ContentState.createFromBlockArray(contentBlocks);
- const [editorState, setEditorState] = useState(EditorState.createWithContent(initialContentState));
 
- const onEditorStateChange = (newEditorState) => {
-  setEditorState(newEditorState);
- };
-
- useEffect(() => {
-  setValue('attachments', attachments);
- }, [attachments, setValue]);
-
- useEffect(() => {
-  setValue("description", draftToHtml(convertToRaw(editorState.getCurrentContent())));
- }, [editorState, setValue]);
 
  async function onSubmit(data) {
   if (fileName && fileName.length > 0) {
@@ -109,22 +93,9 @@ const EditBlog = ({ data, onClose }) => {
   setPreviousImages(filtered3);
  };
 
- const imageUploadCallback = (file) => {
-  return new Promise((resolve, reject) => {
-   const reader = new FileReader();
-   reader.onloadend = () => {
-    resolve({ data: { link: reader.result } }); // Return the image link
-   };
-   reader.onerror = () => {
-    reject('Error uploading image');
-   };
-   reader.readAsDataURL(file);
-  });
- };
-
  return (
   <Container>
-   <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '20px 0px' }}>
+   <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '5px 0px 20px 0px' }}>
     <Typography variant='h5'>Edit Blog</Typography>
     <CloseIcon onClick={onClose} />
    </Box>
@@ -139,7 +110,7 @@ const EditBlog = ({ data, onClose }) => {
        defaultValue={title}
        control={control}
        render={({ field }) => (
-        <TextField fullWidth label="Title" {...field} error={!!errors.title} helperText={errors.title?.message} />
+        <TextField size='small' fullWidth label="Title" {...field} error={!!errors.title} helperText={errors.title?.message} />
        )}
       />
      </Grid>
@@ -150,26 +121,37 @@ const EditBlog = ({ data, onClose }) => {
        control={control}
        disabled
        render={({ field }) => (
-        <TextField fullWidth label="Created By" {...field} error={!!errors.createdBy} helperText={errors.createdBy?.message} />
+        <TextField size='small' fullWidth label="Created By" {...field} error={!!errors.createdBy} helperText={errors.createdBy?.message} />
        )}
       />
      </Grid>
 
      <Grid item xs={12}>
-      <Box sx={{ border: '1px solid lightgrey' }}>
-       <Editor
-        editorState={editorState}
-        editorClassName="richtext-editor-textarea-blog"
-        onEditorStateChange={onEditorStateChange}
-        toolbar={{
-         options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'textAlign', 'image'],
-         image: {
-          uploadCallback: imageUploadCallback,
-          alt: { present: true, mandatory: false },
-          previewImage: true,
-         },
-        }}
+      <Box className="rich-text-editor">
+       <Controller
+        name="description"
+        control={control}
+        defaultValue={description}
+        render={({ field: { onChange, value } }) => (
+         <ReactQuill
+          className={`quill-editor ${errors.description ? 'show__error' : ''}`}
+          ref={quillRef}
+          value={value}
+          onChange={onChange}
+          modules={{
+           toolbar: [
+            [{ 'header': [1, 2, false] }],
+            ['bold', 'italic', 'underline'],
+            ['image', 'code-block'],
+            ['clean'], [{ 'font': [] }],
+            [{ 'align': [] }],
+           ],
+
+          }}
+         />
+        )}
        />
+       {errors.description && <div className='show__error_text'>{errors.description.message}</div>}
       </Box>
      </Grid>
      <Grid item xs={12}>
@@ -188,15 +170,17 @@ const EditBlog = ({ data, onClose }) => {
         />
        )}
       />
-      <label htmlFor="fileInput">
-       <IconButton component="span">
-        <CloudUploadIcon />
-       </IconButton>
-      </label>
-      <Button sx={{ display: 'none' }} variant="contained" component="span" onClick={() => document.getElementById('fileInput').click()}>
-       Upload
-      </Button>
       <Grid container spacing={2}>
+       <Grid item>
+        <label htmlFor="fileInput">
+         <IconButton component="span">
+          <CloudUploadIcon />
+         </IconButton>
+        </label>
+        <Button sx={{ display: 'none' }} variant="contained" component="span" onClick={() => document.getElementById('fileInput').click()}>
+         Upload
+        </Button>
+       </Grid>
        {file && file.map((media, index) => (
         <Grid item key={index}>
          <ImageWrapper>
@@ -233,8 +217,8 @@ const ImageWrapper = styled(Box)({
 const DisplayAttachment = styled('img')({
  objectFit: "cover",
  color: "#152766",
- width: "80px",
- height: "80px",
+ width: "50px",
+ height: "50px",
  background: "#f7f7f7",
  borderRadius: "3px",
  marginRight: "10px",

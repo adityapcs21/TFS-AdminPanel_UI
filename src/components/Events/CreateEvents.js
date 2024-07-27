@@ -11,12 +11,10 @@ import { getS3SignedUrl } from '../../helpers/mediaUpload';
 import styled from '@emotion/styled';
 import FullScreenLoader from '../../common/FullscreenLoader';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { Editor } from 'react-draft-wysiwyg';
 import useEditorState from '../../helpers/textEditorHandler';
-import draftToHtml from 'draftjs-to-html';
-import { convertToRaw } from 'draft-js';
 import { AddEvent, mediaIsLoading } from '../../redux/slice/events';
 import moment from 'moment';
+import ReactQuill from 'react-quill';
 
 
 const schema = yup.object().shape({
@@ -38,20 +36,17 @@ const schema = yup.object().shape({
 });
 
 const CreateEvent = ({ onClose }) => {
+  let quillRef = null;
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.events.mediaUploading);
   const BatchList = useSelector((state) => state.batch.batchList.batchList);
 
   const [file, setFile] = useState([]);
   const [fileName, setFileName] = useState([]);
-  const { editorState, onChange } = useEditorState();
   const { control, setValue, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
 
-  useEffect(() => {
-    setValue("description", draftToHtml(convertToRaw(editorState.getCurrentContent())));
-  }, [editorState, setValue]);
 
   const onSubmit = async (data) => {
     data.batch = data.batch.toString();
@@ -313,16 +308,30 @@ const CreateEvent = ({ onClose }) => {
 
 
             <Grid item xs={12}>
-              <Box sx={{ border: '1px solid lightgrey' }}>
-                <Editor
-                  editorState={editorState}
-                  editorClassName="event-text-editor"
-                  onEditorStateChange={onChange}
-                  toolbar={
-                    {
-                      options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'list', 'textAlign', 'colorPicker', 'remove'],
-                    }}
+              <Box className="rich-text-editor">
+                <Controller
+                  name="description"
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
+                    <ReactQuill
+                      placeholder='Write something here...'
+                      className={`quill-editor ${errors.description ? 'show__error' : ''}`}
+                      ref={quillRef}
+                      value={value}
+                      onChange={onChange}
+                      modules={{
+                        toolbar: [
+                          [{ 'header': [1, 2, false] }],
+                          ['bold', 'italic', 'underline'],
+                          ['image', 'code-block'],
+                          ['clean'], [{ 'font': [] }],
+                          [{ 'align': [] }],
+                        ]
+                      }}
+                    />
+                  )}
                 />
+                {errors.description && <div className='show__error_text'>{errors.description.message}</div>}
               </Box>
             </Grid>
 

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
-import { Editor } from 'react-draft-wysiwyg';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Box, Button, Card, Grid, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import draftToHtml from 'draftjs-to-html';
@@ -14,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import Swal from 'sweetalert2';
 import Loader from '../../../common/loader';
+import ReactQuill from 'react-quill';
 
 const validationSchema = Yup.object().shape({
   receivers: Yup.array()
@@ -34,6 +33,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const DraftEmail = () => {
+  let quillRef = null;
   const dispatch = useDispatch();
   const [draftMessage, setDraftMessage] = useState(JSON.parse(localStorage.getItem('tfsDraftMessage')));
   const [isDiscarded, setIsDiscarded] = useState(false);
@@ -47,13 +47,9 @@ const DraftEmail = () => {
     defaultValues: {
       receivers: draftMessage && draftMessage.receivers,
       subject: draftMessage && draftMessage.subject,
+      message: draftMessage && draftMessage.message,
     },
   });
-
-  const contentBlocks = convertFromHTML(draftMessage?.message || "");
-  const initialContentState = ContentState.createFromBlockArray(contentBlocks);
-
-  const [editorState, setEditorState] = useState(EditorState.createWithContent(initialContentState));
 
   const tfsDraftMessage = watch();
 
@@ -73,13 +69,6 @@ const DraftEmail = () => {
     localStorage.setItem('tfsDraftMessage', JSON.stringify(tfsDraftMessage));
   }, [tfsDraftMessage]);
 
-  useEffect(() => {
-    setValue("receivers", emails)
-  }, [editorState, setValue]);
-
-  useEffect(() => {
-    setValue("message", draftToHtml(convertToRaw(editorState.getCurrentContent())));
-  }, [editorState, setValue]);
 
   const onSubmit = (data) => {
     setIsLoading(true);
@@ -103,26 +92,11 @@ const DraftEmail = () => {
       message: "",
       //  attachments: [],
     });
-    setEditorState(EditorState.createEmpty());
     setIsDiscarded(true);
     localStorage.removeItem("tfsDraftMessage");
     setEmails([])
   };
 
-  const onEditorStateChange = (newEditorState) => {
-    setEditorState(newEditorState);
-  };
-
-  const imageUploadCallback = (file) => {
-    return new Promise((resolve, reject) => {
-      // Simulate an upload
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve({ data: { link: reader.result } }); // Return the image link
-      };
-      reader.readAsDataURL(file);
-    });
-  }
 
   return (
     <Box width={"100%"}>
@@ -188,26 +162,31 @@ const DraftEmail = () => {
                         />
                       </Grid>
                       <Grid item xs={12}>
-                        <Box sx={{ border: '1px solid lightgrey', display: 'flex', width: '100%' }}>
-                          <Editor
-                            // handlePastedImage={handlePastedImage}
-                            // handleDroppedFiles={handleDroppedFiles}
-                            editorState={editorState}
-                            editorClassName="richtext-editor-textarea-blog"
-                            onEditorStateChange={setEditorState}
-                            toolbar={{
-                              options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'textAlign', 'image'],
-                              inline: {
-                                inDropdown: false,
-                                options: ['bold', 'italic', 'underline', 'strikethrough'], // Removed superscript
-                              },
-                              image: {
-                                uploadCallback: imageUploadCallback,
-                                alt: { present: true, mandatory: false },
-                                previewImage: true,
-                              },
-                            }}
+                        <Box className="rich-text-editor">
+                          <Controller
+                            name="message"
+                            control={control}
+                            defaultValue={draftMessage && draftMessage.message}
+                            render={({ field: { onChange, value } }) => (
+                              <ReactQuill
+                                className={`quill-editor ${errors.message ? 'show__error' : ''}`}
+                                ref={quillRef}
+                                value={value}
+                                onChange={onChange}
+                                modules={{
+                                  toolbar: [
+                                    [{ 'header': [1, 2, false] }],
+                                    ['bold', 'italic', 'underline'],
+                                    ['image', 'code-block'],
+                                    ['clean'], [{ 'font': [] }],
+                                    [{ 'align': [] }],
+                                  ],
+
+                                }}
+                              />
+                            )}
                           />
+                          {errors.message && <div className='show__error_text'>{errors.message.message}</div>}
                         </Box>
                       </Grid>
                       {/* <Grid item xs={12}>

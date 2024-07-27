@@ -10,35 +10,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import { SaveBlog, mediaIsUploading } from '../../../redux/slice/blog';
 import { getS3SignedUrl } from '../../../helpers/mediaUpload';
 import useEditorState from '../../../helpers/textEditorHandler';
-import { Editor } from 'react-draft-wysiwyg';
-import draftToHtml from 'draftjs-to-html';
-import { convertToRaw, EditorState } from 'draft-js';
 import FullScreenLoader from '../../../common/FullscreenLoader';
 import styled from '@emotion/styled';
+import ReactQuill, { Quill } from 'react-quill';
+
 
 
 const schema = yup.object().shape({
  title: yup.string().required(),
  createdBy: yup.string().required(),
  attachments: yup.array().of(yup.mixed().required('Image is required')),
+ description: yup.string().required('description is required'),
 });
 
 const AddNewBlog = ({ onClose }) => {
+
+ let quillRef = null;
  const dispatch = useDispatch()
- const { editorState, onChange } = useEditorState();
  const isLoading = useSelector((state) => state.blog.isMediaUploading)
 
  const [file, setFile] = useState([]);
  const [fileName, setFileName] = useState([])
  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")))
- const { control, setValue, handleSubmit, formState: { errors } } = useForm({
+ const { control, handleSubmit, formState: { errors } } = useForm({
   resolver: yupResolver(schema),
  });
-
- useEffect(() => {
-  setValue("description", draftToHtml(convertToRaw(editorState.getCurrentContent())))
- }, [editorState])
-
 
  async function onSubmit(data) {
 
@@ -107,41 +103,7 @@ const AddNewBlog = ({ onClose }) => {
   setFileName(filtered1)
  }
 
- const imageUploadCallback = (file) => {
-  return new Promise((resolve, reject) => {
-   // Simulate an upload
-   const reader = new FileReader();
-   reader.onloadend = () => {
-    resolve({ data: { link: reader.result } }); // Return the image link
-   };
-   reader.readAsDataURL(file);
-  });
- }
-
-
- const handlePastedImage = (image) => {
-  // Convert the image to a base64 string or upload it to a server
-  const reader = new FileReader();
-  reader.onloadend = () => {
-   const base64Image = reader.result;
-   // Insert the base64 image into the editor
-   const contentState = editorState.getCurrentContent();
-   const contentWithImage = contentState.createEntity('IMAGE', 'IMMUTABLE', { src: base64Image });
-   const entityKey = contentWithImage.getLastCreatedEntityKey();
-   const newEditorState = EditorState.set(editorState, { currentContent: contentWithImage });
-   onChange(newEditorState);
-  };
-  reader.readAsDataURL(image);
- };
-
- const handleDroppedFiles = (files) => {
-  const file = files[0];
-  if (file && file.type.startsWith('image/')) {
-   handlePastedImage(file);
-  }
- };
-
-
+ console.log("errorss", errors)
  return (
   <Container >
    <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '5px 0px 20px 0px' }}>
@@ -155,7 +117,7 @@ const AddNewBlog = ({ onClose }) => {
        name="title"
        control={control}
        render={({ field }) => (
-        <TextField fullWidth label="Title" {...field} error={!!errors.title} helperText={errors.title?.message} />
+        <TextField size='small' fullWidth label="Title" {...field} error={!!errors.title} helperText={errors.title?.message} />
        )}
       />
      </Grid>
@@ -172,26 +134,31 @@ const AddNewBlog = ({ onClose }) => {
      </Grid>
 
      <Grid item xs={12}>
-      <Box sx={{ border: '1px solid lightgrey', display: 'flex', width: '100%' }}>
-       <Editor
-        handlePastedImage={handlePastedImage}
-        handleDroppedFiles={handleDroppedFiles}
-        editorState={editorState}
-        editorClassName="richtext-editor-textarea-blog"
-        onEditorStateChange={onChange}
-        toolbar={{
-         options: ['inline', 'blockType', 'fontSize', 'fontFamily', 'textAlign', 'image'],
-         inline: {
-          inDropdown: false,
-          options: ['bold', 'italic', 'underline', 'strikethrough'], // Removed superscript
-         },
-         image: {
-          uploadCallback: imageUploadCallback,
-          alt: { present: true, mandatory: false },
-          previewImage: true,
-         },
-        }}
+      <Box className="rich-text-editor">
+       <Controller
+        name="description"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+         <ReactQuill
+          placeholder='Write something here...'
+          className={`quill-editor ${errors.description ? 'show__error' : ''}`}
+          ref={quillRef}
+          value={value}
+          onChange={onChange}
+          modules={{
+           toolbar: [
+            [{ 'header': [1, 2, false] }],
+            ['bold', 'italic', 'underline'],
+            ['image', 'code-block'],
+            ['clean'], [{ 'font': [] }],
+            [{ 'align': [] }],
+           ],
+           
+          }}
+         />
+        )}
        />
+       {errors.description && <div className='show__error_text'>{errors.description.message}</div>}
       </Box>
      </Grid>
 
@@ -259,8 +226,8 @@ const ImageWrapper = styled(Box)({
 const DisplayAttachment = styled('img')({
  objectFit: "cover",
  color: "#152766",
- width: "80px",
- height: "80px",
+ width: "50px",
+ height: "50px",
  background: "#f7f7f7",
  borderRadius: "3px",
  marginRight: "10px",
@@ -274,11 +241,11 @@ const DisplayAttachment = styled('img')({
 const CloseIconCont = styled(Box)({
  borderRadius: '50%',
  position: 'absolute',
- top: '-5px',
- right: '5px',
- height: '24px',
+ top: '-9px',
+ right: '2px',
+ height: '23px',
  background: 'white',
  "&.hover": {
-  fontSize: "18px",
+  fontSize: "8px",
  }
 })

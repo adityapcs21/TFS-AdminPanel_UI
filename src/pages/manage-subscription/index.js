@@ -83,7 +83,7 @@ export default function ManageSubscription() {
         <Grid container spacing={2}>
           {
             !isLoading ? data && data.map((item, index) => (
-              <Grid item xs={3} key={index}>
+              <Grid item xs={4} lg={3} key={index}>
                 <Card sx={{ maxWidth: 345, padding: '20px' }}>
                   <Box sx={{ background: '#ecf0fa', width: '100%', overflow: "hidden", padding: '10px 20px', borderRadius: '5px', display: 'flex', justifyContent: 'center' }}>
                     <Typography sx={{ fontSize: '18px', fontWeight: '500', textTransform: 'uppercase', }}>{item.planName}</Typography>
