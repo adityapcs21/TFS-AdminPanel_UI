@@ -58,7 +58,7 @@ const authSlice = createSlice({
    state.token = action.payload
   },
   setIsLoading: (state, action) => {
-   state.token = true
+   state.isLoading = true
   }
  },
  extraReducers: (builder) => {

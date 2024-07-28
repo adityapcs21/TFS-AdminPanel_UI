@@ -14,8 +14,7 @@ export default function Dashboard() {
     5: "linear-gradient(to left, #efa65f, #f76a2d)"
   }
   const dashboardData = useSelector(state => state.auth.dashboardInfo)
-  const isLoading = useSelector(state => state.auth.isLoading || false)
-
+  const isLoading = useSelector(state => state.auth.isLoading)
 
   useEffect(() => {
     dispatch(setIsLoading())
@@ -28,7 +27,9 @@ export default function Dashboard() {
         <Typography variant='h5'>Dashboard Information</Typography>
       </Grid>
       {isLoading ?
-        <Loader />
+        <Grid item xs={12}>
+          <Loader />
+        </Grid>
         :
         dashboardData && dashboardData.length > 0 && dashboardData.map((item, index) => {
           let currentno = index + 1

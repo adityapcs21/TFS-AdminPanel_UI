@@ -6,6 +6,7 @@ import { BatchUpdateRequestList, StudentDataIsLoading } from '../../redux/slice/
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import ApproveStudentModal from '../../components/students/ApproveStudentModal';
 import Loader from '../../common/loader';
+import NothingToShow from '../../components/SharedComponent/NothingToShow';
 
 const columns = [
   { id: 'userName', label: 'Name' },
@@ -77,19 +78,21 @@ export default function BatchUpdateRequest() {
         {
           isLoading ?
             <Loader />
-            :
-            <ReusableTable
-              columns={columns}
-              data={BatchUpdateList}
-              onEdit={handleUpdate}
-              disableView
-              disableDelete
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={ListSize}
-            />
+            : !isLoading && BatchUpdateList && BatchUpdateList.length === 0 ?
+              <NothingToShow />
+              :
+              <ReusableTable
+                columns={columns}
+                data={BatchUpdateList}
+                onEdit={handleUpdate}
+                disableView
+                disableDelete
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                count={ListSize}
+              />
 
         }
 

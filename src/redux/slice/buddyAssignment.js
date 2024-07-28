@@ -74,7 +74,8 @@ const initialState = {
  ErrorMessage: "",
  AssignmentList: [],
  updatePlan: {},
- ListUpdated: false
+ ListUpdated: false,
+ AppliedFilters: {},
 }
 
 const buddyAssignment = createSlice({
@@ -86,6 +87,12 @@ const buddyAssignment = createSlice({
   },
   buddyIsUpdated: (state, action) => {
    state.ListUpdated = true
+  },
+  applyAssignBuddyFilters: (state, action) => {
+   state.AppliedFilters = action.payload
+  },
+  clearAssignBuddyFilter: (state, action) => {
+   state.AppliedFilters = {}
   }
  },
  extraReducers: (builder) => {
@@ -135,5 +142,5 @@ const buddyAssignment = createSlice({
 
  },
 })
-export const { buddyAssignmentIsLoading, buddyIsUpdated } = buddyAssignment.actions;
+export const { buddyAssignmentIsLoading, buddyIsUpdated, applyAssignBuddyFilters, clearAssignBuddyFilter } = buddyAssignment.actions;
 export default buddyAssignment.reducer;

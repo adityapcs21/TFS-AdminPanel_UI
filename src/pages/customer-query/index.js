@@ -128,7 +128,7 @@ export default function CustomerQuery() {
           !isLoading && customerQueryData && customerQueryData.length === 0 ?
             <NothingToShow />
             :
-            <Grid xs={12}>
+            <Grid item xs={12}>
               <Loader />
             </Grid>
       }
