@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { TextField, Button, Grid, Box, Typography, IconButton } from '@mui/material';
@@ -8,25 +8,28 @@ import { SendResponse } from '../../redux/slice/customer-query';
 import ReactQuill from 'react-quill';
 import { useForm, Controller } from 'react-hook-form';
 
-
+// Validation schema
 const schema = yup.object().shape({
-  queryId: yup.string().required('query id is required'),
+  queryId: yup.string().required('Query ID is required'),
   message: yup.string().required("Please add some message"),
 });
 
 const SendQueryResponse = ({ onClose, queryId }) => {
-  let quillRef = null;
   const dispatch = useDispatch();
   const { control, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(schema)
+    resolver: yupResolver(schema),
+    defaultValues: {
+      queryId: queryId,
+      message: '', // Initialize message as empty
+    }
   });
 
   const onSubmit = (data) => {
-    let payload = {
-      queryId,
-      message: data.message
-    }
-    dispatch(SendResponse(payload))
+    const payload = {
+      queryId: data.queryId || queryId, // Ensure queryId is included
+      message: data.message,
+    };
+    dispatch(SendResponse(payload));
     onClose();
   };
 
@@ -47,15 +50,15 @@ const SendQueryResponse = ({ onClose, queryId }) => {
               <Controller
                 name="queryId"
                 control={control}
-                disabled
                 render={({ field }) => (
                   <TextField
-                    label="Query Id"
+                    label="Query ID"
                     variant="outlined"
                     fullWidth
                     {...field}
                     error={!!errors.queryId}
                     helperText={errors.queryId?.message}
+                    disabled // Disable as it's not editable
                   />
                 )}
               />
@@ -69,7 +72,6 @@ const SendQueryResponse = ({ onClose, queryId }) => {
                     <ReactQuill
                       placeholder='Write something here...'
                       className={`quill-editor ${errors.message ? 'show__error' : ''}`}
-                      ref={quillRef}
                       value={value}
                       onChange={onChange}
                       modules={{
@@ -92,7 +94,7 @@ const SendQueryResponse = ({ onClose, queryId }) => {
                 <Button variant="contained" color="warning" onClick={onClose}>
                   Cancel
                 </Button>
-                <Button type="submit" onClick={() => handleSubmit()} variant="contained" color="primary">
+                <Button type="submit" variant="contained" color="primary">
                   Send Response
                 </Button>
               </Box>
