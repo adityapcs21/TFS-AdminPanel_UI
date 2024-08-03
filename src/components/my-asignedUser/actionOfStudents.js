@@ -6,7 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { AddBuddyAction } from '../../redux/slice/buddyAssignment';
+import { AddBuddyAction, buddyAssignmentIsLoading } from '../../redux/slice/buddyAssignment';
 import ReusableTable from '../SharedComponent/ReusableTable';
 import { Height } from '@mui/icons-material';
 
@@ -52,6 +52,7 @@ export default function ActionOfStudents({ onClose }) {
  const onSubmit = (data) => {
   data.studentId = studentDetails.uniqueId
   onClose()
+  dispatch(buddyAssignmentIsLoading())
   dispatch(AddBuddyAction(data))
  };
 
@@ -130,13 +131,61 @@ export default function ActionOfStudents({ onClose }) {
           <Grid item xs={12} md={6}>
            <TextField
             disabled
-            label="Status"
+            label="Email"
             fullWidth
-            value={studentDetails.status}
+            value={studentDetails.emailAddress}
            />
           </Grid>
 
           <Grid item xs={12} md={6}>
+           <TextField
+            disabled
+            label="Mobile No."
+            fullWidth
+            value={studentDetails.mobileNumber}
+           />
+          </Grid>
+          <Grid item xs={12} md={6}>
+           <TextField
+            disabled
+            label="Telegram Id"
+            fullWidth
+            value={studentDetails.telegramUserName}
+           />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+           <TextField
+            disabled
+            label="Subscription Type"
+            fullWidth
+            value={studentDetails.subscriptionType}
+           />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+           <TextField
+            disabled
+            label="Batch No"
+            fullWidth
+            value={studentDetails.batchNo}
+           />
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+           <TextField
+            disabled
+            label="Subscription Start Date"
+            type="date"
+            fullWidth
+            InputLabelProps={{
+             shrink: true,
+            }}
+            value={moment(studentDetails.subscriptionStartDate, 'DD-MM-YYYY').format('YYYY-MM-DD')}
+           />
+          </Grid>
+
+          <Grid item xs={12} md={4}>
            <TextField
             disabled
             label="Subscription End Date"
@@ -147,10 +196,9 @@ export default function ActionOfStudents({ onClose }) {
             }}
             value={moment(studentDetails.subscriptionEndDate, 'DD-MM-YYYY').format('YYYY-MM-DD')}
            />
-
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
            <Controller
             defaultValue=""
             name="action"

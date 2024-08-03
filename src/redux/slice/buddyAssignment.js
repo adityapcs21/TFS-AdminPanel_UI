@@ -93,7 +93,7 @@ const buddyAssignment = createSlice({
   },
   clearAssignBuddyFilter: (state, action) => {
    state.AppliedFilters = {}
-  }
+  },
  },
  extraReducers: (builder) => {
   builder.addCase(GetMyAssignedUsers.fulfilled, (state, action) => {

@@ -17,6 +17,7 @@ const ViewStudent = ({ onClose }) => {
   subscriptionStartDate,
   subscriptionType,
   status,
+  kycStatus
  } = StudentDetails
 
  return (
@@ -72,7 +73,7 @@ const ViewStudent = ({ onClose }) => {
       />
      </Grid>
 
-     <Grid item xs={6}>
+     <Grid item xs={4}>
       <TextField
        disabled
        label="Subscription End Date"
@@ -83,7 +84,7 @@ const ViewStudent = ({ onClose }) => {
 
       />
      </Grid>
-     <Grid item xs={6}>
+     <Grid item xs={4}>
       <TextField
        disabled
        label="Subscription Start Date"
@@ -91,7 +92,16 @@ const ViewStudent = ({ onClose }) => {
        fullWidth
        name="subscriptionStartDate"
        value={subscriptionStartDate}
-
+      />
+     </Grid>
+     <Grid item xs={4}>
+      <TextField
+       disabled
+       label="Kyc Status"
+       variant="outlined"
+       fullWidth
+       name="kycStatus"
+       value={kycStatus}
       />
      </Grid>
      <Grid item xs={4}>

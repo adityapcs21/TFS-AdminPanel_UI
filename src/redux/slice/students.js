@@ -177,6 +177,9 @@ const students = createSlice({
    state.isError = true
   });
 
+  builder.addCase(UpdateStudentData.pending, (state, action) => {
+   state.isLoading = true;
+  });
   builder.addCase(UpdateStudentData.fulfilled, (state, action) => {
    state.isLoading = false;
    state.StudentsDataUpdated = true

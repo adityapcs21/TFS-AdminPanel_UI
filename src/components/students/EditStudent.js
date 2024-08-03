@@ -1,12 +1,13 @@
 import CloseIcon from '@mui/icons-material/Close';
 import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { TextField, Button, Grid, Container, Box, Typography } from '@mui/material';
+import { TextField, Button, Grid, Container, Box, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import { UpdateStudentData } from '../../redux/slice/students';
+import { StudentDataIsLoading, UpdateStudentData } from '../../redux/slice/students';
+import Swal from 'sweetalert2';
 
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
@@ -51,6 +52,15 @@ const UpdateStudent = ({ onClose, editData }) => {
   data.subscriptionStartDate = data.subscriptionStartDate ? moment(data.subscriptionStartDate, 'YYYY-MM-DD').format('DD-MM-YYYY') : data.subscriptionStartDate
 
   dispatch(UpdateStudentData(data))
+   .then((res) => {
+    console.log("res", res.payload)
+    Swal.fire({
+     timer: 3000,
+     text: res.payload.data,
+     icon: "success"
+    });
+   })
+  dispatch(StudentDataIsLoading())
   onClose()
  };
 
@@ -181,12 +191,21 @@ const UpdateStudent = ({ onClose, editData }) => {
        name="status"
        control={control}
        render={({ field }) => (
-        <TextField fullWidth label="Status" {...field} error={!!errors.status} helperText={errors.status?.message} />
+        <FormControl fullWidth>
+         <InputLabel>Status</InputLabel>
+         <Select
+          {...field}
+          value={field.value || ''}  // Explicitly set the value
+          error={!!errors.status}
+          label="Status">
+          <MenuItem value="IN-ACTIVE">IN-ACTIVE</MenuItem>
+          <MenuItem value="ACTIVE">ACTIVE</MenuItem>
+         </Select>
+         <FormHelperText>{errors.status?.message}</FormHelperText>
+        </FormControl>
        )}
       />
-      <Box sx={{ minHeight: '16px' }}></Box>
      </Grid>
-
 
      <Grid item xs={12}>
       <Box sx={{ display: "flex", justifyContent: 'flex-end', gap: '10px' }}>

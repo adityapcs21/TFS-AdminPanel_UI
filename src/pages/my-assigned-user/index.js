@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { GetBuddyActionsList, GetMyAssignedUsers } from '../../redux/slice/buddyAssignment'
+import { buddyAssignmentIsLoading, GetBuddyActionsList, GetMyAssignedUsers } from '../../redux/slice/buddyAssignment'
 import { Grid } from '@mui/material'
 import ReusableTable from '../../components/SharedComponent/ReusableTable'
 import { useState } from 'react'
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog'
 import ActionOfStudents from '../../components/my-asignedUser/actionOfStudents'
 import { GetStudentDetails } from '../../redux/slice/students'
+import Loader from '../../common/loader'
 
 const columns = [
   { id: 'studentId', label: "Student Id" },
@@ -22,6 +23,7 @@ export default function MyAssignedUser() {
 
   const assignedUserList = useSelector(state => state.buddyAssignment.AssignedUserList?.userAssignmentList);
   const totalPages = useSelector(state => state.buddyAssignment.AssignedUserList?.size);
+  const isLoading = useSelector(state => state.buddyAssignment.isLoading);
 
   const ListUpdated = useSelector(state => state.buddyAssignment.ListUpdated);
 
@@ -30,8 +32,8 @@ export default function MyAssignedUser() {
   const [rowsPerPage, setRowsPerPage] = useState(6);
 
 
-
   useEffect(() => {
+    dispatch(buddyAssignmentIsLoading())
     let payload = {
       "perPageResults": rowsPerPage,
       "pageNo": page + 1
@@ -69,19 +71,24 @@ export default function MyAssignedUser() {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <ReusableTable
-          columns={columns}
-          data={assignedUserList}
-          // disableActionButton
-          disableDelete
-          disableEdit
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          count={totalPages || 0}
-          onView={handleView}
-        />
+        {
+          isLoading ?
+            <Loader />
+            :
+            <ReusableTable
+              columns={columns}
+              data={assignedUserList}
+              // disableActionButton
+              disableDelete
+              disableEdit
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              count={totalPages || 0}
+              onView={handleView}
+            />
+        }
       </Grid>
 
       <ReusbaleDialog maxWidth="lg" open={showActionOfStudent} onClose={() => setShowActionOfStudent(prevState => !prevState)}>
