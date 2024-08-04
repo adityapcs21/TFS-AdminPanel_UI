@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { GetAllAssignments, applyAssignBuddyFilters, buddyAssignmentIsLoading, clearAssignBuddyFilter } from '../../redux/slice/buddyAssignment'
+import { GetAllAssignments, GetBuddyActionsList, applyAssignBuddyFilters, buddyAssignmentIsLoading, clearAssignBuddyFilter } from '../../redux/slice/buddyAssignment'
 import { Badge, Box, Button, Grid, Stack, Typography } from '@mui/material'
 import ReusableTable from '../../components/SharedComponent/ReusableTable'
 import { useState } from 'react'
@@ -8,6 +8,8 @@ import AddNewBuddy from '../../components/assign-buddy/AddNewBuddy'
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog'
 import Loader from '../../common/loader'
 import FilterAssignBuddy from '../../components/assign-buddy/FilterAssignBuddy'
+import UserDetailsHistory from '../../components/assign-buddy/UserDetailsHistory'
+import { GetStudentDetails } from '../../redux/slice/students'
 
 const columns = [
   { id: 'studentId', label: "Student Id" },
@@ -30,7 +32,9 @@ export default function AssignBuddy() {
   const [addNewBuddy, setAddNewBuddy] = useState(false)
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(6);
-  const [openFilterModal, setOpenFilterModal] = useState(false)
+  const [openFilterModal, setOpenFilterModal] = useState(false);
+  const [activeDetails, setActiveDetails] = useState({})
+  const [openUserDetails, setOpenUserDetails] = useState(false);
 
 
   useEffect(() => {
@@ -79,6 +83,14 @@ export default function AssignBuddy() {
     setOpenFilterModal(prevState => !prevState)
   };
 
+  const handleView = (rowDetails) => {
+    dispatch(GetBuddyActionsList(rowDetails.studentId))
+    dispatch(GetStudentDetails({ uniqueId: rowDetails.studentId }))
+      .then((res) => {
+        setOpenUserDetails(prevState => !prevState)
+      })
+  }
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
@@ -113,7 +125,9 @@ export default function AssignBuddy() {
             <ReusableTable
               columns={columns}
               data={assignedUserList}
-              disableActionButton
+              disableDelete={true}
+              disableEdit={true}
+              onView={handleView}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
               page={page}
@@ -130,6 +144,10 @@ export default function AssignBuddy() {
 
       <ReusbaleDialog maxWidth="sm" open={openFilterModal} onClose={() => setOpenFilterModal(prevState => !prevState)}>
         <FilterAssignBuddy handleFilter={handleFilter} onClose={() => setOpenFilterModal(prevState => !prevState)} />
+      </ReusbaleDialog>
+
+      <ReusbaleDialog maxWidth="lg" open={openUserDetails} onClose={() => setOpenUserDetails(prevState => !prevState)}>
+        <UserDetailsHistory onClose={() => setOpenUserDetails(prevState => !prevState)} />
       </ReusbaleDialog>
 
     </Grid>

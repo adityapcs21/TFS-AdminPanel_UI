@@ -23,6 +23,7 @@ import DraftEmail from "../pages/manage-email/draft-email/index.js";
 import MailCompose from "../pages/manage-email/compose-email/index.js";
 import KYCApproval from "../pages/kyc/index.js";
 import KYCApprovalPending from "../pages/kyc/KYCApprovalPending.js";
+import PendingPayment from "../pages/pending-payment/pendingPayment.js";
 // import CustomerQuery from "../pages/customer-query/index.js";
 
 
@@ -51,6 +52,7 @@ const Router = () => {
           <Route path={routeNames.SUBSCRIBEDEMAIL} element={<SubscribedEmail />} />
           <Route path={routeNames.CUSTOMERQUERY} element={<CustomerQuery />} />
           <Route path={routeNames.STUDENTS} element={<Students />} />
+          <Route path={routeNames.PENDINGPAYMENT} element={<PendingPayment />} />
           <Route path={routeNames.STUDENTBATCHCHANGE} element={<BatchUpdateRequest />} />
           <Route path={routeNames.UPDATEPROFILE} element={<UpdateProfile />} />
           <Route path={routeNames.RENEWPENDINGSTUDENTS} element={<RenewPendingStudents />} />

@@ -4,10 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { Box, Button, Card, Grid, TextField, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import draftToHtml from 'draftjs-to-html';
-import { ContentState, EditorState, convertFromHTML, convertToRaw } from 'draft-js';
-import { ReactMultiEmail, isEmail } from 'react-multi-email';
+import { ReactMultiEmail } from 'react-multi-email';
 import 'react-multi-email/dist/style.css';
 import { useDispatch } from 'react-redux';
 import { SendTextEmail } from '../../../redux/slice/events';
@@ -36,9 +33,7 @@ const validationSchema = Yup.object().shape({
 const EmailCompose = () => {
   let quillRef = null;
   const dispatch = useDispatch()
-  const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")));
-  const [sender, setSender] = useState(JSON.parse(localStorage.getItem('tfsUserDetails')))
-  const { control, handleSubmit, watch, reset, setValue, formState: { errors } } = useForm({
+  const { control, handleSubmit, watch, reset, formState: { errors } } = useForm({
     resolver: yupResolver(validationSchema)
   });
 
@@ -77,17 +72,6 @@ const EmailCompose = () => {
 
   const saveToDraft = () => {
     localStorage.setItem('tfsDraftMessage', JSON.stringify(tfsDraftMessage));
-  }
-
-  const imageUploadCallback = (file) => {
-    return new Promise((resolve, reject) => {
-      // Simulate an upload
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        resolve({ data: { link: reader.result } }); // Return the image link
-      };
-      reader.readAsDataURL(file);
-    });
   }
 
   return (
@@ -165,6 +149,7 @@ const EmailCompose = () => {
                               onChange={onChange}
                               modules={{
                                 toolbar: [
+                                  [{ 'color': [] }, { 'background': [] }],
                                   [{ 'header': [1, 2, false] }],
                                   ['bold', 'italic', 'underline'],
                                   ['image', 'code-block'],

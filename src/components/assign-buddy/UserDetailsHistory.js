@@ -23,8 +23,7 @@ const validationSchema = yup.object().shape({
  action: yup.string().required('Action is required'),
  comment: yup.string().required('Comment is required'),
 });
-export default function ActionOfStudents({ onClose }) {
- const dispatch = useDispatch()
+export default function UserDetailsHistory({ onClose }) {
  const studentDetails = useSelector((state) => state.students.StudentDetails?.userList[0])
  const BuddyActionList = useSelector(state => state.buddyAssignment.BuddyActionList)
  const totalHistory = BuddyActionList && BuddyActionList.length
@@ -32,7 +31,7 @@ export default function ActionOfStudents({ onClose }) {
  const [page, setPage] = useState(0);
  const [rowsPerPage, setRowsPerPage] = useState(6);
 
- const { control, handleSubmit, formState: { errors } } = useForm({
+ const { control, formState: { errors } } = useForm({
   resolver: yupResolver(validationSchema),
   defaultValues: {
    studentId: `${studentDetails.firstName} ${studentDetails.lastName}`
@@ -46,13 +45,6 @@ export default function ActionOfStudents({ onClose }) {
  const handleChangeRowsPerPage = (event) => {
   setRowsPerPage(parseInt(event.target.value, 6));
   setPage(0);
- };
-
- const onSubmit = (data) => {
-  data.studentId = studentDetails.uniqueId
-  onClose()
-  dispatch(buddyAssignmentIsLoading())
-  dispatch(AddBuddyAction(data))
  };
 
 
@@ -102,12 +94,12 @@ export default function ActionOfStudents({ onClose }) {
         indicatorColor="secondary"
         aria-label="secondary tabs example"
        >
-        <Tab label="Add Action to User" {...a11yProps(0)} />
+        <Tab label="User Details" {...a11yProps(0)} />
         <Tab label="History" {...a11yProps(1)} />
        </Tabs>
 
        <TabPanel value={value} index={0}>
-        <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
+        <form style={{ width: '100%' }}>
          <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
            <Controller
@@ -171,7 +163,7 @@ export default function ActionOfStudents({ onClose }) {
            />
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
            <TextField
             disabled
             label="Subscription Start Date"
@@ -184,7 +176,7 @@ export default function ActionOfStudents({ onClose }) {
            />
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
            <TextField
             disabled
             label="Subscription End Date"
@@ -196,58 +188,17 @@ export default function ActionOfStudents({ onClose }) {
             value={moment(studentDetails.subscriptionEndDate, 'DD-MM-YYYY').format('YYYY-MM-DD')}
            />
           </Grid>
-
-          <Grid item xs={12} md={4}>
-           <Controller
-            defaultValue=""
-            name="action"
-            control={control}
-            render={({ field }) => (
-             <TextField
-              {...field}
-              select
-              label="Action"
-              variant="outlined"
-              fullWidth
-              error={!!errors.action}
-              helperText={errors.action?.message}
-             >
-              <MenuItem value="EXTENSION">Extension</MenuItem>
-              <MenuItem value="PAID">Paid</MenuItem>
-              <MenuItem value="REMOVE">Remove</MenuItem>
-             </TextField>
-            )}
-           />
-          </Grid>
-
-          <Grid item xs={12} >
-           <Controller
-            name="comment"
-            control={control}
-            defaultValue=""
-            render={({ field }) => (
-             <TextField
-              {...field}
-              label="Comment"
-              fullWidth
-              multiline
-              maxRows={2}
-              error={!!errors.comment}
-              helperText={errors.comment?.message}
-             />
-            )}
-           />
-          </Grid>
          </Grid>
          <Grid item xs={12}>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-           <Button type="submit" variant="contained" color="primary" style={{ marginTop: '16px' }}>
-            Submit
+           <Button onClick={onClose} variant="contained" color="primary" style={{ marginTop: '16px' }}>
+            Cancel
            </Button>
           </Box>
          </Grid>
         </form>
        </TabPanel>
+
        <TabPanel value={value} index={1} >
         <Grid container sx={{ width: "100%" }}>
          <Grid item xs={12}>

@@ -331,6 +331,7 @@ const UpdateEvent = ({ onClose }) => {
                       onChange={onChange}
                       modules={{
                         toolbar: [
+                          [{ 'color': [] }, { 'background': [] }],
                           [{ 'header': [1, 2, false] }],
                           ['bold', 'italic', 'underline'],
                           ['image', 'code-block'],

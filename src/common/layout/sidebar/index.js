@@ -49,6 +49,7 @@ export const menuOptions = {
         { label: 'Email Subscribed User', subCatUrl: routeNames.SUBSCRIBEDEMAIL },
         { label: 'Customer Query', subCatUrl: routeNames.CUSTOMERQUERY },
         { label: 'All Students', subCatUrl: routeNames.STUDENTS },
+        { label: 'Pending Payment', subCatUrl: routeNames.PENDINGPAYMENT },
         { label: 'Batch Change Requests', subCatUrl: routeNames.STUDENTBATCHCHANGE },
         { label: 'Update Profile Requests', subCatUrl: routeNames.UPDATEPROFILE },
         { label: 'Assign Buddy', subCatUrl: routeNames.ASSIGNBUDDY },

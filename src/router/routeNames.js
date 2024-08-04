@@ -12,6 +12,7 @@ const routeNames = {
  VIDEOGALLERY: '/video-gallery',
  CUSTOMERQUERY: '/customer-query',
  STUDENTS: '/all-students',
+ PENDINGPAYMENT: '/pending-payment',
  STUDENTBATCHCHANGE: '/student-batch-change',
  UPDATEPROFILE: '/student-profile-update',
  RENEWPENDINGSTUDENTS: '/renew-pending-students',

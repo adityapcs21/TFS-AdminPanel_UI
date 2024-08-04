@@ -81,7 +81,8 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, d
                         <Tooltip title="View">
                           <VisibilityIcon />
                         </Tooltip>
-                      </IconContainer>}
+                      </IconContainer>
+                    }
 
                     {!disableEdit &&
                       <IconContainer onClick={() => onEdit(row)}>

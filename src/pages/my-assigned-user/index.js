@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { buddyAssignmentIsLoading, GetBuddyActionsList, GetMyAssignedUsers } from '../../redux/slice/buddyAssignment'
-import { Grid } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import ReusableTable from '../../components/SharedComponent/ReusableTable'
 import { useState } from 'react'
 import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog'
@@ -70,6 +70,9 @@ export default function MyAssignedUser() {
 
   return (
     <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Typography variant='h6'>My Assigned Users List</Typography>
+      </Grid>
       <Grid item xs={12}>
         {
           isLoading ?
