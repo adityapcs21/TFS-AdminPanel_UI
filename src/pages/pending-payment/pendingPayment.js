@@ -5,15 +5,20 @@ import ReusableTable from '../../components/SharedComponent/ReusableTable'
 import { useState } from 'react'
 import Loader from '../../common/loader'
 import { GetAllStudentsList, StudentDataIsLoading } from '../../redux/slice/students'
+import moment from 'moment'
 
 const columns = [
  { id: 'firstName', label: "First Name" },
  { id: 'lastName', label: "Last Name" },
  { id: 'mobileNumber', label: 'Mobile Number' },
- { id: 'createdDate', label: 'Created Date' },
+ { id: 'createdDateMillis', label: 'Created Date' },
  { id: 'emailAddress', label: "Email Id" },
  { id: 'referenceNo', label: 'Reference No' }
 ]
+
+const columnFormats = {
+  createdDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 
 export default function PendingPayment() {
  const dispatch = useDispatch();
@@ -63,6 +68,7 @@ export default function PendingPayment() {
        page={page}
        rowsPerPage={rowsPerPage}
        count={totalPages || 0}
+       columnFormats={columnFormats}
       />
     }
    </Grid>

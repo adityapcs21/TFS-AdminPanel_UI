@@ -16,9 +16,14 @@ const columns = [
   { id: 'amount', label: 'Amount' },
   { id: 'status', label: 'Status' },
   { id: 'action', label: "Payment Type" },
-  { id: 'updateddDate', label: "Updated Date" },
-  { id: 'createdDate', label: "Created Date" },
+  { id: 'updatedDateMillis', label: "Updated Date" },
+  { id: 'createdDateMillis', label: "Created Date" },
 ]
+
+const columnFormats = {
+  createdDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+  updatedDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 
 export default function ManagePayment() {
   const dispatch = useDispatch()
@@ -115,6 +120,7 @@ export default function ManagePayment() {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 count={totalPages}
+                columnFormats={columnFormats}
               />
               :
               <NothingToShow />

@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { GetAllTestimonials, testimonialIsLoading } from '../../redux/slice/testimonials';
 import UpdateTestimonials from '../../components/Testimonials/UpdateTestimonial';
 import NoDataFound from '../../components/SharedComponent/NoDataFound';
+import moment from 'moment';
 
 const columns = [
   { id: 'testimonialId', label: 'Testimonial Id' },
@@ -15,8 +16,15 @@ const columns = [
   { id: "userId", label: "User Id" },
   { id: "message", label: "Message" },
   { id: "testimonialStatus", label: "Status" },
-  // { id: "available", label: "Available" },
+  { id: "createdDateMillis", label: "Created Date" },
+  { id: "updatedDateMillis", label: "Updated Date" },
 ];
+
+const columnFormats = {
+  createdDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+  updatedDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
+
 
 export default function Testimonial() {
   const dispatch = useDispatch();
@@ -95,6 +103,7 @@ export default function Testimonial() {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 count={ListSize}
+                columnFormats={columnFormats}
               />
               :
               <NoDataFound />

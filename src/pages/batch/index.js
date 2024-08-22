@@ -8,15 +8,20 @@ import { DeleteBatch, GetAllBatches, batchIsLoading } from '../../redux/slice/ba
 import Swal from 'sweetalert2';
 import CreateBatchModal from '../../components/batch/AddBatch';
 import UpdateBatchModal from '../../components/batch/UpdateBatch';
-import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import SendEmailUpdate from '../../components/batch/SendEmailUpdate';
+import moment from 'moment';
 
 const columns = [
   { id: 'id', label: 'Batch No.' },
-  { id: "startDate", label: "Start Date" },
-  { id: "endDate", label: "End Date" },
+  { id: "startDateMillis", label: "Start Date" },
+  { id: "endDateMillis", label: "End Date" },
   { id: "telegramLink", label: "Telegram Link" },
 ];
+
+const columnFormats = {
+  startDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+  endDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 
 export default function Batch() {
   const dispatch = useDispatch();
@@ -99,7 +104,7 @@ export default function Batch() {
             <Loader />
             :
             <ReusableTable
-              columns={columns} 
+              columns={columns}
               data={BatchList}
               onEdit={handleUpdate}
               disableView
@@ -109,6 +114,7 @@ export default function Batch() {
               page={page}
               rowsPerPage={rowsPerPage}
               count={ListSize || 1}
+              columnFormats={columnFormats}
             />
         }
 

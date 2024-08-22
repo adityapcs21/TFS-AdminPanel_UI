@@ -25,9 +25,11 @@ const columns = [
   { id: 'subscriptionType', label: "Subscription Type" },
   { id: 'lastLoginDate', label: "Last Login Detail" },
   { id: 'lastChangePasswordDate', label: "Last Password Change" },
-  // { id: 'status', label: "Status" },
-  // { id: 'incorrectPasswordCount', label: "Incorrect Password Count" },
+  { id: 'updatedDateMillis', label: "Updated Date" },
 ]
+const columnFormats = {
+  updatedDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 
 export default function Students() {
   const dispatch = useDispatch()
@@ -43,7 +45,6 @@ export default function Students() {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [editData, setEditData] = useState({});
-  const [viewData, setViewData] = useState({})
   const [openFilterModal, setOpenFilterModal] = useState(false)
   const [openEmailModal, setOpenEmailModal] = useState(false)
 
@@ -228,6 +229,7 @@ export default function Students() {
               page={page}
               rowsPerPage={rowsPerPage}
               count={totalPages}
+              columnFormats={columnFormats}
             />
             :
             <ReusableTable
@@ -241,6 +243,7 @@ export default function Students() {
               page={page}
               rowsPerPage={rowsPerPage}
               count={totalPages}
+              columnFormats={columnFormats}
             />
           :
           StudentData && StudentData.length === 0 ?

@@ -15,8 +15,12 @@ const columns = [
  { id: 'actionById', label: 'Action By' },
  { id: 'actionName', label: 'Action' },
  { id: 'commentName', label: "Comment" },
+ { id: 'createdDateMillis', label: "Created Date" },
 ]
 
+const columnFormats = {
+ createdDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 
 const validationSchema = yup.object().shape({
  studentId: yup.string().optional('Student Name is required'),
@@ -207,7 +211,7 @@ export default function UserDetailsHistory({ onClose }) {
            {BuddyActionList && BuddyActionList.length > 0 ?
             <ReusableTable
              columns={columns}
-             data={BuddyActionList}
+             data={BuddyActionList ? [...BuddyActionList].reverse() : []}
              disableActionButton
              disableDelete
              disableEdit
@@ -216,6 +220,7 @@ export default function UserDetailsHistory({ onClose }) {
              page={0}
              rowsPerPage={totalHistory || 0}
              count={totalHistory || 0}
+             columnFormats={columnFormats}
             />
             :
             <Typography>No registration details found</Typography>

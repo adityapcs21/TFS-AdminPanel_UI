@@ -9,6 +9,7 @@ import { GetAllPendingKYCList, activePendingId, kycListIsLoading } from '../../r
 import { useNavigate } from 'react-router-dom';
 import routeNames from '../../router/routeNames';
 import NoDataFound from '../../components/SharedComponent/NoDataFound';
+import moment from 'moment';
 
 const columns = [
   { id: 'emailAddress', label: 'Email' },
@@ -22,8 +23,13 @@ const columns = [
   { id: "currentAddress", label: "Current Address" },
   { id: "referralName", label: "Referral Name" },
   { id: "telegramUserName", label: "DOB" },
-
+  { id: "createdDateMillis", label: "Created Date" },
+  { id: "updatedDateMillis", label: "Updated Date" },
 ];
+const columnFormats = {
+  createdDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+  updatedDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 
 export default function KYCApproval() {
   const dispatch = useDispatch();
@@ -105,6 +111,7 @@ export default function KYCApproval() {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 count={ListSize}
+                columnFormats={columnFormats}
               />
               :
               <NoDataFound />

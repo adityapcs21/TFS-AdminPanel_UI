@@ -10,6 +10,7 @@ import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import SendQueryResponse from '../../components/customer-query/SendQueryResponse';
 import FilterCustomerQuery from '../../components/customer-query/FilterCustomerQuery';
 import NothingToShow from '../../components/SharedComponent/NothingToShow';
+import moment from 'moment/moment';
 
 const columns = [
   { id: 'name', label: 'Name' },
@@ -17,8 +18,13 @@ const columns = [
   { id: 'mobileNo', label: 'Mobile No.' },
   { id: 'subject', label: 'Subject' },
   { id: 'message', label: 'Message' },
-  // { id: 'subscribe', label: 'Subscribe' },
+  { id: 'createdDateMillis', label: "Created Date" },
 ];
+
+
+const columnFormats = {
+  createdDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 export default function CustomerQuery() {
   const dispatch = useDispatch()
   const isLoading = useSelector((state) => state.customerQuery.isLoading);
@@ -122,6 +128,7 @@ export default function CustomerQuery() {
                 </Tooltip>
               }
               handleCustomButton={handleSendResponse}
+              columnFormats={columnFormats}
             />
           </Grid>
           :

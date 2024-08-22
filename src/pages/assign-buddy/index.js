@@ -10,13 +10,14 @@ import Loader from '../../common/loader'
 import FilterAssignBuddy from '../../components/assign-buddy/FilterAssignBuddy'
 import UserDetailsHistory from '../../components/assign-buddy/UserDetailsHistory'
 import { GetStudentDetails } from '../../redux/slice/students'
+import moment from 'moment'
 
 const columns = [
   { id: 'studentId', label: "Student Id" },
   { id: 'buddyId', label: "Buddy Id" },
   { id: 'currentStatus', label: "Current Status" },
   { id: 'assignedBy', label: 'Assigned By' },
-  { id: 'updatedDate', label: "Updated Date" },
+  { id: 'updatedDateMillis', label: "Updated Date" },
   { id: 'firstName', label: "First Name" },
   { id: 'lastName', label: "Last Name" },
   { id: 'emailAddress', label: 'Email Id' },
@@ -24,6 +25,10 @@ const columns = [
   { id: 'subscriptionEndDate', label: "Subscription End Date" },
   { id: 'subscriptionType', label: "Subscription Type" },
 ]
+
+const columnFormats = {
+  updatedDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 
 export default function AssignBuddy() {
   const dispatch = useDispatch();
@@ -138,6 +143,7 @@ export default function AssignBuddy() {
               page={page}
               rowsPerPage={rowsPerPage}
               count={totalSize || 0}
+              columnFormats={columnFormats}
             />
         }
       </Grid>

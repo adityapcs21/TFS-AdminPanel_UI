@@ -13,13 +13,14 @@ import { GetAllBatches, batchIsLoading } from '../../redux/slice/batch'
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import SendEventCommunication from '../../components/Events/SendEventCommunication'
 import NoDataFound from '../../components/SharedComponent/NoDataFound'
+import moment from 'moment'
 
 const columns = [
   { id: 'eventName', label: "Event Name" },
   { id: 'eventDate', label: "Event Date" },
   // { id: 'eventStartTime', label: "Event Start Time" },
   // { id: 'eventEndTime', label: 'Event End Time' },
-  // { id: 'registrationDeadLineDate', label: 'Registration Deadline' },
+  { id: 'registrationDeadLineDateMillis', label: 'Registration Deadline' },
   // { id: 'createdBy', label: "Created By" },
   { id: 'description', label: "Description" },
   { id: 'location', label: "Location" },
@@ -28,8 +29,10 @@ const columns = [
   { id: 'eventType', label: "Event Type" },
   { id: 'registrationFees', label: "Registration Fee" },
   // { id: 'attachments', label: "Attachments" }
-
 ]
+const columnFormats = {
+  registrationDeadLineDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 
 export default function Events() {
   const dispatch = useDispatch()
@@ -170,6 +173,7 @@ export default function Events() {
                   </Tooltip>
                 }
                 handleCustomButton={handleSendEmail}
+                columnFormats={columnFormats}
               />
               :
               <NoDataFound />

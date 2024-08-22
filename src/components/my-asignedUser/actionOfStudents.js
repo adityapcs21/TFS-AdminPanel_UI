@@ -15,18 +15,23 @@ const columns = [
  { id: 'actionById', label: 'Action By' },
  { id: 'actionName', label: 'Action' },
  { id: 'commentName', label: "Comment" },
+ { id: 'createdDateMillis', label: "Created Date" },
 ]
-
+const columnFormats = {
+ createdDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 
 const validationSchema = yup.object().shape({
  studentId: yup.string().optional('Student Name is required'),
  action: yup.string().required('Action is required'),
  comment: yup.string().required('Comment is required'),
 });
+
 export default function ActionOfStudents({ onClose }) {
  const dispatch = useDispatch()
  const studentDetails = useSelector((state) => state.students.StudentDetails?.userList[0])
  const BuddyActionList = useSelector(state => state.buddyAssignment.BuddyActionList)
+ console.log("BuddyActionList", BuddyActionList)
  const totalHistory = BuddyActionList && BuddyActionList.length
  const [value, setValue] = React.useState(0);
  const [page, setPage] = useState(0);
@@ -256,7 +261,7 @@ export default function ActionOfStudents({ onClose }) {
            {BuddyActionList && BuddyActionList.length > 0 ?
             <ReusableTable
              columns={columns}
-             data={BuddyActionList}
+             data={BuddyActionList ? [...BuddyActionList].reverse() : []}
              disableActionButton
              disableDelete
              disableEdit
@@ -265,7 +270,9 @@ export default function ActionOfStudents({ onClose }) {
              page={0}
              rowsPerPage={totalHistory || 0}
              count={totalHistory || 0}
+             columnFormats={columnFormats}
             />
+
             :
             <Typography>No registration details found</Typography>
            }

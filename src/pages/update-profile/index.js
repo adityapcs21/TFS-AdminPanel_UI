@@ -7,16 +7,20 @@ import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import Loader from '../../common/loader';
 import ApproveProfileUpdate from '../../components/students/ApproveProfileUpdate';
 import NothingToShow from '../../components/SharedComponent/NothingToShow';
+import moment from 'moment';
 const columns = [
   { id: 'firstName', label: "First Name" },
   { id: 'lastName', label: "Last Name" },
   { id: 'emailAddress', label: 'Email Id' },
   { id: 'mobileNumber', label: 'Mobile Number' },
   { id: 'approvedBy', label: "Approved By" },
-  { id: 'updatedDate', label: "Updated On" },
+  { id: 'updatedDateMillis', label: "Updated On" },
   { id: 'requestStatus', label: "Request Status" },
-
 ]
+
+const columnFormats = {
+  updatedDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 
 export default function UpdateProfile() {
   const dispatch = useDispatch();
@@ -92,6 +96,7 @@ export default function UpdateProfile() {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 count={ListSize}
+                columnFormats={columnFormats}
               />
               :
               <NothingToShow />
