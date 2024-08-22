@@ -75,10 +75,11 @@ jwtInterceptor.interceptors.response.use(
       showCancelButton: true,
       confirmButtonColor: "#2c4c74",
       cancelButtonColor: "#f36334",
-      confirmButtonText: "Refresh"
+      confirmButtonText: "Login Again",
      }).then((result) => {
       if (result.isConfirmed) {
-       window.location.reload();
+       localStorage.clear();
+       window.location.href = "/login";
       }
      })
     }

@@ -16,8 +16,13 @@ const columns = [
   { id: 'buddyId', label: "Buddy Id" },
   { id: 'currentStatus', label: "Current Status" },
   { id: 'assignedBy', label: 'Assigned By' },
-  { id: 'createdDate', label: 'Created Date' },
   { id: 'updatedDate', label: "Updated Date" },
+  { id: 'firstName', label: "First Name" },
+  { id: 'lastName', label: "Last Name" },
+  { id: 'emailAddress', label: 'Email Id' },
+  { id: 'mobileNumber', label: 'Mobile No.' },
+  { id: 'subscriptionEndDate', label: "Subscription End Date" },
+  { id: 'subscriptionType', label: "Subscription Type" },
 ]
 
 export default function AssignBuddy() {
@@ -33,9 +38,8 @@ export default function AssignBuddy() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(6);
   const [openFilterModal, setOpenFilterModal] = useState(false);
-  const [activeDetails, setActiveDetails] = useState({})
   const [openUserDetails, setOpenUserDetails] = useState(false);
-
+  console.log("assignedUserList", assignedUserList)
 
   useEffect(() => {
     dispatch(buddyAssignmentIsLoading())
@@ -84,6 +88,7 @@ export default function AssignBuddy() {
   };
 
   const handleView = (rowDetails) => {
+    dispatch(buddyAssignmentIsLoading())
     dispatch(GetBuddyActionsList(rowDetails.studentId))
     dispatch(GetStudentDetails({ uniqueId: rowDetails.studentId }))
       .then((res) => {
@@ -132,7 +137,7 @@ export default function AssignBuddy() {
               onRowsPerPageChange={handleChangeRowsPerPage}
               page={page}
               rowsPerPage={rowsPerPage}
-              count={totalSize}
+              count={totalSize || 0}
             />
         }
       </Grid>

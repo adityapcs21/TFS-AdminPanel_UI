@@ -11,11 +11,16 @@ import Loader from '../../common/loader'
 
 const columns = [
   { id: 'studentId', label: "Student Id" },
-  // { id: 'buddyId', label: "Buddy Id" },
+  { id: 'buddyId', label: "Buddy Id" },
   { id: 'currentStatus', label: "Current Status" },
   { id: 'assignedBy', label: 'Assigned By' },
-  { id: 'createdDate', label: 'Created Date' },
   { id: 'updatedDate', label: "Updated Date" },
+  { id: 'firstName', label: "First Name" },
+  { id: 'lastName', label: "Last Name" },
+  { id: 'emailAddress', label: 'Email Id' },
+  { id: 'mobileNumber', label: 'Mobile No.' },
+  { id: 'subscriptionEndDate', label: "Subscription End Date" },
+  { id: 'subscriptionType', label: "Subscription Type" },
 ]
 
 export default function MyAssignedUser() {
@@ -51,6 +56,7 @@ export default function MyAssignedUser() {
   };
 
   const handleView = (rowDetails) => {
+    dispatch(buddyAssignmentIsLoading())
     dispatch(GetBuddyActionsList(rowDetails.studentId))
     dispatch(GetStudentDetails({ uniqueId: rowDetails.studentId }))
       .then((res) => {

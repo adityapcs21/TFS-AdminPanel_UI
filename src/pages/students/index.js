@@ -15,14 +15,15 @@ import SendEmailModal from '../../components/SharedComponent/SendEmailModal';
 
 
 const columns = [
+  { id: 'uniqueId', label: "Student Id" },
   { id: 'firstName', label: "First Name" },
   { id: 'lastName', label: "Last Name" },
   { id: 'emailAddress', label: 'Email Id' },
-  { id: 'mobileNumber', label: 'Mobile Number' },
+  { id: 'mobileNumber', label: 'Mobile No.' },
   { id: 'batchNo', label: "Batch No." },
   { id: 'subscriptionEndDate', label: "Subscription End Date" },
   { id: 'subscriptionType', label: "Subscription Type" },
-  { id: 'lastLoginDate', label: "Last Login Date" },
+  { id: 'lastLoginDate', label: "Last Login Detail" },
   { id: 'lastChangePasswordDate', label: "Last Password Change" },
   // { id: 'status', label: "Status" },
   // { id: 'incorrectPasswordCount', label: "Incorrect Password Count" },
