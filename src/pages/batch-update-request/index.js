@@ -34,10 +34,8 @@ export default function BatchUpdateRequest() {
 
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     let payload = {
-      // "requestId": "",
-      // "uniqueId": "",
-      // "requestStatus": "",
       "pageNo": page + 1,
       "perPageResults": rowsPerPage
     }

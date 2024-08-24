@@ -47,18 +47,21 @@ export default function AssignBuddy() {
   console.log("assignedUserList", assignedUserList)
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     dispatch(buddyAssignmentIsLoading())
     let payload = {
       "perPageResults": rowsPerPage,
       "pageNo": page + 1,
       "buddyId": appliedFilters?.buddyId,
-      "userId": appliedFilters?.userId
+      "userId": appliedFilters?.userId,
+      "status": appliedFilters?.status
     }
     dispatch(GetAllAssignments(payload))
   }, [page, rowsPerPage, appliedFilters])
 
   useEffect(() => {
     if (isUpdated) {
+      window.scrollTo(0, 0);
       dispatch(buddyAssignmentIsLoading())
       let payload = {
         "perPageResults": rowsPerPage,
@@ -82,9 +85,11 @@ export default function AssignBuddy() {
   }
 
   const handleFilter = (data) => {
+    console.log("data", data)
     const filteredData = Object.fromEntries(
       Object.entries(data).filter(([_, value]) => value !== null && value !== '')
     );
+    console.log("filteredData", filteredData)
     setPage(0);
     setRowsPerPage(5)
     dispatch(buddyAssignmentIsLoading())

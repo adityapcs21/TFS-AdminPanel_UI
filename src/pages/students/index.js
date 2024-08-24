@@ -12,7 +12,9 @@ import ViewStudent from '../../components/students/ViewStudent';
 import FilterStudents from '../../components/students/FilterStudents';
 import moment from 'moment';
 import SendEmailModal from '../../components/SharedComponent/SendEmailModal';
-
+import jwtInterceptor from '../../helpers/jwtInterceptors';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import * as XLSX from 'xlsx';
 
 const columns = [
   { id: 'uniqueId', label: "Student Id" },
@@ -21,6 +23,7 @@ const columns = [
   { id: 'emailAddress', label: 'Email Id' },
   { id: 'mobileNumber', label: 'Mobile No.' },
   { id: 'batchNo', label: "Batch No." },
+  { id: 'subscriptionStartDate', label: "Subscription Start Date" },
   { id: 'subscriptionEndDate', label: "Subscription End Date" },
   { id: 'subscriptionType', label: "Subscription Type" },
   { id: 'lastLoginDate', label: "Last Login Detail" },
@@ -41,38 +44,16 @@ export default function Students() {
 
   const [userDetails, setUserDetails] = useState(JSON.parse(localStorage.getItem("tfsUserDetails")));
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openViewModal, setOpenViewModal] = useState(false);
-  const [editData, setEditData] = useState({});
   const [openFilterModal, setOpenFilterModal] = useState(false)
   const [openEmailModal, setOpenEmailModal] = useState(false)
 
 
-  // useEffect(() => {
-  //   if (isUpdated) {
-  //     let payload = {
-  //       "pageNo": page + 1,
-  //       "perPageResults": rowsPerPage,
-  //       "status": "", //"ACTIVE", "IN-ACTIVE"
-  //       "uniqueId": "",
-  //       "emailId": "",
-  //       "mobileNo": "",
-  //       "firstName": "",
-  //       "lastName": "",
-  //       "batchNo": "",
-  //       "subscriptionType": "", // Annual, Half Yearly
-  //       "subscriptionStatus": "", //"ACTIVE", "IN-ACTIVE",
-  //       "renewalDue": "",//"YES" or blank,
-  //       "subscriptionEndDateFrom": "",// "09-02-2024"
-  //       "subscriptionEndDateTo": ""
-  //     }
-  //     dispatch(GetAllStudentsList(payload))
-  //   }
-  // }, [isUpdated])
-
   useEffect(() => {
-
+    dispatch(StudentDataIsLoading())
+    window.scrollTo(0, 0);
     let payload = {
       "pageNo": page + 1,
       "perPageResults": rowsPerPage,
@@ -192,6 +173,46 @@ export default function Students() {
     });
   };
 
+  const downloadExcel = async () => {
+    let axiosConfig = {
+      headers: {
+        "Authorization": localStorage.getItem("tfstoken")
+      }
+    };
+    let payload = {
+      "status": appliedFilters.status,
+      "search": appliedFilters?.search,
+      "batchNo": appliedFilters?.batchNo,
+      "subscriptionType": appliedFilters.subscriptionType,
+      "subscriptionStatus": appliedFilters.subscriptionStatus,
+      "renewalDue": appliedFilters?.renewalDue,
+      "subscriptionEndDateFrom": appliedFilters.subscriptionEndDateFrom,
+      "subscriptionEndDateTo": appliedFilters.subscriptionEndDateTo
+    }
+    const apiResponse = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}managerUser/student/getUsersList`, payload, axiosConfig)
+    console.log("apiResponse", apiResponse.data.length > 0)
+    if (apiResponse && apiResponse.data && apiResponse.data.userList.length > 0) {
+      const finalDate = await apiResponse.data.userList.map((record) => ({
+        "Student Id": record.uniqueId,
+        "First Name": record.firstName,
+        "Last Name": record.lastName,
+        "Email Id": record.emailAddress,
+        "Mobile No.": record.mobileNumber,
+        "Batch No": record.batchNo,
+        "Subscription Start Date": record.subscriptionStartDate,
+        "Subscription End Date": record.subscriptionEndDate,
+        "Subscription Type": record.subscriptionType,
+        "Last Login Detail": record.lastLoginDate,
+        "Last Password Change": record.lastChangePasswordDate,
+        "Updated Date": moment(record.updatedDateMillis).format('DD-MM-YY HH:mm:ss'),
+      }))
+      const worksheet = XLSX.utils.json_to_sheet(finalDate);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      XLSX.writeFile(workbook, "StudentList.xlsx");
+    }
+  }
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
@@ -214,6 +235,9 @@ export default function Students() {
           </Stack>
         </Box>
       </Grid >
+      <Grid item xs={12} textAlign="end">
+        <Button disabled={Object.keys(appliedFilters).length === 0} onClick={() => downloadExcel()} variant='contained' color='success' endIcon={<PictureAsPdfIcon />}>Export as PDF</Button>
+      </Grid>
       <Grid item xs={12}>
         {!isLoading && StudentData && StudentData.length > 0 ?
 
@@ -256,7 +280,7 @@ export default function Students() {
       </Grid>
 
       <ReusbaleDialog maxWidth="md" open={openEditModal} onClose={() => setOpenEditModal(prevState => !prevState)}>
-        <UpdateStudent editData={editData} onClose={() => setOpenEditModal(prevState => !prevState)} />
+        <UpdateStudent onClose={() => setOpenEditModal(prevState => !prevState)} />
       </ReusbaleDialog>
 
       <ReusbaleDialog maxWidth="md" open={openViewModal} onClose={() => setOpenViewModal(prevState => !prevState)}>

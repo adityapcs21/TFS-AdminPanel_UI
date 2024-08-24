@@ -131,7 +131,7 @@ const UpdateAdmin = ({ onClose, editData }) => {
         aria-label="secondary tabs example"
        >
         <Tab label="Update User" {...a11yProps(0)} />
-        <Tab label="Change Password" {...a11yProps(1)} />
+        {/* <Tab label="Change Password" {...a11yProps(1)} /> */}
        </Tabs>
 
        <TabPanel value={value} index={0}>

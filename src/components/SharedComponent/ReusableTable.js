@@ -112,7 +112,7 @@ const ReusableTable = ({ data, columns, onView, onDelete, onEdit, disableView, d
         </TableBody>
       </Table>
       <TablePagination
-        rowsPerPageOptions={[2, 5, 10, 25]}
+        rowsPerPageOptions={[5, 10, 25, 50, 100]}
         component="div"
         count={count}
         rowsPerPage={rowsPerPage}

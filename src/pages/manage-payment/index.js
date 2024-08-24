@@ -8,21 +8,27 @@ import ManagePaymentFilters from '../../components/managePayment/ManagePaymentFi
 import moment from 'moment'
 import Loader from '../../common/loader'
 import NothingToShow from '../../components/SharedComponent/NothingToShow'
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import * as XLSX from 'xlsx';
+import jwtInterceptor from '../../helpers/jwtInterceptors'
+
 
 const columns = [
-  { id: 'transactionId', label: "Transaction Id" },
   { id: 'razorPayOrderId', label: "Razor Pay OrderId" },
   { id: 'userId', label: "User Id" },
+  { id: 'userName', label: 'User Name' },
   { id: 'amount', label: 'Amount' },
   { id: 'status', label: 'Status' },
-  { id: 'action', label: "Payment Type" },
-  { id: 'updatedDateMillis', label: "Updated Date" },
+  { id: 'actionName', label: "Payment Type" },
+  { id: 'updatedDateMillis', label: "Payment Date" },
   { id: 'createdDateMillis', label: "Created Date" },
+  { id: 'isGstRequired', label: 'GST Required' }
 ]
 
 const columnFormats = {
   createdDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
   updatedDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+  isGstRequired: (value) => (value ? "YES" : "NO")
 };
 
 export default function ManagePayment() {
@@ -34,10 +40,11 @@ export default function ManagePayment() {
 
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(6);
+  const [rowsPerPage, setRowsPerPage] = useState(2);
   const [openFilterModal, setOpenFilterModal] = useState(false)
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     let payload = {
       "userId": appliedFilters.userId,
       "paymentStatus": appliedFilters.paymentStatus,
@@ -77,11 +84,46 @@ export default function ManagePayment() {
       dispatch(ApplyFilters(data))
       setOpenFilterModal(prevState => !prevState)
     }
-
   };
 
   const handleClearFilter = () => {
     dispatch(ClearPaymentFilter())
+  }
+
+
+
+  const downloadExcel = async () => {
+    let axiosConfig = {
+      headers: {
+        "Authorization": localStorage.getItem("tfstoken")
+      }
+    };
+    let payload = {
+      "userId": appliedFilters.userId,
+      "paymentStatus": appliedFilters.paymentStatus,
+      "actionName": appliedFilters.actionName,
+      "fromDate": appliedFilters.fromDate,
+      "toDate": appliedFilters.toDate,
+    }
+    const apiResponse = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}payments/getPaymentList`, payload, axiosConfig)
+    console.log("apiResponse", apiResponse.data.transactionList)
+    if (apiResponse && apiResponse.data && apiResponse.data.transactionList?.length > 0) {
+      const finalDate = await apiResponse.data.transactionList.map((record) => ({
+        "Razor Pay OrderId": record.razorPayOrderId,
+        "User Id": record.userId,
+        "User Name": record.userName,
+        "Amount": record.amount,
+        "Status": record.status,
+        "Payment Type": record.actionName,
+        "Payment Date": moment(record.updatedDateMillis).format('DD-MM-YY HH:mm:ss'),
+        "Created Date": moment(record.createdDateMillis).format('DD-MM-YY HH:mm:ss'),
+        "GST Required": record.isGstRequired ? 'YES' : 'NO',
+      }))
+      const worksheet = XLSX.utils.json_to_sheet(finalDate);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      XLSX.writeFile(workbook, "PaymentList.xlsx");
+    }
   }
 
   return (
@@ -104,6 +146,9 @@ export default function ManagePayment() {
             }
           </Stack>
         </Box>
+      </Grid>
+      <Grid item xs={12} textAlign="end">
+        <Button disabled={Object.keys(appliedFilters).length === 0} onClick={() => setOpenFilterModal(prevState => !prevState)} onClick={() => downloadExcel()} variant='contained' color='success' endIcon={<PictureAsPdfIcon />}>Export as PDF</Button>
       </Grid>
       <Grid item xs={12}>
         {

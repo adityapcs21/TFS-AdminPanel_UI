@@ -10,7 +10,7 @@ import moment from 'moment';
 const schema = yup.object().shape({
   userId: yup.string().optional(),
   paymentStatus: yup.string().oneOf(['created', 'attempted', 'paid', '']).optional(),
-  actionName: yup.string().oneOf(['SUBSCRIPTION', 'BATCH_UPDATE', ""]).optional(),
+  actionName: yup.string().oneOf(['SUBSCRIPTION', 'SUBSCRIPTION_RENEW', 'SUBSCRIPTION_UPDRADE', 'EVENT', 'BATCH_CHANGE', ""]).optional(),
   fromDate: yup.string().nullable()
     .test({
       test: function (startDate) {
@@ -108,8 +108,12 @@ const ManagePaymentFilters = ({ handleFilter, onClose }) => {
                     value={field.value || ''}
                   >
                     <MenuItem value="">Select Action</MenuItem>
-                    <MenuItem value="SUBSCRIPTION">Subscription</MenuItem>
-                    <MenuItem value="BATCH_UPDATE">Batch Update</MenuItem>
+                    <MenuItem value="SUBSCRIPTION">New Subscription</MenuItem>
+                    <MenuItem value="SUBSCRIPTION_RENEW">Renew Subscription</MenuItem>
+                    <MenuItem value="SUBSCRIPTION_UPDRADE">Subscription Upgrade</MenuItem>
+                    <MenuItem value="EVENT">Event</MenuItem>
+                    <MenuItem value="BATCH_CHANGE">Batch Change</MenuItem>
+
                   </Select>
                 </FormControl>
               )}

@@ -39,6 +39,7 @@ export default function UserManagement() {
 
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     dispatch(manageAdminIsLoading())
     let payload = {
       "name": appliedFilters && appliedFilters.name,
@@ -53,6 +54,7 @@ export default function UserManagement() {
   }, [page, rowsPerPage, appliedFilters])
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (isUserUpdated) {
       dispatch(manageAdminIsLoading())
       let payload = {

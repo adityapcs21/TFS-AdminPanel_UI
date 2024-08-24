@@ -68,20 +68,22 @@ jwtInterceptor.interceptors.response.use(
    } catch (refreshError) {
     if (refreshError) {
      console.log("refreshError", refreshError)
-     Swal.fire({
-      title: refreshError.message,
-      // text: "Do you still want to login again in this tab?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#2c4c74",
-      cancelButtonColor: "#f36334",
-      confirmButtonText: "Login Again",
-     }).then((result) => {
-      if (result.isConfirmed) {
-       localStorage.clear();
-       window.location.href = "/login";
-      }
-     })
+     localStorage.clear();
+     window.location.href = "/login";
+     // Swal.fire({
+     //  title: refreshError.message,
+     //  // text: "Do you still want to login again in this tab?",
+     //  icon: "warning",
+     //  showCancelButton: true,
+     //  confirmButtonColor: "#2c4c74",
+     //  cancelButtonColor: "#f36334",
+     //  confirmButtonText: "Login Again",
+     // }).then((result) => {
+     //  if (result.isConfirmed) {
+     //   localStorage.clear();
+     //   window.location.href = "/login";
+     //  }
+     // })
     }
     // Handle refresh token error, e.g., redirect to login page
     console.error('Error refreshing token:', refreshError);

@@ -24,7 +24,7 @@ const validationSchema = yup.object().shape({
  status: yup.string().required(),
 });
 
-const UpdateStudent = ({ onClose, editData }) => {
+const UpdateStudent = ({ onClose }) => {
  const StudentDetails = useSelector((state) => state.students.StudentDetails?.userList[0]);
 
  const {
