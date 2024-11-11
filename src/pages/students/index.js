@@ -102,7 +102,6 @@ export default function Students() {
 
   const handleView = (data) => {
     dispatch(StudentDataIsLoading())
-    console.log(data)
     // setViewData(data)
     let payload = {
       uniqueId: data.uniqueId
@@ -190,7 +189,6 @@ export default function Students() {
       "subscriptionEndDateTo": appliedFilters.subscriptionEndDateTo
     }
     const apiResponse = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}managerUser/student/getUsersList`, payload, axiosConfig)
-    console.log("apiResponse", apiResponse.data.length > 0)
     if (apiResponse && apiResponse.data && apiResponse.data.userList.length > 0) {
       const finalDate = await apiResponse.data.userList.map((record) => ({
         "Student Id": record.uniqueId,

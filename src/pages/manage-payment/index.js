@@ -77,7 +77,6 @@ export default function ManagePayment() {
       data.toDate = moment(data.toDate).format('DD-MM-YYYY');
     }
     if (Object.keys(data).length > 0) {
-      console.log("datata", data)
       setPage(0);
       setRowsPerPage(5)
       dispatch(ManagePaymentIsLoading())
@@ -106,7 +105,6 @@ export default function ManagePayment() {
       "toDate": appliedFilters.toDate,
     }
     const apiResponse = await jwtInterceptor.post(`${process.env.REACT_APP_API_ENDPOINT}payments/getPaymentList`, payload, axiosConfig)
-    console.log("apiResponse", apiResponse.data.transactionList)
     if (apiResponse && apiResponse.data && apiResponse.data.transactionList?.length > 0) {
       const finalDate = await apiResponse.data.transactionList.map((record) => ({
         "Razor Pay OrderId": record.razorPayOrderId,

@@ -37,14 +37,12 @@ export default function KYCApproval() {
   const KYCList = useSelector(state => state.kyc.allKycList?.userList);
   const KYCList1 = useSelector(state => state.kyc);
 
-  console.log("KYCList", KYCList1)
   const isLoading = useSelector((state) => state.kyc.isLoading);
   const ListSize = useSelector((state) => state.kyc.allKycList?.size)
   const KYCIsUpdated = useSelector((state) => state.kyc.kycUpdated)
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [openUpdateModal, setOPenUpdateModal] = useState(false)
   const [testimonialData, setTestimonialData] = useState({})
 
   useEffect(() => {

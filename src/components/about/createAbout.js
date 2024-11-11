@@ -24,7 +24,6 @@ const schema = yup.object().shape({
 const AddNewAbout = ({ onClose }) => {
  const dispatch = useDispatch()
  const mediaIsLoading = useSelector((state) => state.about.mediaIsLoading)
- console.log("mediaIsLoading", mediaIsLoading)
  const [file, setFile] = useState([]);
  const [fileName, setFileName] = useState([])
  const { control, handleSubmit, formState: { errors } } = useForm({

@@ -75,7 +75,6 @@ export default function AddNewBuddy({ onClose }) {
   }, [dispatch]);
 
   const onSubmit = (data) => {
-    console.log("data", data)
     const finalData = {
       user: data.students.map(student => student.uniqueId), // Convert IDs to strings
       adminId: data.admin.emailId, // Assuming admin has uniqueId

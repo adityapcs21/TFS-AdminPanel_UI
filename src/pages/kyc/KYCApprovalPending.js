@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, Card, CardContent, Chip, Container, Divider, Grid, InputLabel, Link, MenuItem, Select, TextareaAutosize, Typography, styled } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { GetS3Image, KycAction, activePendingId } from '../../redux/slice/kyc'
+import { GetAllPendingKYCList, GetS3Image, KycAction, activePendingId, kycListIsLoading } from '../../redux/slice/kyc'
+import Swal from 'sweetalert2';
 
 
 const KYCApprovalPending = () => {
@@ -12,11 +13,20 @@ const KYCApprovalPending = () => {
   const userData = useSelector(state => state.kyc.userData)
   const [profilePhotoLink, setProfilePhotoLink] = useState();
   const [idProofLink, setIdProofLink] = useState("")
-  // const[idProofLinks, setIdProofLinks] = useState([]);
-  console.log("userData", idProofLink)
+
   useEffect(() => {
-    dispatch(activePendingId(id))
-  }, [])
+    let payload = {
+      "pageNo": 1,
+      "perPageResults": 10
+    }
+    dispatch(kycListIsLoading());
+    dispatch(GetAllPendingKYCList(payload)).then((response) => {
+      if (response && response.error && response.error.mesage === "Rejected") {
+        Swal.fire("Something Went Wrong");
+      }
+      dispatch(activePendingId(id))
+    })
+  }, [id])
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -62,6 +72,13 @@ const KYCApprovalPending = () => {
       "rejectReason": reasons
     }
     dispatch(KycAction(payload))
+      .then((res) => {
+        Swal.fire({
+          timer: 3000,
+          text: res.payload.data,
+          icon: "success"
+        });
+      })
   }
 
   return (

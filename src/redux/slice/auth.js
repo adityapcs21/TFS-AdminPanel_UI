@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios";
 import jwtInterceptor from "../../helpers/jwtInterceptors";
+import Swal from "sweetalert2";
 
 let axiosConfig = {
  headers: {
@@ -25,7 +26,12 @@ export const DashBoardInfo = createAsyncThunk('auth/dashboardInnfo', async () =>
   const response = await jwtInterceptor.get(`${process.env.REACT_APP_API_ENDPOINT}dashboard/cards`, axiosConfig);
   return response.data;
  } catch (error) {
-  console.error(error);
+  console.error(error.response.data.message);
+  Swal.fire({
+   title: "Error",
+   text: error.response.data.message,
+   icon: "error"
+  });
  }
 })
 

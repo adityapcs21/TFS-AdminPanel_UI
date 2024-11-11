@@ -53,7 +53,6 @@ const UpdateStudent = ({ onClose }) => {
 
   dispatch(UpdateStudentData(data))
    .then((res) => {
-    console.log("res", res.payload)
     Swal.fire({
      timer: 3000,
      text: res.payload.data,

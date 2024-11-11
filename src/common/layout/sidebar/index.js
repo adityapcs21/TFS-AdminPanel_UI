@@ -203,7 +203,7 @@ export default function MiniDrawer() {
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={handleDrawerOpen}
+            // onClick={handleDrawerOpen}
             edge="start"
             sx={{
               marginRight: 5,
@@ -224,9 +224,6 @@ export default function MiniDrawer() {
           <Box sx={{ cursor: 'pointer', display: 'flex' }} onClick={() => navigate(routeNames.DASHBOARD)}>
             <BrandLogos src={brandLogo} alt='brand-logo' />
           </Box>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
         </DrawerHeader>
         <Divider sx={{ borderColor: "#eae8f1", border: '0.5px solid #eae8f1', opacity: 1 }} />
         <List>

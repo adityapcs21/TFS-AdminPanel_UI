@@ -48,7 +48,6 @@ const EmailCompose = () => {
     data.sender = "alerts@welcometotfs.com";
     dispatch(SendTextEmail(data))
       .then((response) => {
-        console.log("responsee", response)
         setIsLoading(false);
         Swal.fire({
           position: 'center',

@@ -24,7 +24,6 @@ const FilterCustomerQuery = ({ handleFilter, onClose }) => {
    ...appliedFilters
   }
  });
- console.log("errors", appliedFilters)
 
  return (
   <Container>

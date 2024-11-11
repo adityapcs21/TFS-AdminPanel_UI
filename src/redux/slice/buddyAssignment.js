@@ -116,7 +116,8 @@ const buddyAssignment = createSlice({
   });
   builder.addCase(GetAllAssignments.rejected, (state, action) => {
    console.log("Error", action.payload);
-   state.isError = true
+   state.isError = true;
+   state.isLoading = false;
   });
 
 

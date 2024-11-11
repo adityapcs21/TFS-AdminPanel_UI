@@ -44,7 +44,6 @@ export default function AssignBuddy() {
   const [rowsPerPage, setRowsPerPage] = useState(6);
   const [openFilterModal, setOpenFilterModal] = useState(false);
   const [openUserDetails, setOpenUserDetails] = useState(false);
-  console.log("assignedUserList", assignedUserList)
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -85,11 +84,9 @@ export default function AssignBuddy() {
   }
 
   const handleFilter = (data) => {
-    console.log("data", data)
     const filteredData = Object.fromEntries(
       Object.entries(data).filter(([_, value]) => value !== null && value !== '')
     );
-    console.log("filteredData", filteredData)
     setPage(0);
     setRowsPerPage(5)
     dispatch(buddyAssignmentIsLoading())

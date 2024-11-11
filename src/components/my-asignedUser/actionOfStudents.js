@@ -31,7 +31,6 @@ export default function ActionOfStudents({ onClose }) {
  const dispatch = useDispatch()
  const studentDetails = useSelector((state) => state.students.StudentDetails?.userList[0])
  const BuddyActionList = useSelector(state => state.buddyAssignment.BuddyActionList)
- console.log("BuddyActionList", BuddyActionList)
  const totalHistory = BuddyActionList && BuddyActionList.length
  const [value, setValue] = React.useState(0);
  const [page, setPage] = useState(0);

@@ -57,7 +57,6 @@ export default function Header({ isOpen }) {
   const handleLogout = () => {
     dispatch(logoutAdmin())
       .then((res) => {
-        console.log("res", res.payload)
         localStorage.clear()
         handleMenuClose();
         window.location.reload()

@@ -103,7 +103,6 @@ const AddNewBlog = ({ onClose }) => {
   setFileName(filtered1)
  }
 
- console.log("errorss", errors)
  return (
   <Container >
    <Box sx={{ display: "flex", justifyContent: 'space-between', padding: '5px 0px 20px 0px' }}>

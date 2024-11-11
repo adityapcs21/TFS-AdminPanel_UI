@@ -9,6 +9,7 @@ import ActionOfStudents from '../../components/my-asignedUser/actionOfStudents'
 import { GetStudentDetails } from '../../redux/slice/students'
 import Loader from '../../common/loader'
 import moment from 'moment'
+import NothingToShow from '../../components/SharedComponent/NothingToShow'
 
 const columns = [
   { id: 'studentId', label: "Student Id" },
@@ -88,20 +89,23 @@ export default function MyAssignedUser() {
           isLoading ?
             <Loader />
             :
-            <ReusableTable
-              columns={columns}
-              data={assignedUserList}
-              // disableActionButton
-              disableDelete
-              disableEdit
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={totalPages || 0}
-              onView={handleView}
-              columnFormats={columnFormats}
-            />
+            !isLoading && assignedUserList?.length === 0 ?
+              <NothingToShow />
+              :
+              <ReusableTable
+                columns={columns}
+                data={assignedUserList}
+                // disableActionButton
+                disableDelete
+                disableEdit
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                count={totalPages || 0}
+                onView={handleView}
+                columnFormats={columnFormats}
+              />
         }
       </Grid>
 

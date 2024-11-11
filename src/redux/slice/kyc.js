@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit"
 import jwtInterceptor from "../../helpers/jwtInterceptors";
 
 let axiosConfig = {
@@ -67,8 +67,11 @@ const manageKycApproval = createSlice({
   },
   activePendingId: (state, action) => {
    state.activeId = action.payload
-   let data = state.allKycList?.userList?.find((item) => item.userId = action.payload)
-   state.userData = data
+   console.log(current(state))
+   if(state.allKycList && state.allKycList.userList && state.allKycList.userList.length > 0){    
+    let data = state.allKycList.userList.find((item) => item.userId = action.payload)
+    state.userData = data
+   }
   }
  },
  extraReducers: (builder) => {

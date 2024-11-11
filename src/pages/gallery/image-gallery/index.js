@@ -15,7 +15,6 @@ export default function ImageGallery() {
     const isGalleryUpdated = useSelector((state) => state.gallery.newGalleryAdded)
     const Gallery = useSelector((state) => state.gallery.Gallery);
     const isLoading = useSelector((state) => state.gallery.isLoading);
-    console.log("isLoad", isLoading)
     const [openAddModal, setOpenAddModal] = useState(false)
     const [page, setPage] = React.useState(1);
     const [perPageResult, setPerpageResult] = useState(8);

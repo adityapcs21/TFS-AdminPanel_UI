@@ -52,6 +52,13 @@ jwtInterceptor.interceptors.response.use(
     text: error.response.data.data,
    });
   }
+  else if (error.response.status === 502) {
+   Swal.fire({
+    icon: "error",
+    title: "Oops...",
+    text: error.response.data.message,
+   });
+  }
   // Check if the error is due to an expired token
   if (error.response.status === 401 && !originalRequest._retry) {
    originalRequest._retry = true;
@@ -67,7 +74,6 @@ jwtInterceptor.interceptors.response.use(
     return axios(originalRequest);
    } catch (refreshError) {
     if (refreshError) {
-     console.log("refreshError", refreshError)
      localStorage.clear();
      window.location.href = "/login";
      // Swal.fire({

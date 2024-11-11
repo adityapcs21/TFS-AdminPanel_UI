@@ -17,7 +17,6 @@ export default function Banner() {
  const isBannerUpdated = useSelector(state => state.banner.isBannerUpdated)
  const isLoading = useSelector(state => state.banner.isLoading)
 
- console.log("all banner", AllBannerImages)
  const [openAddModal, setOpenAddModal] = useState(false);
  const [hovered, setHovered] = useState(false);
  const [activeIndex, setActiveIndex] = useState()
