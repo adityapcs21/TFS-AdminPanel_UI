@@ -272,7 +272,8 @@ const KYCApprovalPending = () => {
               </CardContent>
             </StyledCard>
           </Grid>
-        </Grid>}
+        </Grid>
+        }
     </StyledContainer >
   );
 };
@@ -285,8 +286,4 @@ const StyledContainer = styled(Container)({
 
 const StyledCard = styled(Card)({
   padding: '16px',
-});
-
-const StyledChip = styled(Chip)({
-  marginRight: '8px',
 });

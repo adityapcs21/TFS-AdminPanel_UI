@@ -48,14 +48,12 @@ jwtInterceptor.interceptors.response.use(
   if ((error.response.status === 400) || (error.response.status === 500)) {
    Swal.fire({
     icon: "error",
-    title: "Oops...",
     text: error.response.data.data,
    });
   }
   else if (error.response.status === 502) {
    Swal.fire({
     icon: "error",
-    title: "Oops...",
     text: error.response.data.message,
    });
   }

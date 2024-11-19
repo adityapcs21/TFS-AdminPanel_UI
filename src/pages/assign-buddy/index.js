@@ -11,6 +11,8 @@ import FilterAssignBuddy from '../../components/assign-buddy/FilterAssignBuddy'
 import UserDetailsHistory from '../../components/assign-buddy/UserDetailsHistory'
 import { GetStudentDetails } from '../../redux/slice/students'
 import moment from 'moment'
+import NothingToShow from '../../components/SharedComponent/NothingToShow'
+import NoDataFound from '../../components/SharedComponent/NoDataFound'
 
 const columns = [
   { id: 'studentId', label: "Student Id" },
@@ -134,19 +136,22 @@ export default function AssignBuddy() {
           isLoading ?
             <Loader />
             :
-            <ReusableTable
-              columns={columns}
-              data={assignedUserList}
-              disableDelete={true}
-              disableEdit={true}
-              onView={handleView}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              count={totalSize || 0}
-              columnFormats={columnFormats}
-            />
+            !isLoading && assignedUserList && assignedUserList.length === 0 ?
+              <NoDataFound />
+              :
+              <ReusableTable
+                columns={columns}
+                data={assignedUserList}
+                disableDelete={true}
+                disableEdit={true}
+                onView={handleView}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                count={totalSize || 0}
+                columnFormats={columnFormats}
+              />
         }
       </Grid>
 

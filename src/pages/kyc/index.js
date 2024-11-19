@@ -112,7 +112,12 @@ export default function KYCApproval() {
                 columnFormats={columnFormats}
               />
               :
-              <NoDataFound />
+              <Grid item xs={12}>
+                <Typography variant="h5" gutterBottom>
+                  User KYC Information
+                </Typography>
+                <NoDataFound />
+              </Grid>
         }
 
       </Grid>
