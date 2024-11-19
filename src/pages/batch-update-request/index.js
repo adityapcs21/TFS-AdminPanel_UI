@@ -7,18 +7,23 @@ import ReusbaleDialog from '../../components/SharedComponent/ReusableDialog';
 import ApproveStudentModal from '../../components/students/ApproveStudentModal';
 import Loader from '../../common/loader';
 import NothingToShow from '../../components/SharedComponent/NothingToShow';
+import moment from 'moment';
 
 const columns = [
   { id: 'userName', label: 'Name' },
   { id: "batchNo", label: "Batch NO" },
   { id: "currentBatchNo", label: "Current Batch NO" },
+  { id: 'createdDateMillis', label: 'Subscription StartDate' },
   { id: 'subscriptionEndDate', label: 'Subscription EndDate' },
-  { id: 'subscriptionStartDate', label: 'Subscription StartDate' },
   { id: 'price', label: 'Price' },
   { id: 'requestStatus', label: 'Request Status' },
   { id: 'approvedBy', label: 'Approved By' },
-
 ];
+
+const columnFormats = {
+  createdDateMillis: (value) => moment(value).format('DD-MM-YYYY'),
+  // endDateMillis: (value) => moment(value).format('DD-MM-YY HH:mm:ss'),
+};
 
 export default function BatchUpdateRequest() {
   const dispatch = useDispatch();
@@ -90,6 +95,8 @@ export default function BatchUpdateRequest() {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 count={ListSize}
+                columnFormats={columnFormats}
+
               />
 
         }
